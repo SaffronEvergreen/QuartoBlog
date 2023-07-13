@@ -1,11 +1,11 @@
 ---
 title: "Welcome To My Blog"
-author: "Tristan O'Malley"
+author: "Saffron"
 date: "2023-07-10"
 categories: [news]
 ---
 
-This is the first post in a Quarto blog. Welcome!
+I'm going to keep this as my trial post --
 
 ![](thumbnail.jpg)
 
