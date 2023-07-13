@@ -5,7 +5,11 @@ date: "2023-07-10"
 categories: [news]
 ---
 
-I'm going to keep this as my trial post --
+I'm going to keep this as my trial and error post --
+
+The content below is what was provided in the default Quarto Blog stuff
+
+\_\_
 
 ![](thumbnail.jpg)
 

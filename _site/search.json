@@ -25,6 +25,6 @@
     "href": "posts/welcome/index.html",
     "title": "Welcome To My Blog",
     "section": "",
-    "text": "I’m going to keep this as my trial post –\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+    "text": "I’m going to keep this as my trial and error post –\nThe content below is what was provided in the default Quarto Blog stuff\n__\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   }
 ]
