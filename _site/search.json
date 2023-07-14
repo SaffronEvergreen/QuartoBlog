@@ -2,16 +2,16 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "GitBlog",
+    "title": "Collections",
     "section": "",
-    "text": "Post With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nJul 10, 2023\n\n\nSaffron\n\n\n\n\n\n\nNo matching items"
+    "text": "First Post\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nJul 10, 2023\n\n\nSaffron\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this blog"
+    "text": "This blog is under construction but is intended as a way to express what I’ve learned throughout my MPH Biostatistics program, as a student and individual who geeks out in their free time."
   },
   {
     "objectID": "posts/post-with-code/index.html",
@@ -26,5 +26,12 @@
     "title": "Welcome To My Blog",
     "section": "",
     "text": "I’m going to keep this as my trial and error post –\nThe content below is what was provided in the default Quarto Blog stuff\n__\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
+    "objectID": "posts/First Blog Post/index.html",
+    "href": "posts/First Blog Post/index.html",
+    "title": "First Post",
+    "section": "",
+    "text": "This is my first attempt at posting a blog using Quarto!\nI’ve built two blogs in the past using the Blogdown-Hugo-GitHub-Netlify pipeline but those are on a laptop which has now passed over and the URL’s are nowhere to be found. So my goal here is to lay out all the fun I’ve had and the major learning curves I’ve pushed through these last few years.\nI have way too many interests and passions related and unrelated to data science so my goal is to touch on many different topics that I’ve covered in my classes, as well as what I’ve worked on outside of graduate courses.\nResume Link\nA new tool that I’ve been lightly tinkering with is typst.app which is what I’ve been using to build my resume and cover letters. Here is the link for my resume.\n\n# This is for me to edit my resume \n# https://typst.app/project/wfidmzdG33SwaQ2Adu5pNG  \n# This is for me to edit my cover letter \n# https://typst.app/project/w14mwPCsdNobGkuX_i_knB \n\n\n1 + 1\n\n[1] 2"
   }
 ]

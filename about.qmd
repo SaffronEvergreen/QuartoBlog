@@ -4,16 +4,18 @@ image: profile.jpg
 about:
   template: jolla
   links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com
+    - icon: share
+      text: Contact
+      href: https://forms.gle/aPCwBHi7eJGcwt7w5
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
+      href: https://www.linkedin.com/in/saffron-evergreen/
     - icon: github
       text: Github
-      href: https://github.com
-
+      href: https://github.com/SaffronEvergreen 
+    - icon: rss 
+      text: Resume 
+      href: https://typst.app/project/roXl2ZLlMwxkKm3TU1bD2a
 ---
 
-About this blog
+This blog is under construction but is intended as a way to express what I've learned throughout my MPH Biostatistics program, as a student and individual who geeks out in their free time.

@@ -1,0 +1,14 @@
+{
+  "hash": "1cbcddc0266787bb1bf6a93d8d423cf6",
+  "result": {
+    "markdown": "---\ntitle: \"First Post\"\nauthor: \"Saffron\"\ndate: \"2023-07-13\"\ncategories: [news]\nimage: \"image.jpg\"\n---\n\n\nThis is my first attempt at posting a blog using Quarto!\n\nI've built two blogs in the past using the Blogdown-Hugo-GitHub-Netlify pipeline but those are on a laptop which has now passed over and the URL's are nowhere to be found. So my goal here is to lay out all the fun I've had and the major learning curves I've pushed through these last few years.  \n\nI have way too many interests and passions related and unrelated to data science so my goal is to touch on many different topics that I've covered in my classes, as well as what I've worked on outside of graduate courses.  \n\n__Resume Link__      \n\nA new tool that I've been lightly tinkering with is typst.app which is what I've been using to build my resume and cover letters. Here is the link for my [resume](https://typst.app/project/roXl2ZLlMwxkKm3TU1bD2a). \n\n\n::: {.cell}\n\n```{.r .cell-code}\n# This is for me to edit my resume \n# https://typst.app/project/wfidmzdG33SwaQ2Adu5pNG  \n# This is for me to edit my cover letter \n# https://typst.app/project/w14mwPCsdNobGkuX_i_knB \n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\n1 + 1\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] 2\n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

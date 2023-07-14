@@ -1,5 +1,5 @@
 ---
-title: "GitBlog"
+title: "Collections"
 listing:
   contents: posts
   sort: "date desc"
