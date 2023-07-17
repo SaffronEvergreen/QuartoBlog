@@ -8,13 +8,13 @@ image: "image.jpg"
 
 This is my first attempt at posting a blog using Quarto!
 
-I've built two blogs in the past using the Blogdown-Hugo-GitHub-Netlify pipeline but those are on a laptop which has now passed over and the URL's are nowhere to be found. So my goal here is to lay out all the fun I've had and the major learning curves I've pushed through these last few years.  
+I've built two blogs in the past using the Blogdown-Hugo-GitHub-Netlify pipeline but those are on a laptop which has now passed over and the URL's are nowhere to be found. So my goal here is to lay out all the fun I've had and the major learning curves I've pushed through these last few years.
 
-I have way too many interests and passions related and unrelated to data science so my goal is to touch on many different topics that I've covered in my classes, as well as what I've worked on outside of graduate courses.  
+I have way too many interests and passions related and unrelated to data science so my goal is to touch on many different topics that I've covered in my classes, as well as what I've worked on outside of graduate courses.
 
-__Resume Link__      
+**Resume Link**
 
-A new tool that I've been lightly tinkering with is typst.app which is what I've been using to build my resume and cover letters. Here is the link for my [resume](https://typst.app/project/roXl2ZLlMwxkKm3TU1bD2a). 
+A new tool that I've been lightly tinkering with is typst.app which is what I've been using to build my resume and cover letters. Here is the link for my [resume](https://typst.app/project/roXl2ZLlMwxkKm3TU1bD2a).
 
 ```{r}
 # This is for me to edit my resume 
@@ -24,6 +24,3 @@ A new tool that I've been lightly tinkering with is typst.app which is what I've
 ```
 
 
-```{r}
-1 + 1
-```

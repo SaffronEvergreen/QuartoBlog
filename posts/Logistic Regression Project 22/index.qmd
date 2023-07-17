@@ -1,0 +1,1290 @@
+---
+title: "Logistic Regression Project Winter 2022"
+author: "Saffron"
+date: "2023-07-16"
+categories: [news]
+image: ""
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.height=5, fig.width=7, message = F, warning = F)
+```
+
+
+# Disclosure   
+
+As I was rendering all of my group's hard work, I remembered that uploading projects and assignments in full completion for all to see on the internet is against academic policy. For those looking to collaborate or hire me as part of your team, I will send a copy of the completed project upon request. To abide by the rules, I will show just a bit of the highlights and my thoughts along the way.    
+
+This project was done in collaboration with 3 other peers and I am forever grateful for their commitment and perseverance, especially during this final project. Please know that what I have posted below is not all my brain, it is a collaboration piece, as is most projects.      
+
+The datasets used in this project were sourced from the <SWAN database>(https://www.icpsr.umich.edu/web/ICPSR/series/00253).    
+
+
+# Research Proposal   
+The association between stress and C-reactive protein as an indication for cardiovascular health in middle-aged women located in the United States.      
+
+The primary predictor was the variable "ability to afford basic living expenses", as a means to assess stress load. The additional covariates that were assessed were; race/ethnicity, education, marital status, smoking status, age, body mass index (BMI), systolic blood pressure (SBP), and self-reported physical activity level, difficulty sleeping, and overall health status.    
+
+## Packages      
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(knitr)
+library(broom)
+library(rstatix)
+library(gt)
+library(readxl)
+library(gridExtra)
+library(grid)
+library(ggplot2)
+library(lattice)
+library(psych)
+library(describedata) 
+library(ggfortify)
+library(plotly)
+library(GGally) 
+library(dplyr)
+library(rsq)
+library(gtsummary)
+library(tinytex)
+library(car)  # vif(), car::Anova()
+library(cowplot)
+library(moderndive)
+library(forcats)
+library(leaps)
+library(ggridges)
+```
+
+## Loading Data    
+
+```{r}
+# baseline data
+load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 22/ICPSR_04368/ICPSR_04368/DS0001/04368-0001-Data.rda")
+
+# cross-sectional data 
+load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 22/ICPSR_28762/ICPSR_28762/DS0001/28762-0001-Data.rda")
+```
+
+
+## Merging Datasets, Renaming Variables     
+
+```{r echo=FALSE}
+Merged <- merge(da04368.0001,da28762.0001,
+              by="SWANID")
+
+#There are uneven column sizes. 'max_length' is used to find the max length among all variables.
+max_length <- max(c(length(Merged$SWANID),
+                    length(Merged$HOW_HARD),
+                    length(Merged$CRPRESU0),
+                    length(Merged$RACE.x),
+                    length(Merged$DEGREE),
+                    length(Merged$MARITALGP),
+                    length(Merged$SMOKING),
+                    length(Merged$AGE),
+                    length(Merged$BMI),
+                    length(Merged$SYSBP30),
+                    length(Merged$PHY_ACT),
+                    length(Merged$HEALTH),
+                    length(Merged$TRBLSLE0)))   
+
+SWANish <- data.frame(ID = c(Merged$SWANID,
+                            rep( max_length - length(Merged$SWANID))),
+                      Financial_Strain = c(Merged$HOW_HARD,
+                                           rep( max_length - length(Merged$HOW_HARD))),
+                      CRP = c(Merged$CRPRESU0,
+                              rep( max_length - length(Merged$CRPRESU0))),
+                   Race = c(Merged$RACE.x,
+                            rep(max_length - length(Merged$RACE.x))),
+                   Education = c(Merged$DEGREE,
+                            rep( max_length - length(Merged$DEGREE))),
+                   Marital_Status = c(Merged$MARITALGP,
+                            rep( max_length - length(Merged$MARITALGP))),
+                   Smoke = c(Merged$SMOKING, 
+                             rep(max_length - length(Merged$SMOKING))),
+                   Age = c(Merged$AGE,
+                            rep( max_length - length(Merged$AGE))),
+                   BMI = c(Merged$BMI,
+                            rep( max_length - length(Merged$BMI))),
+                   SBP = c(Merged$SYSBP30,
+                            rep( max_length - length(Merged$SYSBP30))),
+                   Physical_Activity = c(Merged$PHY_ACT,
+                            rep( max_length - length(Merged$PHY_ACT))),
+                   HealthRank = c(Merged$HEALTH,
+                            rep( max_length - length(Merged$HEALTH))),
+                   Difficulty_Sleeping = c(Merged$TRBLSLE0,
+                            rep( max_length - length(Merged$TRBLSLE0))))
+```   
+
+
+## Primary Predictor as Binary     
+
+```{r echo=FALSE}
+# making Financial Strain a factor 
+SWANish$Financial_Strain <- as.factor(SWANish$Financial_Strain)  
+
+# check work - shows how many factor levels there are
+fct_count(SWANish$Financial_Strain)
+# NA == 22
+
+# include collapsed factor to SWANish  
+SWANish <- SWANish %>%
+  dplyr::mutate(
+    Financial_Strain = fct_collapse(Financial_Strain,
+                        "0" = "3",
+                        "1" = c("1", "2")))  
+# check work - another way to check factor levels  
+levels(SWANish$Financial_Strain)
+```
+
+
+# Data Cleaning     
+
+## Baseline Model    
+
+__Regression Formula__   
+
+$$\textrm{CRP} = \beta_0 + \beta_1 \textrm{Financial Strain} + \beta_2 \textrm{Race/Ethnicity} + \beta_3  \textrm{Education}+ \beta_4 \textrm{Marital Status} + \\ \beta_5 \textrm{Smoking Status} + \beta_6 \textrm{Age} + \beta_7 \textrm{BMI} + \beta_8 \textrm{SBP} + \beta_9 \textrm{Physical Activity} + \\ \beta_{10} \textrm{Difficulty Sleeping} + \beta_{11} \textrm{Health Rank} + \epsilon$$    
+
+__Baseline Hypothesis__    
+
+$$H_0: \beta_{1}=\beta_{2}=.....\beta_{11}=0 \quad \text{vs.} \quad H_A: \text{At least one of } \beta_{j} \neq 0$$  
+
+<font color = "purple">   
+
+**What is blocked out**: We had ran a model using `lm()` function and created a clean table assessing the coefficient estimates.   
+
+</font>
+
+```{r echo=FALSE}
+# baseline model with all covariates   
+baseline_model <- lm(CRP ~ Financial_Strain + Race + Education + Marital_Status + Smoke + Age + BMI + SBP + Physical_Activity + HealthRank + Difficulty_Sleeping,
+            data = SWANish)
+tidy(baseline_model) %>%  gt()   
+```
+
+
+## Assessing Outliers: Cook's Distance     
+
+<font color = "purple">   
+**What is blocked out**: we performed a visual assessment to show the influential outliers using cook's distance with the cut-off point of $4 \div 2928$ along the slope and removed the rows which had those outliers.      
+</font>   
+
+```{r echo=FALSE}
+# finding outliers 
+cooks_points <- cooks.distance(baseline_model)
+
+(cooks_distance_plot <- plot(baseline_model, which = 4))
+
+# determining outliers, regardless of influence
+as.numeric(names(cooks_points)[(cooks_points > (4/2928))]) 
+  # a lot of outliers without strong influence over linearity of the model
+
+# removing influential outliers 
+SWANish <-SWANish[!(row.names(SWANish) %in% c("3303","1124","1568","2635")),]
+```
+
+### Baseline Model: Reassessment     
+
+<font color = "purple">   
+**What is blocked out**: we then assessed linearity of our baseline model with the influential points removed. The assumptions for linearity were most definitely still not met at this point.    
+
+Assumptions for linearity:   
+* Linearity: nope   
+* Independence: yep    
+* Homoscedasticity: definitely not     
+* Normality: not quite    
+
+</font>   
+
+```{r echo=FALSE}
+# new model without outliers
+baseline_model <- lm(CRP ~ Financial_Strain + Race + Education + Marital_Status + Smoke + Age + BMI + SBP + Physical_Activity + HealthRank + Difficulty_Sleeping,
+            data = SWANish)
+tidy(baseline_model) %>%  gt()
+
+regression_points <- augment(baseline_model)
+
+# baseline sans outliers 
+autoplot(baseline_model)
+
+# making sure that all influential values have been removed
+  # all values below threshold   
+plot(baseline_model, which = 4)
+```
+ 
+## Descriptive Statistics Table          
+
+<font color = "purple">    
+**What is blocked out**: a bunch of code converting the covariates to factored variables.    
+</font>   
+   
+
+```{r echo=FALSE}  
+# remove rows with NA and create dataset for recoding variables into factors  
+
+# it's convenient to have extra datasets like this, so when edits are made to factors or variable names, it is easy to re-run without overlapping edits
+
+swan_fct <- SWANish
+
+swan_fct$Financial_Strain <- swan_fct$Financial_Strain %>% 
+  factor(levels = c("0", "1"), # how many levels set
+    labels = c("Somewhat/Very hard", 
+                   "Not hard"), 
+        ordered = TRUE) # showing "hierarchy" primarily for creating tables and having the same structure for each
+
+swan_fct$Race <- swan_fct$Race %>% 
+  factor(levels = c("1", "2", "3", "4", "5"),
+         labels = c("Black/African American", 
+                    "Chinese/Chinese American", 
+                    "Japanese/Japanese American", 
+                    "Caucasian/White Non-Hispanic", 
+                    "Hispanic"), 
+         ordered = TRUE)
+
+swan_fct$Education <- swan_fct$Education %>% 
+  factor(levels = c("1", "2", "3", "4", "5"),
+         labels = c("Less than high school", 
+                    "High school graduate", 
+                    "Some college/technical school", 
+                    "College graduate", 
+                    "Post graduate education"), 
+         ordered = TRUE)
+
+swan_fct$Marital_Status <- swan_fct$Marital_Status %>% 
+  factor(levels = c("1", "2", "3", "4"), 
+         labels = c("Single, never married", 
+                    "Currently married/living as married", 
+                    "Separated or divorced", 
+                    "Widowed"), 
+         ordered = TRUE)
+
+swan_fct$Physical_Activity <- swan_fct$Physical_Activity %>% 
+  factor(levels = c("1", "2", "3", "4", "5"),
+         labels = c("Much less than other women your age", 
+                    "Somewhat less than other women your age", 
+                    "About the same as other women your age", 
+                    "Somewhat more than other women your age", 
+                    "Much more than other women your age"), 
+         ordered = TRUE)
+
+swan_fct$HealthRank <- swan_fct$HealthRank %>% 
+  factor(levels = c("1", "2", "3", "4", "5"),
+         labels = c("Excellent", 
+                    "Very good", 
+                    "Good", 
+                    "Fair", 
+                    "Poor"), 
+         ordered = TRUE)
+
+swan_fct$Difficulty_Sleeping <- swan_fct$Difficulty_Sleeping %>% 
+  factor(levels = c("1", "2"), 
+         labels = c("None", 
+                    "Yes"),
+         ordered = TRUE) 
+
+swan_fct$Smoke <- swan_fct$Smoke %>% 
+  factor(levels = c("1", "2", "3"), 
+         labels = c("Never smoked",
+                    "Former smoker", 
+                    "Current smoker"),
+         ordered = TRUE)
+
+
+# check work - shows how many factor levels there are, and the amount of observations per factor level
+fct_count(swan_fct$Financial_Strain)
+```
+
+
+
+### Table 1    
+<font color = "purple">   
+**Note**: I was emotionally attached to this table since this was one of the learning curves I endured combining various `gt` libraries and functions so I'm including it since this was my baby at the time.   
+</font>  
+
+
+```{r}  
+# list of all variables for easy input 
+
+# Financial_Strain, Race, Education, Marital_Status, Smoke, Age, BMI, SBP, Physical_Activity, HealthRank, Difficulty_Sleeping
+
+swan_fct %>% tbl_summary(
+  by = Financial_Strain, # stratifying by this binary variable (primary predictor)
+  label = list(                       # row name appearance
+    Financial_Strain ~ "Financial Strain",
+    Race ~ "Race/Ethnicity",
+    Marital_Status ~ "Marital Status", 
+    Smoke ~ "Smoking Status", 
+    Age ~ "Age",
+    BMI ~ "Body Mass Index (BMI)",
+    SBP ~ "Systolic Blood Pressure (SBP)",
+    Physical_Activity ~ "Physical Activity", 
+    HealthRank ~ "Health Status", 
+    Difficulty_Sleeping ~ "Difficulty Sleeping"
+  ),
+  include = c(     # which variables from dataset to include in table 
+    Financial_Strain, Age, Race, Education, Marital_Status, SBP, Smoke, BMI, Physical_Activity, HealthRank, Difficulty_Sleeping)) %>% 
+  #add_overall() %>% ## this didn't run for us
+  modify_header(label ~ "Variable") %>%
+  modify_footnote(
+    all_stat_cols() ~ "Median (IQR); Frequency (%)") %>%
+  modify_caption("Table 1.") %>%
+ bold_labels() %>% 
+## to use gt() functions, add `as_gt()` then include gt() functions
+ as_gt() %>% 
+  tab_header(
+    title = "Participants' characteristics, stratified by Financial Strain",
+    subtitle = "Financial Strain: How hard is it to afford basic living expenses?") %>% 
+  tab_options(heading.title.font.size = "small",
+              heading.title.font.weight = "bold",
+              heading.subtitle.font.size = "large",
+              heading.subtitle.font.weight = "80",
+              heading.align = "right") %>% 
+  opt_table_outline(style = "solid", width = px(5)) %>% 
+  opt_stylize(style = 6, color = "gray")
+```
+
+
+# Exploratory Data Analysis         
+
+<font color = "purple">   
+**What's blocked out**: visualizations showing the distribution of our outcome variable and covariates.    
+</font>   
+
+## Distribution of CRP    
+
+```{r echo=FALSE}
+#create histogram of values for CRP levels 
+ggplot(data=SWANish, aes(x=CRP)) +
+  geom_histogram(fill="lightblue", color="darkblue", bins = 100) +
+  ggtitle("Histogram of C-reactive Protein Levels ")
+
+# since this is the outcome variable and greatly negatively skewed, we will likely want to transform this once we approach that stage of the analysis
+```
+
+## Boxplots    
+
+```{r echo=FALSE}
+#install packages and library(viridis)
+
+bp1 <- ggplot(swan_fct, aes(x = Financial_Strain, y =CRP, 
+                            color = Financial_Strain, 
+                            group = Financial_Strain)) + 
+  geom_boxplot(outlier.shape = NA) +
+  coord_cartesian(ylim =  c(0, 15), xlim = c(1, 3)) + 
+  ggtitle("Financial Strain and CRP") + 
+  geom_jitter(size=0.05, alpha=0.5) + 
+  theme(legend.position = "none") + 
+  xlab("Financial Strain") + ylab("CRP")
+
+
+bp2 <- ggplot(swan_fct, aes(x = Race, y = CRP, 
+                            color = Race, 
+                            group = Race)) + 
+  geom_boxplot(outlier.shape = NA) +
+  coord_cartesian(ylim =  c(0, 20)) + 
+  ggtitle("Race/Ethnicity and CRP") + 
+  geom_jitter(size=0.05, alpha=0.5) + 
+  theme(legend.position = "none") + 
+  xlab("Race") + ylab("CRP")
+
+
+bp3 <- ggplot(swan_fct, aes(x = Marital_Status, y = CRP, 
+                            color = Marital_Status, 
+                            group = Marital_Status)) + 
+  geom_boxplot(outlier.shape = NA) +
+  coord_cartesian(ylim =  c(0, 15)) + 
+  ggtitle("Marital Status and CRP") + 
+  geom_jitter(size=0.05, alpha=0.5) + 
+  theme(legend.position = "none") + 
+  xlab("Marital Status") + ylab("CRP")
+
+bp4 <- ggplot(swan_fct, aes(x = Smoke, y = CRP, 
+                            color = Smoke, 
+                            group = Smoke)) + 
+  geom_boxplot(outlier.shape = NA) +
+  coord_cartesian(ylim =  c(0, 15)) + 
+  ggtitle("Smoke and CRP") + 
+  geom_jitter(size=0.05, alpha=0.5) + 
+  theme(legend.position = "none") + 
+  xlab("Smoking Status") + ylab("CRP")
+
+bp5 <- ggplot(swan_fct, aes(x = as.factor(Age), y = CRP, 
+                            color = Age, 
+                            group = Age)) + 
+  geom_boxplot(outlier.shape = NA) +  
+  coord_cartesian(ylim =  c(0, 15)) + 
+  ggtitle("Age and CRP") + 
+  geom_jitter(size=0.05, alpha=0.5) + 
+  theme(legend.position = "none") + 
+  xlab("Age") + ylab("CRP")
+
+bp6 <- ggplot(swan_fct, aes(x = BMI, y = CRP)) + 
+  geom_point() + 
+  ggtitle("BMI and CRP") + 
+  geom_smooth(method = lm, color = "purple", se = F) + 
+  theme(legend.position = "none")
+
+bp7 <- ggplot(swan_fct, aes(x = SBP, y = CRP)) + 
+  geom_point() + 
+  ggtitle("SBP and CRP") + 
+  geom_smooth(method = lm, color = "purple", se = F) + 
+  theme(legend.position = "none")
+
+bp8 <- ggplot(swan_fct, aes(
+  x = Physical_Activity, y = CRP, 
+  color = Physical_Activity, 
+  group = Physical_Activity)) + 
+  geom_boxplot(outlier.shape = NA) +
+  coord_cartesian(ylim =  c(0, 25)) + 
+  ggtitle("Physical Activity and CRP") + 
+  geom_jitter(size=0.05, alpha=0.5) + 
+  theme(legend.position = "none") + 
+  xlab("Physical Activity") + ylab("CRP")
+
+bp9 <- ggplot(swan_fct, aes(
+  x = HealthRank, y = CRP, 
+  color = HealthRank, 
+  group = HealthRank)) +
+  coord_cartesian(ylim =  c(0, 20)) + 
+  geom_boxplot(outlier.shape = NA) + 
+  ggtitle("Health Rank and CRP") + 
+  geom_jitter(size=0.05, alpha=0.5) + 
+  theme(legend.position = "none") + 
+  xlab("Health Rank") + ylab("CRP")
+
+bp10 <- ggplot(swan_fct, aes(
+  x = Difficulty_Sleeping, y = CRP, 
+  color = Difficulty_Sleeping, 
+  group = Difficulty_Sleeping)) + 
+  geom_boxplot(outlier.shape = NA) +
+  coord_cartesian(ylim =  c(0, 15)) + 
+  ggtitle("Difficulty Sleeping and CRP") + 
+  geom_jitter(size=0.05, alpha=0.5) + 
+  theme(legend.position = "none") + 
+  xlab("Difficulty Sleeping") + ylab("CRP")
+  ### NA should possibly be factored or labeled in a more readable way
+
+grid.arrange(bp1, bp2, bp3, bp4, bp5, bp6, bp7, bp8, bp9, bp10, nrow=5, ncol=2)
+```
+
+## Density plots   
+
+```{r echo=FALSE}
+library(ggridges)
+
+d1 <- ggplot(swan_fct, 
+       aes(x = CRP, 
+           y = Financial_Strain, 
+           fill = Financial_Strain)) +
+  geom_density_ridges() + 
+  theme_ridges() +
+  theme(legend.position = "none") + 
+  xlab("CRP") + ylab("Financial Strain") + 
+  ggtitle("CRP and Financial Strain")
+
+d2 <- ggplot(swan_fct, 
+       aes(x = CRP, 
+           y = as.factor(Race), 
+           fill = Race)) +
+  geom_density_ridges() + 
+  theme_ridges() +
+  theme(legend.position = "none") + 
+  xlab("CRP") + ylab("Race") + 
+  ggtitle("CRP and Race")
+
+
+d3 <- ggplot(swan_fct, 
+       aes(x = CRP, 
+           y = as.factor(Marital_Status), 
+           fill = Marital_Status)) +
+  geom_density_ridges() + 
+  theme_ridges() +
+  theme(legend.position = "none")+ xlab("CRP") + ylab("Marital Status")
+
+
+d4 <- ggplot(swan_fct, 
+       aes(x = CRP, 
+           y = as.factor(Smoke), 
+           fill = Smoke)) +
+  geom_density_ridges() + 
+  theme_ridges() +
+  theme(legend.position = "none")+ 
+  xlab("CRP") + ylab("Smoking Status") + 
+  ggtitle("CRP and Smoking Status")
+
+
+d5 <- ggplot(swan_fct, 
+       aes(x = CRP, 
+           y = as.factor(Age), 
+           fill = Age)) +
+  geom_density_ridges() + 
+  theme_ridges() +
+  theme(legend.position = "none")+ 
+  xlab("CRP") + ylab("Age") + 
+  ggtitle("CRP and Age")
+
+
+d6 <- ggplot(swan_fct, 
+       aes(x = CRP, 
+           y = as.factor(Physical_Activity), 
+           fill = Physical_Activity)) +
+  geom_density_ridges() + 
+  theme_ridges() +
+  theme(legend.position = "none")+ 
+  xlab("CRP") + ylab("Physical Activity") + 
+  ggtitle("CRP and Physical Activity")
+
+
+d7 <- ggplot(swan_fct, 
+       aes(x = CRP, 
+           y = as.factor(HealthRank), 
+           fill = HealthRank)) +
+  geom_density_ridges() + 
+  theme_ridges() +
+  theme(legend.position = "none")+ 
+  xlab("CRP") + ylab("Health Rank") + 
+  ggtitle("CRP and Health Rank")
+
+
+d8 <- ggplot(swan_fct, 
+       aes(x = CRP, 
+           y = as.factor(Difficulty_Sleeping),
+           xlim = 60,
+           fill = Difficulty_Sleeping)) +
+  geom_density_ridges() + 
+  theme_ridges() +
+  theme(legend.position = "none")+ 
+  xlab("CRP") + ylab("Difficulty Sleeping") + 
+  ggtitle("CRP and Difficulty Sleeping")
+
+d1; d2; d3; d4; d5; d6; d7; d8
+
+```
+
+
+>Check for multicollinearity   
+
+```{r}
+# any VIF value > 5 suggests multicollinearity
+car::vif(baseline_model)
+```   
+
+
+# Parsimonious Model: Mallow's Cp Criterion      
+
+<font color = "purple">   
+**What is blocked out**: the process of getting the parsimonious model using Mallow's Cp Criterion. In conclusion this is what was pulled for the model; CRP ~ Race + Smoke + BMI + SBP + Physical Activity + Health Rank. Note that `Financial Strain` was not included, and given that that was our primary predictor we will add it in the future.    
+</font>   
+
+```{r echo=FALSE}
+full_model <- regsubsets(CRP ~ 
+              Financial_Strain + 
+              Race + Education + 
+              Marital_Status + 
+              Smoke + Age + BMI + 
+              SBP + 
+              Physical_Activity + # modifier
+              HealthRank + 
+              Difficulty_Sleeping, 
+                         data = SWANish, 
+                         nvmax = 13)
+
+msummary <- summary(full_model)
+
+# shows all model options
+msummary$outmat
+
+# pulls the model selection that has the smallest Cp value
+(index.cp <- which.min(msummary$cp))
+  # the 6th model is the parsimonious model
+
+# get minimum Cp value  
+msummary$cp[index.cp] # 6.562162
+
+# add r squared, adjusted r squared and Cp for comparison 
+cbind(msummary$which, 
+      round(cbind(rsq=msummary$rsq, 
+                  adjr2=msummary$adjr2,
+                  cp=msummary$cp), 3))
+
+# the coefficient estimates for "best/parsimonious" model
+coef(full_model, index.cp)
+# CRP ~ Race + Smoke + BMI + SBP + Physical Activity + Health Rank
+```
+
+
+## Forward Elimination Procedure      
+
+<font color = "purple">   
+**Note**: The code below (with the exception of the covariates added) is solely a gift from my previous professor. 
+</font>   
+
+```{r}
+# another method for determining parsimonious model
+model <- regsubsets(CRP ~ 
+              Financial_Strain + 
+              Race + Education + 
+              Marital_Status + 
+              Smoke + Age + BMI + 
+              SBP + 
+              Physical_Activity + 
+              HealthRank + 
+              Difficulty_Sleeping, 
+                         data = SWANish, 
+                         nvmax = 13,
+                    method="forward")
+
+p.val <- 0; i <- 1; vars_last <- NULL
+
+#----------------------------
+# do not edit code within the "while" loop"
+while(p.val <= 0.1){
+  vars_current <- names(coef(model,i))[-1]
+  var_add <- vars_current[!vars_current %in% vars_last]
+  coef <- summary(lm(as.formula(paste("CRP ~ ", paste(vars_current, collapse =" + "), sep = "")),  
+                  data = SWANish))$coefficients
+  
+  p.val <- coef[var_add,"Pr(>|t|)"]
+  vars_last <- vars_current
+  i=i + 1
+  print(var_add) # print the variable being added 
+  print(coef) #print the coefficients and p-value of new model
+}
+```
+
+
+
+## Summary of the parsimonious model
+
+The parsimonious model did not include Financial Strain, but since that is the primary predictor for this regression analysis project, we decided to include it back into the model.     
+
+__Model table__    
+
+<font color = "purple">    
+**What is blocked out**: a table of the coefficient estimates from the parsimonious model using the forward elimination procedure.    
+</font>  
+
+```{r echo=FALSE}
+parsimonious_model <- lm(CRP ~ Financial_Strain + Race + Smoke + BMI + SBP + Physical_Activity + HealthRank, 
+           data = SWANish)
+
+parsimonious_model %>% tidy() %>% gt()
+
+# Financial Strain and Physical Activity have p-values higher than 0.05. An assumption is that there may have been measurement error or recall error of some sort during the data collection process since those two variables are both "perceived" and vary a lot depending on a multitude of factors
+```
+
+__Regression table__   
+
+```{r echo=FALSE}
+# note: just reliable predictors pulled, no transformations have been done  
+tbl_regression(parsimonious_model)
+
+parsimonious_model_summary <- summary(lm(CRP ~ Financial_Strain + Race + Smoke + BMI + SBP + Physical_Activity + HealthRank, 
+           data = SWANish))$coefficients
+
+## an option for looking at the coefficients and their parameters 
+parsimonious_model_summary
+```
+
+>Check again for multicollinearity  
+
+```{r}
+# any VIF value > 5 suggests multicollinearity
+car::vif(parsimonious_model)
+```
+
+This was done prior to building the parsimonious model, but the multicollinearity test was ran again just to ensure that after removing a couple of variables, the linearity between independent variables didn't change. All vif values are less than 5, suggesting that there is no collinearity between predictor variables in our parsimonious model.   
+
+
+# Building the parsimonious model by hand     
+
+<font color = "purple">   
+**What is blocked out**: I deleted a lot of the process below, as well as hid the code used. Though it is an important process, there have already been two models so far, so I don't want to show too much.
+</font> 
+
+
+**Baseline Model with All Potential Variables**  
+
+$$\textrm{CRP} = \beta_0 + \beta_1 \textrm{Financial Strain} + \beta_2 \textrm{Race/Ethnicity} + \beta_3  \textrm{Education}+ \beta_4 \textrm{Marital Status} + \\ \beta_5 \textrm{Smoking Status} + \beta_6 \textrm{Age} + \beta_7 \textrm{BMI} + \beta_8 \textrm{SBP} + \beta_9 \textrm{Physical Activity} + \\ \beta_{10} \textrm{Difficulty Sleeping} + \beta_{11} \textrm{Health Rank} + \epsilon$$   
+
+
+**Hypothesis Test for Baseline Model**    
+
+$$H_0: \beta_{1}=\beta_{2}=.....\beta_{11}=0 \quad \text{vs.} \quad H_A: \text{At least one of } \beta_{j} \neq 0$$    
+
+
+**Baseline Model**   
+
+
+```{r echo=FALSE} 
+# baseline model with all covariates
+baseline_model2 <- lm(CRP ~ Financial_Strain + Race + Education + Marital_Status + Smoke + Age + BMI + SBP + Physical_Activity + HealthRank + Difficulty_Sleeping,
+            data = SWANish)
+tidy(baseline_model2) %>%  gt()
+
+## saved regression points for later use, if needed
+regression_points <- augment(baseline_model2)  
+
+# ANOVA of baseline model
+anova(baseline_model2) %>% gt()
+``` 
+
+
+**Visualization of CRP ~ Financial Strain distribution**    
+
+```{r echo=FALSE}
+plot(baseline_model2, which = 1)
+plot(baseline_model2, which = 2)
+```
+
+This is a quick, not so thorough way, of checking normality assumptions in our baseline model. Only two assumptions are checked here; to see if the residuals have equal variance and to see if the residuals follow a linear pattern. Neither of these assumptions are met here, which is not surprising since we have not assessed if transformations need to be done at this point.    
+
+
+**Regression Table Summary of Baseline Model**    
+
+```{r}
+tbl_regression(baseline_model2)
+```
+
+This regression table shows a lot of the variables with p-values greater than $\alpha=0.05$. These will affect the reliability of the model, if we were to run this as a prediction model.    
+
+__Next steps__    
+
+As established prior, this model does not have any collinearity issues so we will be looking at each variable as a variable of interest. Below, we will test each variable to see if they help improve model reliability.        
+
+>Financial Strain as Primary Predictor    
+
+**Hypothesis**    
+
+$$\widehat{\text{CRP}} = \widehat\beta_0 + \widehat{\beta_1} \cdot \textrm{Financial Strain}$$   
+
+$$H_0: \beta_1 = 0, ~~H_A: \beta_1 \neq 0$$    
+
+
+```{r echo=FALSE}
+first_model <- lm(CRP~ Financial_Strain, data = SWANish)
+anova(first_model) %>% gt()
+```  
+
+
+>CRP ~ Financial Strain + Race/Ethnicity      
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity}$$    
+
+**Hypotheses**    
+
+$$
+H_0: \beta_2 = 0, ~~ H_A: \beta_2 \neq 0
+$$    
+
+
+**Test statistic formula**    
+
+```{r echo=FALSE} 
+# full model 
+second_model <- lm(CRP~ Financial_Strain + Race, data = SWANish)
+
+# reduced model = first_model
+
+anova(first_model, second_model) %>% gt()
+```   
+
+
+>CRP ~ Financial Strain + Race/Ethnicity + Education      
+
+$$\widehat{\textrm{CRP}} = \widehat \beta_0 + \widehat \beta_1 \cdot \textrm{Financial Strain} + \widehat \beta_2 \cdot \textrm{Race/Ethnicity} + \widehat \beta_3 \cdot \textrm{Education}$$   
+
+**Hypotheses**    
+
+$$
+H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
+$$    
+
+```{r echo=FALSE}
+#full model 
+third_model <- lm(CRP~ Financial_Strain + Race + Education, data = SWANish)
+#reduced model = second_model
+
+car::Anova(third_model, second_model) 
+```    
+
+
+>CRP ~ Financial Strain + Race/Ethnicity + Education + Marital Status       
+
+$$
+\widehat{\textrm{CRP}} = \widehat \beta_0 + \widehat \beta_1 \cdot \textrm{Financial Strain} + \widehat \beta_2 \cdot \textrm{Race/Ethnicity} + \widehat \beta_3 \cdot \textrm{Education}+ \widehat \beta_4 \cdot \textrm{Marital Status}
+$$     
+
+**Hypotheses**    
+
+$$
+H_0: \beta_4 = 0, ~~ H_A: \beta_4 \neq 0
+$$    
+
+
+```{r echo=FALSE}
+# full model 
+fourth_model <- lm(CRP~ Financial_Strain + Race + Education + Marital_Status, data = SWANish)
+#reduced model = third_model
+
+car::Anova(fourth_model, third_model)
+``` 
+
+
+>CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke     
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Education}+ \widehat\beta_4 \cdot \textrm{Smoking Status}$$   
+
+
+**Hypotheses**     
+
+$$
+H_0: \beta_4 = 0, ~~ H_A: \beta_4 \neq 0
+$$     
+
+   
+
+```{r echo=FALSE}
+# full model 
+fifth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke, data = SWANish)
+#reduced model = third_model
+
+car::Anova(fifth_model, third_model)
+``` 
+
+
+>CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + Age    
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity}  + \\ \widehat\beta_3 \cdot \textrm{Education}+ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{Age}$$    
+
+**Hypotheses**   
+
+$$
+H_0: \beta_5 = 0, ~~ H_A: \beta_5 \neq 0
+$$  
+
+
+```{r echo=FALSE}
+# full model 
+sixth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + Age, data = SWANish)
+#reduced model = fifth_model
+
+car::Anova(sixth_model, fifth_model)
+``` 
+
+
+>CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI    
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Education} + \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI}$$    
+
+**Hypotheses**    
+
+$$
+H_0: \beta_5 = 0, ~~ H_A: \beta_5 \neq 0
+$$   
+
+
+```{r echo=FALSE}
+# full model 
+seventh_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI, data = SWANish)
+#reduced model = fifth_model
+
+car::Anova(seventh_model, fifth_model)
+```   
+
+
+>CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP     
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \widehat\beta_3 \cdot \textrm{Education} + \\ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP}$$    
+
+**Hypotheses**   
+
+$$
+H_0: \beta_6 = 0, ~~ H_A: \beta_6 \neq 0
+$$    
+
+
+```{r echo=FALSE}
+# full model 
+eighth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP, data = SWANish)
+#reduced model = seventh_model
+
+car::Anova(eighth_model, seventh_model)
+```   
+
+
+>CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP + Physical Activity     
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \widehat\beta_3 \cdot \textrm{Education} + \\ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP} + \widehat\beta_7 \cdot \textrm{Physical Activity}$$   
+
+**Hypotheses**   
+
+$$
+H_0: \beta_7 = 0, ~~ H_A: \beta_7 \neq 0
+$$   
+
+
+```{r echo=FALSE}
+# full model 
+ninth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP + Physical_Activity, data = SWANish)
+#reduced model = eighth_model
+
+car::Anova(ninth_model, eighth_model)
+```   
+
+
+>CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP + Health Rank    
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \widehat\beta_3 \cdot \textrm{Education} + \\ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP} + \widehat\beta_7 \cdot \textrm{Health Rank}$$   
+
+**Hypotheses**   
+
+$$
+H_0: \beta_7 = 0, ~~ H_A: \beta_7 \neq 0
+$$    
+
+ 
+```{r echo=FALSE}
+# full model 
+tenth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP + HealthRank, data = SWANish)
+#reduced model = seventh_model
+
+car::Anova(tenth_model, seventh_model)
+``` 
+
+>CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP + Health Rank + Difficulty Sleeping     
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Education} + \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP} +\\ \widehat\beta_7 \cdot \textrm{Health Rank} + \widehat\beta_8 \cdot \textrm{Difficulty Sleeping}$$   
+
+
+**Hypotheses**   
+
+$$
+H_0: \beta_8 = 0, ~~ H_A: \beta_8 \neq 0
+$$     
+
+
+```{r echo=FALSE}
+# full model 
+eleventh_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP + HealthRank + Difficulty_Sleeping, data = SWANish)
+#reduced model = tenth_model
+
+car::Anova(eleventh_model, tenth_model)
+```   
+
+
+## Concluding Model - No interactions, just additions    
+
+$$\textrm{CRP} = \beta_0 + \beta_1 \cdot \textrm{Financial Strain} + \beta_2 \cdot \textrm{Race/Ethnicity} + \\ \beta_3 \cdot \textrm{Education} + \beta_4 \cdot \textrm{Smoking Status} + \beta_5 \cdot \textrm{BMI} + \beta_6 \cdot \textrm{SBP} +\\ \beta_7 \cdot \textrm{Health Rank} + \epsilon$$   
+
+# Testing Interactions        
+
+>Financial Strain*Race/Ethnicity    
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Race/Ethnicity}$$     
+
+**Hypotheses**   
+
+$$
+H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
+$$    
+
+
+```{r echo=FALSE}
+# full model 
+first_interaction_model <- lm(CRP~ Financial_Strain + Race + (Race*Financial_Strain), data = SWANish)
+#reduced model = second model
+
+car::Anova(first_interaction_model, second_model)
+``` 
+
+>Financial Strain*Education      
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Education} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Education}$$   
+
+**Hypotheses**    
+
+$$
+H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
+$$    
+
+
+```{r echo=FALSE}
+# full model 
+second_interaction_model <- lm(CRP~ Financial_Strain + Education + (Education*Financial_Strain), data = SWANish)
+
+#reduced model
+second_reduced_model <- lm(CRP ~ Financial_Strain + Education, data = SWANish)
+
+car::Anova(first_interaction_model, second_reduced_model)
+```    
+
+
+>Financial Strain*Smoking Status    
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Smoke} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Smoke}$$    
+
+
+**Hypotheses**    
+
+$$
+H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
+$$    
+
+
+```{r echo=FALSE}
+# full model 
+third_interaction_model <- lm(CRP~ Financial_Strain + Smoke + (Smoke*Financial_Strain), data = SWANish)   
+
+#reduced model
+third_reduced_model <- lm(CRP ~ Financial_Strain + Smoke, data = SWANish)
+
+car::Anova(third_interaction_model, third_reduced_model)
+```    
+
+
+>Financial Strain*Health Rank    
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Health Rank} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Health Rank}$$    
+
+**Hypotheses**   
+
+$$
+H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
+$$    
+
+
+```{r echo=FALSE}
+# full model 
+fourth_interaction_model <- lm(CRP~ Financial_Strain + HealthRank + (Financial_Strain*HealthRank), data = SWANish)
+
+#reduced model
+fourth_reduced_model <- lm(CRP ~ Financial_Strain + HealthRank, data = SWANish)
+
+car::Anova(fourth_interaction_model, fourth_reduced_model)
+``` 
+
+
+>Financial Strain*Systolic Blood Pressure    
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{SBP} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * SBP}$$   
+
+**Hypotheses**   
+
+$$
+H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
+$$    
+
+
+```{r echo=FALSE}
+# full model 
+fifth_interaction_model <- lm(CRP~ Financial_Strain + SBP + (SBP*Financial_Strain), data = SWANish)
+
+#reduced model
+fifth_reduced_model <- lm(CRP ~ Financial_Strain + SBP, data = SWANish)
+
+car::Anova(fifth_interaction_model, fifth_reduced_model)
+```    
+
+
+>Financial Strain*Difficulty Sleeping
+
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Difficulty Sleeping} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Difficulty Sleeping}$$    
+
+**Hypotheses**    
+
+$$
+H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
+$$    
+
+
+```{r echo=FALSE}
+# full model 
+sixth_interaction_model <- lm(CRP~ Financial_Strain + Difficulty_Sleeping + (Difficulty_Sleeping*Financial_Strain), data = SWANish)
+
+#reduced model
+sixth_reduced_model <- lm(CRP ~ Financial_Strain + Difficulty_Sleeping, data = SWANish)
+
+car::Anova(sixth_interaction_model, sixth_reduced_model)
+```    
+
+
+## Parsimonious Model Conclusion: After Testing for Interactions               
+
+$$\textrm{CRP} = \beta_0 + \beta_1 \cdot \textrm{Financial Strain} + \beta_2 \cdot \textrm{Race/Ethnicity} + \\ \beta_3 \cdot \textrm{Education} + \beta_4 \cdot \textrm{Smoking Status} + \beta_5 \cdot \textrm{BMI} + \beta_6 \cdot \textrm{SBP} +\\ \beta_7 \cdot \textrm{Health Rank} + \epsilon$$    
+
+
+# Regression Diagnostics      
+
+## Testing Normality      
+
+Below, we are taking the residuals of the parsimonious model that we established above and looked to see if this model meets the normality assumptions.    
+   
+
+```{r echo=FALSE}
+### label residuals  
+fitted <- parsimonious_model$fitted.values # fitted value
+resm <- resid(parsimonious_model)    # ols residual
+standm <- rstandard(parsimonious_model)   #standardized resitudal
+studm <- rstudent(parsimonious_model)   #studentized residual
+
+### Residual Plots
+par(mfrow=c(3,3))
+#plot of residuals vs. fitted value
+plot(fitted, resm, main="Residual Plot", xlab="Fitted Value", ylab="Residual")
+abline(0,0, col="red")
+#plot of standardized residual vs. fitted value
+plot(fitted, standm, main="Standardized Residual Plot", xlab="Fitted Value", ylab="Residual")
+abline(0,0, col="red")
+#plot of studentized residual vs. fitted 
+plot(fitted, studm, main="Studentized Residual Plot", xlab="Fitted Value", ylab="Residual")
+abline(0,0, col="red")
+```
+
+
+__Visualization: Assessing Normality__    
+
+```{r echo=FALSE}
+# Parsimonious model
+autoplot(parsimonious_model)
+```
+
+
+__Traditional Method: Assessing Normality, Shapiro Wilkes Test__    
+
+```{r}
+# shapiro wilk test
+parsimonious_residuals <- resid(parsimonious_model)
+shapiro.test(parsimonious_residuals)
+```
+_Note: residuals are normal but there is not solid linearity (as seen in the Normal Q-Q plot) so more needs to be explored_    
+
+
+### Transforming CRP     
+
+<font color = "purple">   
+**Note**: I decided to show the transformation of the outcome variable since that is ideally something we should have checked earlier on. I also just like how satisfying it is to see the before and after effects.   
+<font>   
+
+```{r}
+# assessing distribution of CRP
+ggplot(SWANish, aes(x = CRP)) + geom_density()
+
+# decide transformation
+gladder(SWANish$CRP)
+
+#log transform then check to make sure normally distributed
+SWANish$logCRP <- log(SWANish$CRP)
+
+# visual of logCRP, density plot
+ggplot(SWANish, aes(x = logCRP)) + geom_density()
+
+# parsimonious model with log-transformed CRP
+CRP_p.mod <- lm(logCRP ~ Race + Smoke + BMI + SBP + Physical_Activity + 
++     HealthRank, data = SWANish)
+
+### checking variance of residuals given log-transformed CRP to model
+
+# autoplot 2: label
+autoplot(CRP_p.mod)
+```  
+
+By log-transforming `CRP`, the regression model has more normality than prior to the transformation. The Residuals vs Leverage plot indicates there's more to look into to see if further transformations could be done. There are two continuous variables that could be possibly be transformed, which will be assessed below.       
+
+
+### Assessing Continuous Variables    
+
+_There are two continuous variables in this dataset: BMI and SBP_   
+
+__BMI Variable__    
+
+```{r echo=FALSE}
+### assess skew of BMI
+ggplot(SWANish, aes(x = BMI)) + geom_density()
+
+# transformations for BMI to use
+gladder(SWANish$BMI)
+### use log BMI
+
+# create log-transformed BMI variable  
+SWANish$logBMI <- log(SWANish$BMI)
+
+# assess distribution of log-transformed BMI  
+ggplot(SWANish, aes(x = logBMI)) + geom_density()
+```   
+
+
+__SBP Variable__    
+
+
+```{r echo=FALSE}
+### assess distribution of SBP
+ggplot(SWANish, aes(x = SBP)) + geom_density()
+
+# transformations for SBP to use
+gladder(SWANish$SBP)
+### log SBP
+
+# create log-transformed SBP variable  
+SWANish$logSBP <- log(SWANish$SBP)
+
+# assess distribution of log-transformed SBP
+ggplot(SWANish, aes(x = logSBP)) + geom_density()
+```
+
+After performing log-transformations on the `BMI` and `SBP`, the density plots have shown that these variables appear more like a normal distribution.    
+
+
+# Parsimonious Model with the 3 Log-Transformed Variables    
+
+$$
+\text{logCRP} = \beta_0~+~\beta_1\text{Financial Strain}~+~\beta_2\text{Race}~+~\beta_3\text{Smoke} ~+~ \beta_4\text{logBMI} ~+~ \beta_5\text{logSBP} ~+~ \beta_5\text{Physical Activity}~+~ \beta_6\text{Health Rank} ~+~ \epsilon
+$$
+
+```{r echo=FALSE}     
+# create log-transformed parsimonious model for the 3 variables (CRP, BMI, SBP)
+log_par.model <- lm(logCRP ~ Financial_Strain + Race + Smoke + logBMI + logSBP + Physical_Activity + HealthRank, data = SWANish) 
+
+# parsimonious model with log-transformed CRP
+log_par.model.sum <- summary(log_par.model)
+log_par.model %>% tidy() %>% gt()
+```    
+
+
+__Regression table of final model__    
+
+```{r echo=FALSE}
+# regression table for log-transformed variables  
+tbl_regression(log_par.model)
+```   
+
+_Note: I'm assuming that the reason why the p-value is high on Financial Strain 1 is due to how it was collapsed. This may change if one level was moved to the other binary variable. In a world with spare time, this would have been done_   
+
+_Another Note: The p-values for Race and HealthRank are also higher than the alpha = 0.05. If time allowed, these variables would be removed and then tested for normality and linearity to see if removing them improves reliability._   
+
+
+__Visualization: Checking Normality Assumptions__     
+
+<font color = "purple">    
+**What is blocked out**: It's not shown, but the QQ-plot is fantastic and the residuals are appear equally spaced.    
+</font>   
+
+```{r echo=FALSE}
+# assessing residuals   
+autoplot(log_par.model)
+```
+
+
+
+__Traditional Method: Assessing Normality, Shapiro Wilkes Test__       
+
+```{r echo=FALSE}
+transformed_residuals <- resid(log_par.model)
+shapiro.test(transformed_residuals)
+```
+
+**Conclusion**: Given the results from the Shapiro-Wilk normality test as well as assessing the normality and linearity of residuals, we can state that this linear regression model can be tested as if it is a normal distribution.         
+
