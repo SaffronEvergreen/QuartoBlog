@@ -71,7 +71,7 @@ load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 
 
 ## Merging Datasets, Renaming Variables     
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 Merged <- merge(da04368.0001,da28762.0001,
               by="SWANID")
 
@@ -121,7 +121,7 @@ SWANish <- data.frame(ID = c(Merged$SWANID,
 
 ## Primary Predictor as Binary     
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # making Financial Strain a factor 
 SWANish$Financial_Strain <- as.factor(SWANish$Financial_Strain)  
 
@@ -158,7 +158,7 @@ $$H_0: \beta_{1}=\beta_{2}=.....\beta_{11}=0 \quad \text{vs.} \quad H_A: \text{A
 
 </font>
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # baseline model with all covariates   
 baseline_model <- lm(CRP ~ Financial_Strain + Race + Education + Marital_Status + Smoke + Age + BMI + SBP + Physical_Activity + HealthRank + Difficulty_Sleeping,
             data = SWANish)
@@ -172,7 +172,7 @@ tidy(baseline_model) %>%  gt()
 **What is blocked out**: we performed a visual assessment to show the influential outliers using cook's distance with the cut-off point of $4 \div 2928$ along the slope and removed the rows which had those outliers.      
 </font>   
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # finding outliers 
 cooks_points <- cooks.distance(baseline_model)
 
@@ -199,7 +199,7 @@ Assumptions for linearity:
 
 </font>   
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # new model without outliers
 baseline_model <- lm(CRP ~ Financial_Strain + Race + Education + Marital_Status + Smoke + Age + BMI + SBP + Physical_Activity + HealthRank + Difficulty_Sleeping,
             data = SWANish)
@@ -222,7 +222,7 @@ plot(baseline_model, which = 4)
 </font>   
    
 
-```{r echo=FALSE}  
+```{r echo=FALSE, include=FALSE}  
 # remove rows with NA and create dataset for recoding variables into factors  
 
 # it's convenient to have extra datasets like this, so when edits are made to factors or variable names, it is easy to re-run without overlapping edits
@@ -355,7 +355,7 @@ swan_fct %>% tbl_summary(
 
 ## Distribution of CRP    
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 #create histogram of values for CRP levels 
 ggplot(data=SWANish, aes(x=CRP)) +
   geom_histogram(fill="lightblue", color="darkblue", bins = 100) +
@@ -366,7 +366,7 @@ ggplot(data=SWANish, aes(x=CRP)) +
 
 ## Boxplots    
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 #install packages and library(viridis)
 
 bp1 <- ggplot(swan_fct, aes(x = Financial_Strain, y =CRP, 
@@ -472,7 +472,7 @@ grid.arrange(bp1, bp2, bp3, bp4, bp5, bp6, bp7, bp8, bp9, bp10, nrow=5, ncol=2)
 
 ## Density plots   
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 library(ggridges)
 
 d1 <- ggplot(swan_fct, 
@@ -579,7 +579,7 @@ car::vif(baseline_model)
 **What is blocked out**: the process of getting the parsimonious model using Mallow's Cp Criterion. In conclusion this is what was pulled for the model; CRP ~ Race + Smoke + BMI + SBP + Physical Activity + Health Rank. Note that `Financial Strain` was not included, and given that that was our primary predictor we will add it in the future.    
 </font>   
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 full_model <- regsubsets(CRP ~ 
               Financial_Strain + 
               Race + Education + 
@@ -667,7 +667,7 @@ __Model table__
 **What is blocked out**: a table of the coefficient estimates from the parsimonious model using the forward elimination procedure.    
 </font>  
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 parsimonious_model <- lm(CRP ~ Financial_Strain + Race + Smoke + BMI + SBP + Physical_Activity + HealthRank, 
            data = SWANish)
 
@@ -678,7 +678,7 @@ parsimonious_model %>% tidy() %>% gt()
 
 __Regression table__   
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # note: just reliable predictors pulled, no transformations have been done  
 tbl_regression(parsimonious_model)
 
@@ -719,7 +719,7 @@ $$H_0: \beta_{1}=\beta_{2}=.....\beta_{11}=0 \quad \text{vs.} \quad H_A: \text{A
 **Baseline Model**   
 
 
-```{r echo=FALSE} 
+```{r echo=FALSE, include=FALSE} 
 # baseline model with all covariates
 baseline_model2 <- lm(CRP ~ Financial_Strain + Race + Education + Marital_Status + Smoke + Age + BMI + SBP + Physical_Activity + HealthRank + Difficulty_Sleeping,
             data = SWANish)
@@ -735,7 +735,7 @@ anova(baseline_model2) %>% gt()
 
 **Visualization of CRP ~ Financial Strain distribution**    
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 plot(baseline_model2, which = 1)
 plot(baseline_model2, which = 2)
 ```
@@ -745,7 +745,7 @@ This is a quick, not so thorough way, of checking normality assumptions in our b
 
 **Regression Table Summary of Baseline Model**    
 
-```{r}
+```{r echo=FALSE, include=FALSE}
 tbl_regression(baseline_model2)
 ```
 
@@ -764,7 +764,7 @@ $$\widehat{\text{CRP}} = \widehat\beta_0 + \widehat{\beta_1} \cdot \textrm{Finan
 $$H_0: \beta_1 = 0, ~~H_A: \beta_1 \neq 0$$    
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 first_model <- lm(CRP~ Financial_Strain, data = SWANish)
 anova(first_model) %>% gt()
 ```  
@@ -783,7 +783,7 @@ $$
 
 **Test statistic formula**    
 
-```{r echo=FALSE} 
+```{r echo=FALSE, include=FALSE} 
 # full model 
 second_model <- lm(CRP~ Financial_Strain + Race, data = SWANish)
 
@@ -803,7 +803,7 @@ $$
 H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
 $$    
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 #full model 
 third_model <- lm(CRP~ Financial_Strain + Race + Education, data = SWANish)
 #reduced model = second_model
@@ -825,7 +825,7 @@ H_0: \beta_4 = 0, ~~ H_A: \beta_4 \neq 0
 $$    
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 fourth_model <- lm(CRP~ Financial_Strain + Race + Education + Marital_Status, data = SWANish)
 #reduced model = third_model
@@ -847,7 +847,7 @@ $$
 
    
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 fifth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke, data = SWANish)
 #reduced model = third_model
@@ -867,7 +867,7 @@ H_0: \beta_5 = 0, ~~ H_A: \beta_5 \neq 0
 $$  
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 sixth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + Age, data = SWANish)
 #reduced model = fifth_model
@@ -887,7 +887,7 @@ H_0: \beta_5 = 0, ~~ H_A: \beta_5 \neq 0
 $$   
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 seventh_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI, data = SWANish)
 #reduced model = fifth_model
@@ -907,7 +907,7 @@ H_0: \beta_6 = 0, ~~ H_A: \beta_6 \neq 0
 $$    
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 eighth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP, data = SWANish)
 #reduced model = seventh_model
@@ -927,7 +927,7 @@ H_0: \beta_7 = 0, ~~ H_A: \beta_7 \neq 0
 $$   
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 ninth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP + Physical_Activity, data = SWANish)
 #reduced model = eighth_model
@@ -947,7 +947,7 @@ H_0: \beta_7 = 0, ~~ H_A: \beta_7 \neq 0
 $$    
 
  
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 tenth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP + HealthRank, data = SWANish)
 #reduced model = seventh_model
@@ -967,7 +967,7 @@ H_0: \beta_8 = 0, ~~ H_A: \beta_8 \neq 0
 $$     
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 eleventh_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP + HealthRank + Difficulty_Sleeping, data = SWANish)
 #reduced model = tenth_model
@@ -993,7 +993,7 @@ H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
 $$    
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 first_interaction_model <- lm(CRP~ Financial_Strain + Race + (Race*Financial_Strain), data = SWANish)
 #reduced model = second model
@@ -1012,7 +1012,7 @@ H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
 $$    
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 second_interaction_model <- lm(CRP~ Financial_Strain + Education + (Education*Financial_Strain), data = SWANish)
 
@@ -1035,7 +1035,7 @@ H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
 $$    
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 third_interaction_model <- lm(CRP~ Financial_Strain + Smoke + (Smoke*Financial_Strain), data = SWANish)   
 
@@ -1057,7 +1057,7 @@ H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
 $$    
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 fourth_interaction_model <- lm(CRP~ Financial_Strain + HealthRank + (Financial_Strain*HealthRank), data = SWANish)
 
@@ -1079,7 +1079,7 @@ H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
 $$    
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 fifth_interaction_model <- lm(CRP~ Financial_Strain + SBP + (SBP*Financial_Strain), data = SWANish)
 
@@ -1101,7 +1101,7 @@ H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
 $$    
 
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # full model 
 sixth_interaction_model <- lm(CRP~ Financial_Strain + Difficulty_Sleeping + (Difficulty_Sleeping*Financial_Strain), data = SWANish)
 
@@ -1124,7 +1124,7 @@ $$\textrm{CRP} = \beta_0 + \beta_1 \cdot \textrm{Financial Strain} + \beta_2 \cd
 Below, we are taking the residuals of the parsimonious model that we established above and looked to see if this model meets the normality assumptions.    
    
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 ### label residuals  
 fitted <- parsimonious_model$fitted.values # fitted value
 resm <- resid(parsimonious_model)    # ols residual
@@ -1147,7 +1147,7 @@ abline(0,0, col="red")
 
 __Visualization: Assessing Normality__    
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # Parsimonious model
 autoplot(parsimonious_model)
 ```
@@ -1155,7 +1155,7 @@ autoplot(parsimonious_model)
 
 __Traditional Method: Assessing Normality, Shapiro Wilkes Test__    
 
-```{r}
+```{r echo=FALSE, include=FALSE}
 # shapiro wilk test
 parsimonious_residuals <- resid(parsimonious_model)
 shapiro.test(parsimonious_residuals)
@@ -1169,7 +1169,7 @@ _Note: residuals are normal but there is not solid linearity (as seen in the Nor
 **Note**: I decided to show the transformation of the outcome variable since that is ideally something we should have checked earlier on. I also just like how satisfying it is to see the before and after effects.   
 <font>   
 
-```{r}
+```{r echo=FALSE}
 # assessing distribution of CRP
 ggplot(SWANish, aes(x = CRP)) + geom_density()
 
@@ -1201,7 +1201,7 @@ _There are two continuous variables in this dataset: BMI and SBP_
 
 __BMI Variable__    
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 ### assess skew of BMI
 ggplot(SWANish, aes(x = BMI)) + geom_density()
 
@@ -1219,8 +1219,7 @@ ggplot(SWANish, aes(x = logBMI)) + geom_density()
 
 __SBP Variable__    
 
-
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 ### assess distribution of SBP
 ggplot(SWANish, aes(x = SBP)) + geom_density()
 
@@ -1244,7 +1243,7 @@ $$
 \text{logCRP} = \beta_0~+~\beta_1\text{Financial Strain}~+~\beta_2\text{Race}~+~\beta_3\text{Smoke} ~+~ \beta_4\text{logBMI} ~+~ \beta_5\text{logSBP} ~+~ \beta_5\text{Physical Activity}~+~ \beta_6\text{Health Rank} ~+~ \epsilon
 $$
 
-```{r echo=FALSE}     
+```{r echo=FALSE, include=FALSE}     
 # create log-transformed parsimonious model for the 3 variables (CRP, BMI, SBP)
 log_par.model <- lm(logCRP ~ Financial_Strain + Race + Smoke + logBMI + logSBP + Physical_Activity + HealthRank, data = SWANish) 
 
@@ -1256,7 +1255,7 @@ log_par.model %>% tidy() %>% gt()
 
 __Regression table of final model__    
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # regression table for log-transformed variables  
 tbl_regression(log_par.model)
 ```   
@@ -1272,7 +1271,7 @@ __Visualization: Checking Normality Assumptions__
 **What is blocked out**: It's not shown, but the QQ-plot is fantastic and the residuals are appear equally spaced.    
 </font>   
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 # assessing residuals   
 autoplot(log_par.model)
 ```
@@ -1281,7 +1280,7 @@ autoplot(log_par.model)
 
 __Traditional Method: Assessing Normality, Shapiro Wilkes Test__       
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 transformed_residuals <- resid(log_par.model)
 shapiro.test(transformed_residuals)
 ```
