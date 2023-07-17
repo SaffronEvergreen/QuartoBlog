@@ -1167,7 +1167,7 @@ _Note: residuals are normal but there is not solid linearity (as seen in the Nor
 
 <font color = "purple">   
 **Note**: I decided to show the transformation of the outcome variable since that is ideally something we should have checked earlier on. I also just like how satisfying it is to see the before and after effects.   
-<font>   
+</font>   
 
 ```{r echo=FALSE}
 # assessing distribution of CRP
