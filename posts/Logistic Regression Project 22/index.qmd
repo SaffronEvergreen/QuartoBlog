@@ -6,28 +6,25 @@ categories: [news]
 image: ""
 ---
 
-
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.height=5, fig.width=7, message = F, warning = F)
 ```
 
+# Disclosure
 
-# Disclosure   
+As I was rendering all of my group's hard work, I remembered that uploading projects and assignments in full completion for all to see on the internet is against academic policy. For those looking to collaborate or hire me as part of your team, I will send a copy of the completed project upon request. To abide by the rules, I will show just a bit of the highlights and my thoughts along the way.
 
-As I was rendering all of my group's hard work, I remembered that uploading projects and assignments in full completion for all to see on the internet is against academic policy. For those looking to collaborate or hire me as part of your team, I will send a copy of the completed project upon request. To abide by the rules, I will show just a bit of the highlights and my thoughts along the way.    
+This project was done in collaboration with 3 other peers and I am forever grateful for their commitment and perseverance, especially during this final project. Please know that what I have posted below is not all my brain, it is a collaboration piece, as is most projects.
 
-This project was done in collaboration with 3 other peers and I am forever grateful for their commitment and perseverance, especially during this final project. Please know that what I have posted below is not all my brain, it is a collaboration piece, as is most projects.      
+The datasets used in this project were sourced from the \[SWAN database\] (https://www.icpsr.umich.edu/web/ICPSR/series/00253).
 
-The datasets used in this project were sourced from the [SWAN database] (https://www.icpsr.umich.edu/web/ICPSR/series/00253).    
+# Research Proposal
 
+The association between stress and C-reactive protein as an indication for cardiovascular health in middle-aged women located in the United States.
 
-# Research Proposal   
-The association between stress and C-reactive protein as an indication for cardiovascular health in middle-aged women located in the United States.      
+The primary predictor was the variable "ability to afford basic living expenses", as a means to assess stress load. The additional covariates that were assessed were; race/ethnicity, education, marital status, smoking status, age, body mass index (BMI), systolic blood pressure (SBP), and self-reported physical activity level, difficulty sleeping, and overall health status.
 
-The primary predictor was the variable "ability to afford basic living expenses", as a means to assess stress load. The additional covariates that were assessed were; race/ethnicity, education, marital status, smoking status, age, body mass index (BMI), systolic blood pressure (SBP), and self-reported physical activity level, difficulty sleeping, and overall health status.    
-
-## Packages      
+## Packages
 
 ```{r}
 library(tidyverse)
@@ -58,7 +55,7 @@ library(leaps)
 library(ggridges)
 ```
 
-## Loading Data    
+## Loading Data
 
 ```{r}
 # baseline data
@@ -68,8 +65,7 @@ load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 
 load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 22/ICPSR_28762/ICPSR_28762/DS0001/28762-0001-Data.rda")
 ```
 
-
-## Merging Datasets, Renaming Variables     
+## Merging Datasets, Renaming Variables
 
 ```{r echo=FALSE, include=FALSE}
 Merged <- merge(da04368.0001,da28762.0001,
@@ -116,10 +112,9 @@ SWANish <- data.frame(ID = c(Merged$SWANID,
                             rep( max_length - length(Merged$HEALTH))),
                    Difficulty_Sleeping = c(Merged$TRBLSLE0,
                             rep( max_length - length(Merged$TRBLSLE0))))
-```   
+```
 
-
-## Primary Predictor as Binary     
+## Primary Predictor as Binary
 
 ```{r echo=FALSE, include=FALSE}
 # making Financial Strain a factor 
@@ -139,22 +134,21 @@ SWANish <- SWANish %>%
 levels(SWANish$Financial_Strain)
 ```
 
+# Data Cleaning
 
-# Data Cleaning     
+## Baseline Model
 
-## Baseline Model    
+**Regression Formula**
 
-__Regression Formula__   
+$$\textrm{CRP} = \beta_0 + \beta_1 \textrm{Financial Strain} + \beta_2 \textrm{Race/Ethnicity} + \beta_3  \textrm{Education}+ \beta_4 \textrm{Marital Status} + \\ \beta_5 \textrm{Smoking Status} + \beta_6 \textrm{Age} + \beta_7 \textrm{BMI} + \beta_8 \textrm{SBP} + \beta_9 \textrm{Physical Activity} + \\ \beta_{10} \textrm{Difficulty Sleeping} + \beta_{11} \textrm{Health Rank} + \epsilon$$
 
-$$\textrm{CRP} = \beta_0 + \beta_1 \textrm{Financial Strain} + \beta_2 \textrm{Race/Ethnicity} + \beta_3  \textrm{Education}+ \beta_4 \textrm{Marital Status} + \\ \beta_5 \textrm{Smoking Status} + \beta_6 \textrm{Age} + \beta_7 \textrm{BMI} + \beta_8 \textrm{SBP} + \beta_9 \textrm{Physical Activity} + \\ \beta_{10} \textrm{Difficulty Sleeping} + \beta_{11} \textrm{Health Rank} + \epsilon$$    
+**Baseline Hypothesis**
 
-__Baseline Hypothesis__    
+$$H_0: \beta_{1}=\beta_{2}=.....\beta_{11}=0 \quad \text{vs.} \quad H_A: \text{At least one of } \beta_{j} \neq 0$$
 
-$$H_0: \beta_{1}=\beta_{2}=.....\beta_{11}=0 \quad \text{vs.} \quad H_A: \text{At least one of } \beta_{j} \neq 0$$  
+<font color = "purple">
 
-<font color = "purple">   
-
-**What is blocked out**: We had ran a model using `lm()` function and created a clean table assessing the coefficient estimates.   
+**What is blocked out**: We had ran a model using `lm()` function and created a clean table assessing the coefficient estimates.
 
 </font>
 
@@ -165,12 +159,11 @@ baseline_model <- lm(CRP ~ Financial_Strain + Race + Education + Marital_Status 
 tidy(baseline_model) %>%  gt()   
 ```
 
+## Assessing Outliers: Cook's Distance
 
-## Assessing Outliers: Cook's Distance     
-
-<font color = "purple">   
-**What is blocked out**: we performed a visual assessment to show the influential outliers using cook's distance with the cut-off point of $4 \div 2928$ along the slope and removed the rows which had those outliers.      
-</font>   
+<font color = "purple">\
+**What is blocked out**: we performed a visual assessment to show the influential outliers using cook's distance with the cut-off point of $4 \div 2928$ along the slope and removed the rows which had those outliers.\
+</font>
 
 ```{r echo=FALSE, include=FALSE}
 # finding outliers 
@@ -186,18 +179,18 @@ as.numeric(names(cooks_points)[(cooks_points > (4/2928))])
 SWANish <-SWANish[!(row.names(SWANish) %in% c("3303","1124","1568","2635")),]
 ```
 
-### Baseline Model: Reassessment     
+### Baseline Model: Reassessment
 
-<font color = "purple">   
-**What is blocked out**: we then assessed linearity of our baseline model with the influential points removed. The assumptions for linearity were most definitely still not met at this point.    
+<font color = "purple">\
+**What is blocked out**: we then assessed linearity of our baseline model with the influential points removed. The assumptions for linearity were most definitely still not met at this point.
 
-Assumptions for linearity:   
-* Linearity: nope   
-* Independence: yep    
-* Homoscedasticity: definitely not     
-* Normality: not quite    
+Assumptions for linearity:\
+\* Linearity: nope\
+\* Independence: yep\
+\* Homoscedasticity: definitely not\
+\* Normality: not quite
 
-</font>   
+</font>
 
 ```{r echo=FALSE, include=FALSE}
 # new model without outliers
@@ -214,15 +207,14 @@ autoplot(baseline_model)
   # all values below threshold   
 plot(baseline_model, which = 4)
 ```
- 
-## Descriptive Statistics Table          
 
-<font color = "purple">    
-**What is blocked out**: a bunch of code converting the covariates to factored variables.    
-</font>   
-   
+## Descriptive Statistics Table
 
-```{r echo=FALSE, include=FALSE}  
+<font color = "purple">\
+**What is blocked out**: a bunch of code converting the covariates to factored variables.\
+</font>
+
+```{r echo=FALSE, include=FALSE}
 # remove rows with NA and create dataset for recoding variables into factors  
 
 # it's convenient to have extra datasets like this, so when edits are made to factors or variable names, it is easy to re-run without overlapping edits
@@ -297,15 +289,13 @@ swan_fct$Smoke <- swan_fct$Smoke %>%
 fct_count(swan_fct$Financial_Strain)
 ```
 
+### Table 1
 
+<font color = "purple">\
+**Note**: I was emotionally attached to this table since this was one of the learning curves I endured combining various `gt` libraries and functions so I'm including it since this was my baby at the time.\
+</font>
 
-### Table 1    
-<font color = "purple">   
-**Note**: I was emotionally attached to this table since this was one of the learning curves I endured combining various `gt` libraries and functions so I'm including it since this was my baby at the time.   
-</font>  
-
-
-```{r}  
+```{r}
 # list of all variables for easy input 
 
 # Financial_Strain, Race, Education, Marital_Status, Smoke, Age, BMI, SBP, Physical_Activity, HealthRank, Difficulty_Sleeping
@@ -346,14 +336,13 @@ swan_fct %>% tbl_summary(
   opt_stylize(style = 6, color = "gray")
 ```
 
+# Exploratory Data Analysis
 
-# Exploratory Data Analysis         
+<font color = "purple">\
+**What's blocked out**: visualizations showing the distribution of our outcome variable and covariates.\
+</font>
 
-<font color = "purple">   
-**What's blocked out**: visualizations showing the distribution of our outcome variable and covariates.    
-</font>   
-
-## Distribution of CRP    
+## Distribution of CRP
 
 ```{r echo=FALSE, include=FALSE}
 #create histogram of values for CRP levels 
@@ -364,7 +353,7 @@ ggplot(data=SWANish, aes(x=CRP)) +
 # since this is the outcome variable and greatly negatively skewed, we will likely want to transform this once we approach that stage of the analysis
 ```
 
-## Boxplots    
+## Boxplots
 
 ```{r echo=FALSE, include=FALSE}
 #install packages and library(viridis)
@@ -470,7 +459,7 @@ bp10 <- ggplot(swan_fct, aes(
 grid.arrange(bp1, bp2, bp3, bp4, bp5, bp6, bp7, bp8, bp9, bp10, nrow=5, ncol=2)
 ```
 
-## Density plots   
+## Density plots
 
 ```{r echo=FALSE, include=FALSE}
 library(ggridges)
@@ -564,20 +553,18 @@ d1; d2; d3; d4; d5; d6; d7; d8
 
 ```
 
-
->Check for multicollinearity   
+> Check for multicollinearity
 
 ```{r}
 # any VIF value > 5 suggests multicollinearity
 car::vif(baseline_model)
-```   
+```
 
+# Parsimonious Model: Mallow's Cp Criterion
 
-# Parsimonious Model: Mallow's Cp Criterion      
-
-<font color = "purple">   
-**What is blocked out**: the process of getting the parsimonious model using Mallow's Cp Criterion. In conclusion this is what was pulled for the model; CRP ~ Race + Smoke + BMI + SBP + Physical Activity + Health Rank. Note that `Financial Strain` was not included, and given that that was our primary predictor we will add it in the future.    
-</font>   
+<font color = "purple">\
+**What is blocked out**: the process of getting the parsimonious model using Mallow's Cp Criterion. In conclusion this is what was pulled for the model; CRP \~ Race + Smoke + BMI + SBP + Physical Activity + Health Rank. Note that `Financial Strain` was not included, and given that that was our primary predictor we will add it in the future.\
+</font>
 
 ```{r echo=FALSE, include=FALSE}
 full_model <- regsubsets(CRP ~ 
@@ -615,12 +602,10 @@ coef(full_model, index.cp)
 # CRP ~ Race + Smoke + BMI + SBP + Physical Activity + Health Rank
 ```
 
+## Forward Elimination Procedure
 
-## Forward Elimination Procedure      
-
-<font color = "purple">   
-**Note**: The code below (with the exception of the covariates added) is solely a gift from my previous professor. 
-</font>   
+<font color = "purple">\
+**Note**: The code below (with the exception of the covariates added) is solely a gift from my previous professor. </font>
 
 ```{r}
 # another method for determining parsimonious model
@@ -655,17 +640,15 @@ while(p.val <= 0.1){
 }
 ```
 
-
-
 ## Summary of the parsimonious model
 
-The parsimonious model did not include Financial Strain, but since that is the primary predictor for this regression analysis project, we decided to include it back into the model.     
+The parsimonious model did not include Financial Strain, but since that is the primary predictor for this regression analysis project, we decided to include it back into the model.
 
-__Model table__    
+**Model table**
 
-<font color = "purple">    
-**What is blocked out**: a table of the coefficient estimates from the parsimonious model using the forward elimination procedure.    
-</font>  
+<font color = "purple">\
+**What is blocked out**: a table of the coefficient estimates from the parsimonious model using the forward elimination procedure.\
+</font>
 
 ```{r echo=FALSE, include=FALSE}
 parsimonious_model <- lm(CRP ~ Financial_Strain + Race + Smoke + BMI + SBP + Physical_Activity + HealthRank, 
@@ -676,7 +659,7 @@ parsimonious_model %>% tidy() %>% gt()
 # Financial Strain and Physical Activity have p-values higher than 0.05. An assumption is that there may have been measurement error or recall error of some sort during the data collection process since those two variables are both "perceived" and vary a lot depending on a multitude of factors
 ```
 
-__Regression table__   
+**Regression table**
 
 ```{r echo=FALSE, include=FALSE}
 # note: just reliable predictors pulled, no transformations have been done  
@@ -689,37 +672,31 @@ parsimonious_model_summary <- summary(lm(CRP ~ Financial_Strain + Race + Smoke +
 parsimonious_model_summary
 ```
 
->Check again for multicollinearity  
+> Check again for multicollinearity
 
 ```{r}
 # any VIF value > 5 suggests multicollinearity
 car::vif(parsimonious_model)
 ```
 
-This was done prior to building the parsimonious model, but the multicollinearity test was ran again just to ensure that after removing a couple of variables, the linearity between independent variables didn't change. All vif values are less than 5, suggesting that there is no collinearity between predictor variables in our parsimonious model.   
+This was done prior to building the parsimonious model, but the multicollinearity test was ran again just to ensure that after removing a couple of variables, the linearity between independent variables didn't change. All vif values are less than 5, suggesting that there is no collinearity between predictor variables in our parsimonious model.
 
+# Building the parsimonious model by hand
 
-# Building the parsimonious model by hand     
+<font color = "purple">\
+**What is blocked out**: I deleted a lot of the process below, as well as hid the code used. Though it is an important process, there have already been two models so far, so I don't want to show too much. </font>
 
-<font color = "purple">   
-**What is blocked out**: I deleted a lot of the process below, as well as hid the code used. Though it is an important process, there have already been two models so far, so I don't want to show too much.
-</font> 
+**Baseline Model with All Potential Variables**
 
+$$\textrm{CRP} = \beta_0 + \beta_1 \textrm{Financial Strain} + \beta_2 \textrm{Race/Ethnicity} + \beta_3  \textrm{Education}+ \beta_4 \textrm{Marital Status} + \\ \beta_5 \textrm{Smoking Status} + \beta_6 \textrm{Age} + \beta_7 \textrm{BMI} + \beta_8 \textrm{SBP} + \beta_9 \textrm{Physical Activity} + \\ \beta_{10} \textrm{Difficulty Sleeping} + \beta_{11} \textrm{Health Rank} + \epsilon$$
 
-**Baseline Model with All Potential Variables**  
+**Hypothesis Test for Baseline Model**
 
-$$\textrm{CRP} = \beta_0 + \beta_1 \textrm{Financial Strain} + \beta_2 \textrm{Race/Ethnicity} + \beta_3  \textrm{Education}+ \beta_4 \textrm{Marital Status} + \\ \beta_5 \textrm{Smoking Status} + \beta_6 \textrm{Age} + \beta_7 \textrm{BMI} + \beta_8 \textrm{SBP} + \beta_9 \textrm{Physical Activity} + \\ \beta_{10} \textrm{Difficulty Sleeping} + \beta_{11} \textrm{Health Rank} + \epsilon$$   
+$$H_0: \beta_{1}=\beta_{2}=.....\beta_{11}=0 \quad \text{vs.} \quad H_A: \text{At least one of } \beta_{j} \neq 0$$
 
+**Baseline Model**
 
-**Hypothesis Test for Baseline Model**    
-
-$$H_0: \beta_{1}=\beta_{2}=.....\beta_{11}=0 \quad \text{vs.} \quad H_A: \text{At least one of } \beta_{j} \neq 0$$    
-
-
-**Baseline Model**   
-
-
-```{r echo=FALSE, include=FALSE} 
+```{r echo=FALSE, include=FALSE}
 # baseline model with all covariates
 baseline_model2 <- lm(CRP ~ Financial_Strain + Race + Education + Marital_Status + Smoke + Age + BMI + SBP + Physical_Activity + HealthRank + Difficulty_Sleeping,
             data = SWANish)
@@ -730,78 +707,72 @@ regression_points <- augment(baseline_model2)
 
 # ANOVA of baseline model
 anova(baseline_model2) %>% gt()
-``` 
+```
 
-
-**Visualization of CRP ~ Financial Strain distribution**    
+**Visualization of CRP \~ Financial Strain distribution**
 
 ```{r echo=FALSE, include=FALSE}
 plot(baseline_model2, which = 1)
 plot(baseline_model2, which = 2)
 ```
 
-This is a quick, not so thorough way, of checking normality assumptions in our baseline model. Only two assumptions are checked here; to see if the residuals have equal variance and to see if the residuals follow a linear pattern. Neither of these assumptions are met here, which is not surprising since we have not assessed if transformations need to be done at this point.    
+This is a quick, not so thorough way, of checking normality assumptions in our baseline model. Only two assumptions are checked here; to see if the residuals have equal variance and to see if the residuals follow a linear pattern. Neither of these assumptions are met here, which is not surprising since we have not assessed if transformations need to be done at this point.
 
-
-**Regression Table Summary of Baseline Model**    
+**Regression Table Summary of Baseline Model**
 
 ```{r echo=FALSE, include=FALSE}
 tbl_regression(baseline_model2)
 ```
 
-This regression table shows a lot of the variables with p-values greater than $\alpha=0.05$. These will affect the reliability of the model, if we were to run this as a prediction model.    
+This regression table shows a lot of the variables with p-values greater than $\alpha=0.05$. These will affect the reliability of the model, if we were to run this as a prediction model.
 
-__Next steps__    
+**Next steps**
 
-As established prior, this model does not have any collinearity issues so we will be looking at each variable as a variable of interest. Below, we will test each variable to see if they help improve model reliability.        
+As established prior, this model does not have any collinearity issues so we will be looking at each variable as a variable of interest. Below, we will test each variable to see if they help improve model reliability.
 
->Financial Strain as Primary Predictor    
+> Financial Strain as Primary Predictor
 
-**Hypothesis**    
+**Hypothesis**
 
-$$\widehat{\text{CRP}} = \widehat\beta_0 + \widehat{\beta_1} \cdot \textrm{Financial Strain}$$   
+$$\widehat{\text{CRP}} = \widehat\beta_0 + \widehat{\beta_1} \cdot \textrm{Financial Strain}$$
 
-$$H_0: \beta_1 = 0, ~~H_A: \beta_1 \neq 0$$    
-
+$$H_0: \beta_1 = 0, ~~H_A: \beta_1 \neq 0$$
 
 ```{r echo=FALSE, include=FALSE}
 first_model <- lm(CRP~ Financial_Strain, data = SWANish)
 anova(first_model) %>% gt()
-```  
+```
 
+> CRP \~ Financial Strain + Race/Ethnicity
 
->CRP ~ Financial Strain + Race/Ethnicity      
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity}$$    
-
-**Hypotheses**    
+**Hypotheses**
 
 $$
 H_0: \beta_2 = 0, ~~ H_A: \beta_2 \neq 0
-$$    
+$$
 
+**Test statistic formula**
 
-**Test statistic formula**    
-
-```{r echo=FALSE, include=FALSE} 
+```{r echo=FALSE, include=FALSE}
 # full model 
 second_model <- lm(CRP~ Financial_Strain + Race, data = SWANish)
 
 # reduced model = first_model
 
 anova(first_model, second_model) %>% gt()
-```   
+```
 
+> CRP \~ Financial Strain + Race/Ethnicity + Education
 
->CRP ~ Financial Strain + Race/Ethnicity + Education      
+$$\widehat{\textrm{CRP}} = \widehat \beta_0 + \widehat \beta_1 \cdot \textrm{Financial Strain} + \widehat \beta_2 \cdot \textrm{Race/Ethnicity} + \widehat \beta_3 \cdot \textrm{Education}$$
 
-$$\widehat{\textrm{CRP}} = \widehat \beta_0 + \widehat \beta_1 \cdot \textrm{Financial Strain} + \widehat \beta_2 \cdot \textrm{Race/Ethnicity} + \widehat \beta_3 \cdot \textrm{Education}$$   
-
-**Hypotheses**    
+**Hypotheses**
 
 $$
 H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
-$$    
+$$
 
 ```{r echo=FALSE, include=FALSE}
 #full model 
@@ -809,21 +780,19 @@ third_model <- lm(CRP~ Financial_Strain + Race + Education, data = SWANish)
 #reduced model = second_model
 
 car::Anova(third_model, second_model) 
-```    
+```
 
-
->CRP ~ Financial Strain + Race/Ethnicity + Education + Marital Status       
+> CRP \~ Financial Strain + Race/Ethnicity + Education + Marital Status
 
 $$
 \widehat{\textrm{CRP}} = \widehat \beta_0 + \widehat \beta_1 \cdot \textrm{Financial Strain} + \widehat \beta_2 \cdot \textrm{Race/Ethnicity} + \widehat \beta_3 \cdot \textrm{Education}+ \widehat \beta_4 \cdot \textrm{Marital Status}
-$$     
+$$
 
-**Hypotheses**    
+**Hypotheses**
 
 $$
 H_0: \beta_4 = 0, ~~ H_A: \beta_4 \neq 0
-$$    
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -831,21 +800,17 @@ fourth_model <- lm(CRP~ Financial_Strain + Race + Education + Marital_Status, da
 #reduced model = third_model
 
 car::Anova(fourth_model, third_model)
-``` 
+```
 
+> CRP \~ Financial Strain + Race/Ethnicity + Education + Smoke
 
->CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke     
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Education}+ \widehat\beta_4 \cdot \textrm{Smoking Status}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Education}+ \widehat\beta_4 \cdot \textrm{Smoking Status}$$   
-
-
-**Hypotheses**     
+**Hypotheses**
 
 $$
 H_0: \beta_4 = 0, ~~ H_A: \beta_4 \neq 0
-$$     
-
-   
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -853,19 +818,17 @@ fifth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke, data = SWANi
 #reduced model = third_model
 
 car::Anova(fifth_model, third_model)
-``` 
+```
 
+> CRP \~ Financial Strain + Race/Ethnicity + Education + Smoke + Age
 
->CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + Age    
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity}  + \\ \widehat\beta_3 \cdot \textrm{Education}+ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{Age}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity}  + \\ \widehat\beta_3 \cdot \textrm{Education}+ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{Age}$$    
-
-**Hypotheses**   
+**Hypotheses**
 
 $$
 H_0: \beta_5 = 0, ~~ H_A: \beta_5 \neq 0
-$$  
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -873,19 +836,17 @@ sixth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + Age, data =
 #reduced model = fifth_model
 
 car::Anova(sixth_model, fifth_model)
-``` 
+```
 
+> CRP \~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI
 
->CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI    
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Education} + \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Education} + \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI}$$    
-
-**Hypotheses**    
+**Hypotheses**
 
 $$
 H_0: \beta_5 = 0, ~~ H_A: \beta_5 \neq 0
-$$   
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -893,19 +854,17 @@ seventh_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI, data
 #reduced model = fifth_model
 
 car::Anova(seventh_model, fifth_model)
-```   
+```
 
+> CRP \~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP
 
->CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP     
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \widehat\beta_3 \cdot \textrm{Education} + \\ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \widehat\beta_3 \cdot \textrm{Education} + \\ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP}$$    
-
-**Hypotheses**   
+**Hypotheses**
 
 $$
 H_0: \beta_6 = 0, ~~ H_A: \beta_6 \neq 0
-$$    
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -913,19 +872,17 @@ eighth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP,
 #reduced model = seventh_model
 
 car::Anova(eighth_model, seventh_model)
-```   
+```
 
+> CRP \~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP + Physical Activity
 
->CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP + Physical Activity     
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \widehat\beta_3 \cdot \textrm{Education} + \\ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP} + \widehat\beta_7 \cdot \textrm{Physical Activity}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \widehat\beta_3 \cdot \textrm{Education} + \\ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP} + \widehat\beta_7 \cdot \textrm{Physical Activity}$$   
-
-**Hypotheses**   
+**Hypotheses**
 
 $$
 H_0: \beta_7 = 0, ~~ H_A: \beta_7 \neq 0
-$$   
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -933,39 +890,35 @@ ninth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP +
 #reduced model = eighth_model
 
 car::Anova(ninth_model, eighth_model)
-```   
+```
 
+> CRP \~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP + Health Rank
 
->CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP + Health Rank    
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \widehat\beta_3 \cdot \textrm{Education} + \\ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP} + \widehat\beta_7 \cdot \textrm{Health Rank}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \widehat\beta_3 \cdot \textrm{Education} + \\ \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP} + \widehat\beta_7 \cdot \textrm{Health Rank}$$   
-
-**Hypotheses**   
+**Hypotheses**
 
 $$
 H_0: \beta_7 = 0, ~~ H_A: \beta_7 \neq 0
-$$    
+$$
 
- 
 ```{r echo=FALSE, include=FALSE}
 # full model 
 tenth_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SBP + HealthRank, data = SWANish)
 #reduced model = seventh_model
 
 car::Anova(tenth_model, seventh_model)
-``` 
+```
 
->CRP ~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP + Health Rank + Difficulty Sleeping     
+> CRP \~ Financial Strain + Race/Ethnicity + Education + Smoke + BMI + SBP + Health Rank + Difficulty Sleeping
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Education} + \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP} +\\ \widehat\beta_7 \cdot \textrm{Health Rank} + \widehat\beta_8 \cdot \textrm{Difficulty Sleeping}$$   
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Education} + \widehat\beta_4 \cdot \textrm{Smoking Status} + \widehat\beta_5 \cdot \textrm{BMI} + \widehat\beta_6 \cdot \textrm{SBP} +\\ \widehat\beta_7 \cdot \textrm{Health Rank} + \widehat\beta_8 \cdot \textrm{Difficulty Sleeping}$$
 
-
-**Hypotheses**   
+**Hypotheses**
 
 $$
 H_0: \beta_8 = 0, ~~ H_A: \beta_8 \neq 0
-$$     
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -973,25 +926,23 @@ eleventh_model <- lm(CRP~ Financial_Strain + Race + Education + Smoke + BMI + SB
 #reduced model = tenth_model
 
 car::Anova(eleventh_model, tenth_model)
-```   
+```
 
+## Concluding Model - No interactions, just additions
 
-## Concluding Model - No interactions, just additions    
+$$\textrm{CRP} = \beta_0 + \beta_1 \cdot \textrm{Financial Strain} + \beta_2 \cdot \textrm{Race/Ethnicity} + \\ \beta_3 \cdot \textrm{Education} + \beta_4 \cdot \textrm{Smoking Status} + \beta_5 \cdot \textrm{BMI} + \beta_6 \cdot \textrm{SBP} +\\ \beta_7 \cdot \textrm{Health Rank} + \epsilon$$
 
-$$\textrm{CRP} = \beta_0 + \beta_1 \cdot \textrm{Financial Strain} + \beta_2 \cdot \textrm{Race/Ethnicity} + \\ \beta_3 \cdot \textrm{Education} + \beta_4 \cdot \textrm{Smoking Status} + \beta_5 \cdot \textrm{BMI} + \beta_6 \cdot \textrm{SBP} +\\ \beta_7 \cdot \textrm{Health Rank} + \epsilon$$   
+# Testing Interactions
 
-# Testing Interactions        
+> Financial Strain\*Race/Ethnicity
 
->Financial Strain*Race/Ethnicity    
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Race/Ethnicity}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Race/Ethnicity} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Race/Ethnicity}$$     
-
-**Hypotheses**   
+**Hypotheses**
 
 $$
 H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
-$$    
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -999,18 +950,17 @@ first_interaction_model <- lm(CRP~ Financial_Strain + Race + (Race*Financial_Str
 #reduced model = second model
 
 car::Anova(first_interaction_model, second_model)
-``` 
+```
 
->Financial Strain*Education      
+> Financial Strain\*Education
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Education} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Education}$$   
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Education} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Education}$$
 
-**Hypotheses**    
+**Hypotheses**
 
 $$
 H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
-$$    
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -1020,20 +970,17 @@ second_interaction_model <- lm(CRP~ Financial_Strain + Education + (Education*Fi
 second_reduced_model <- lm(CRP ~ Financial_Strain + Education, data = SWANish)
 
 car::Anova(first_interaction_model, second_reduced_model)
-```    
+```
 
+> Financial Strain\*Smoking Status
 
->Financial Strain*Smoking Status    
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Smoke} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Smoke}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Smoke} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Smoke}$$    
-
-
-**Hypotheses**    
+**Hypotheses**
 
 $$
 H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
-$$    
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -1043,19 +990,17 @@ third_interaction_model <- lm(CRP~ Financial_Strain + Smoke + (Smoke*Financial_S
 third_reduced_model <- lm(CRP ~ Financial_Strain + Smoke, data = SWANish)
 
 car::Anova(third_interaction_model, third_reduced_model)
-```    
+```
 
+> Financial Strain\*Health Rank
 
->Financial Strain*Health Rank    
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Health Rank} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Health Rank}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Health Rank} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Health Rank}$$    
-
-**Hypotheses**   
+**Hypotheses**
 
 $$
 H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
-$$    
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -1065,19 +1010,17 @@ fourth_interaction_model <- lm(CRP~ Financial_Strain + HealthRank + (Financial_S
 fourth_reduced_model <- lm(CRP ~ Financial_Strain + HealthRank, data = SWANish)
 
 car::Anova(fourth_interaction_model, fourth_reduced_model)
-``` 
+```
 
+> Financial Strain\*Systolic Blood Pressure
 
->Financial Strain*Systolic Blood Pressure    
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{SBP} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * SBP}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{SBP} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * SBP}$$   
-
-**Hypotheses**   
+**Hypotheses**
 
 $$
 H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
-$$    
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -1087,19 +1030,17 @@ fifth_interaction_model <- lm(CRP~ Financial_Strain + SBP + (SBP*Financial_Strai
 fifth_reduced_model <- lm(CRP ~ Financial_Strain + SBP, data = SWANish)
 
 car::Anova(fifth_interaction_model, fifth_reduced_model)
-```    
+```
 
+> Financial Strain\*Difficulty Sleeping
 
->Financial Strain*Difficulty Sleeping
+$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Difficulty Sleeping} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Difficulty Sleeping}$$
 
-$$\widehat{\textrm{CRP}} = \widehat\beta_0 + \widehat\beta_1 \cdot \textrm{Financial Strain} + \widehat\beta_2 \cdot \textrm{Difficulty Sleeping} + \\ \widehat\beta_3 \cdot \textrm{Financial Strain * Difficulty Sleeping}$$    
-
-**Hypotheses**    
+**Hypotheses**
 
 $$
 H_0: \beta_3 = 0, ~~ H_A: \beta_3 \neq 0
-$$    
-
+$$
 
 ```{r echo=FALSE, include=FALSE}
 # full model 
@@ -1109,20 +1050,17 @@ sixth_interaction_model <- lm(CRP~ Financial_Strain + Difficulty_Sleeping + (Dif
 sixth_reduced_model <- lm(CRP ~ Financial_Strain + Difficulty_Sleeping, data = SWANish)
 
 car::Anova(sixth_interaction_model, sixth_reduced_model)
-```    
+```
 
+## Parsimonious Model Conclusion: After Testing for Interactions
 
-## Parsimonious Model Conclusion: After Testing for Interactions               
+$$\textrm{CRP} = \beta_0 + \beta_1 \cdot \textrm{Financial Strain} + \beta_2 \cdot \textrm{Race/Ethnicity} + \\ \beta_3 \cdot \textrm{Education} + \beta_4 \cdot \textrm{Smoking Status} + \beta_5 \cdot \textrm{BMI} + \beta_6 \cdot \textrm{SBP} +\\ \beta_7 \cdot \textrm{Health Rank} + \epsilon$$
 
-$$\textrm{CRP} = \beta_0 + \beta_1 \cdot \textrm{Financial Strain} + \beta_2 \cdot \textrm{Race/Ethnicity} + \\ \beta_3 \cdot \textrm{Education} + \beta_4 \cdot \textrm{Smoking Status} + \beta_5 \cdot \textrm{BMI} + \beta_6 \cdot \textrm{SBP} +\\ \beta_7 \cdot \textrm{Health Rank} + \epsilon$$    
+# Regression Diagnostics
 
+## Testing Normality
 
-# Regression Diagnostics      
-
-## Testing Normality      
-
-Below, we are taking the residuals of the parsimonious model that we established above and looked to see if this model meets the normality assumptions.    
-   
+Below, we are taking the residuals of the parsimonious model that we established above and looked to see if this model meets the normality assumptions.
 
 ```{r echo=FALSE, include=FALSE}
 ### label residuals  
@@ -1144,30 +1082,28 @@ plot(fitted, studm, main="Studentized Residual Plot", xlab="Fitted Value", ylab=
 abline(0,0, col="red")
 ```
 
-
-__Visualization: Assessing Normality__    
+**Visualization: Assessing Normality**
 
 ```{r echo=FALSE, include=FALSE}
 # Parsimonious model
 autoplot(parsimonious_model)
 ```
 
-
-__Traditional Method: Assessing Normality, Shapiro Wilkes Test__    
+**Traditional Method: Assessing Normality, Shapiro Wilkes Test**
 
 ```{r echo=FALSE, include=FALSE}
 # shapiro wilk test
 parsimonious_residuals <- resid(parsimonious_model)
 shapiro.test(parsimonious_residuals)
 ```
-_Note: residuals are normal but there is not solid linearity (as seen in the Normal Q-Q plot) so more needs to be explored_    
 
+*Note: residuals are normal but there is not solid linearity (as seen in the Normal Q-Q plot) so more needs to be explored*
 
-### Transforming CRP     
+### Transforming CRP
 
-<font color = "purple">   
-**Note**: I decided to show the transformation of the outcome variable since that is ideally something we should have checked earlier on. I also just like how satisfying it is to see the before and after effects.   
-</font>   
+<font color = "purple">\
+**Note**: I decided to show the transformation of the outcome variable since that is ideally something we should have checked earlier on. I also just like how satisfying it is to see the before and after effects.\
+</font>
 
 ```{r echo=FALSE}
 # assessing distribution of CRP
@@ -1190,16 +1126,15 @@ CRP_p.mod <- lm(logCRP ~ Race + Smoke + BMI + SBP + Physical_Activity +
 
 # autoplot 2: label
 autoplot(CRP_p.mod)
-```  
+```
 
-By log-transforming `CRP`, the regression model has more normality than prior to the transformation. The Residuals vs Leverage plot indicates there's more to look into to see if further transformations could be done. There are two continuous variables that could be possibly be transformed, which will be assessed below.       
+By log-transforming `CRP`, the regression model has more normality than prior to the transformation. The Residuals vs Leverage plot indicates there's more to look into to see if further transformations could be done. There are two continuous variables that could be possibly be transformed, which will be assessed below.
 
+### Assessing Continuous Variables
 
-### Assessing Continuous Variables    
+*There are two continuous variables in this dataset: BMI and SBP*
 
-_There are two continuous variables in this dataset: BMI and SBP_   
-
-__BMI Variable__    
+**BMI Variable**
 
 ```{r echo=FALSE, include=FALSE}
 ### assess skew of BMI
@@ -1214,10 +1149,9 @@ SWANish$logBMI <- log(SWANish$BMI)
 
 # assess distribution of log-transformed BMI  
 ggplot(SWANish, aes(x = logBMI)) + geom_density()
-```   
+```
 
-
-__SBP Variable__    
+**SBP Variable**
 
 ```{r echo=FALSE, include=FALSE}
 ### assess distribution of SBP
@@ -1234,56 +1168,50 @@ SWANish$logSBP <- log(SWANish$SBP)
 ggplot(SWANish, aes(x = logSBP)) + geom_density()
 ```
 
-After performing log-transformations on the `BMI` and `SBP`, the density plots have shown that these variables appear more like a normal distribution.    
+After performing log-transformations on the `BMI` and `SBP`, the density plots have shown that these variables appear more like a normal distribution.
 
-
-# Parsimonious Model with the 3 Log-Transformed Variables    
+# Parsimonious Model with the 3 Log-Transformed Variables
 
 $$
 \text{logCRP} = \beta_0~+~\beta_1\text{Financial Strain}~+~\beta_2\text{Race}~+~\beta_3\text{Smoke} ~+~ \beta_4\text{logBMI} ~+~ \beta_5\text{logSBP} ~+~ \beta_5\text{Physical Activity}~+~ \beta_6\text{Health Rank} ~+~ \epsilon
 $$
 
-```{r echo=FALSE, include=FALSE}     
+```{r echo=FALSE, include=FALSE}
 # create log-transformed parsimonious model for the 3 variables (CRP, BMI, SBP)
 log_par.model <- lm(logCRP ~ Financial_Strain + Race + Smoke + logBMI + logSBP + Physical_Activity + HealthRank, data = SWANish) 
 
 # parsimonious model with log-transformed CRP
 log_par.model.sum <- summary(log_par.model)
 log_par.model %>% tidy() %>% gt()
-```    
+```
 
-
-__Regression table of final model__    
+**Regression table of final model**
 
 ```{r echo=FALSE, include=FALSE}
 # regression table for log-transformed variables  
 tbl_regression(log_par.model)
-```   
+```
 
-_Note: I'm assuming that the reason why the p-value is high on Financial Strain 1 is due to how it was collapsed. This may change if one level was moved to the other binary variable. In a world with spare time, this would have been done_   
+*Note: I'm assuming that the reason why the p-value is high on Financial Strain 1 is due to how it was collapsed. This may change if one level was moved to the other binary variable. In a world with spare time, this would have been done*
 
-_Another Note: The p-values for Race and HealthRank are also higher than the alpha = 0.05. If time allowed, these variables would be removed and then tested for normality and linearity to see if removing them improves reliability._   
+*Another Note: The p-values for Race and HealthRank are also higher than the alpha = 0.05. If time allowed, these variables would be removed and then tested for normality and linearity to see if removing them improves reliability.*
 
+**Visualization: Checking Normality Assumptions**
 
-__Visualization: Checking Normality Assumptions__     
-
-<font color = "purple">    
-**What is blocked out**: It's not shown, but the QQ-plot is fantastic and the residuals are appear equally spaced.    
-</font>   
+<font color = "purple">\
+**What is blocked out**: It's not shown, but the QQ-plot is fantastic and the residuals are appear equally spaced.\
+</font>
 
 ```{r echo=FALSE, include=FALSE}
 # assessing residuals   
 autoplot(log_par.model)
 ```
 
-
-
-__Traditional Method: Assessing Normality, Shapiro Wilkes Test__       
+**Traditional Method: Assessing Normality, Shapiro Wilkes Test**
 
 ```{r echo=FALSE, include=FALSE}
 transformed_residuals <- resid(log_par.model)
 shapiro.test(transformed_residuals)
 ```
 
-**Conclusion**: Given the results from the Shapiro-Wilk normality test as well as assessing the normality and linearity of residuals, we can state that this linear regression model can be tested as if it is a normal distribution.         
-
+**Conclusion**: Given the results from the Shapiro-Wilk normality test as well as assessing the normality and linearity of residuals, we can state that this linear regression model can be tested as if it is a normal distribution.

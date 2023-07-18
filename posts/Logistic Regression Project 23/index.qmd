@@ -1,0 +1,903 @@
+---
+title: "Logistic Regression Project 23"
+author: "Saffron"
+date: "2023-07-17"
+categories: [news]
+---    
+
+
+# Disclosure    
+
+**It is against the academic policy to share the projects and content from our courses. Therefore, I have redacted a lot, and have shown the highlights of what was done.**    
+
+This project was done in the Spring 2023 term with 2 other peers. This project is essentially the same but with more of a focus on categorical data analysis compared to 'Logistic Regression Project 22'. This was the first project I had really felt like I had a full understanding of; there are definitely some parts that I wish I could have done more precisely but I am far more comfortable with the outcome of this model than the other.    
+
+As with the other logistic regression project, the data used is from the [SWAN database](https://www.icpsr.umich.edu/web/ICPSR/series/00253).      
+
+# Research Proposal
+
+The goal of this project was to assess stress and cardiovascular health on middle-aged women in the U.S. The outcome variable is high blood pressure, the primary predictor is self-assessed sleep quality along with the covariates; age, race, smoking status, education, marital status, BMI, income, taking blood pressure medication, self-assessed quality of life and average daily caffeine intake.  
+
+## Libraries Used   
+
+```{r setup, warning=FALSE, message=FALSE}
+library(dplyr)
+library(knitr)
+library(skimr)
+library(tidyr)
+library(Hmisc)
+library(ggplot2)
+library(GGally)
+library(grid)
+library(gridExtra)
+library(forcats) # for categorical variables
+library(janitor) # for tables
+library(gt)
+library(gtable)
+library(tidyverse) # data mgmt and visual
+library(gtsummary)
+library(broom)
+library(kableExtra)
+library(haven)
+library(lmtest)
+library(mfp)
+library(ResourceSelection)
+library(epiDisplay)
+```
+
+# Loading Datasets and Merging 
+
+```{r}   
+# screening dataset
+load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 23/SCREENING.rda")
+
+# baseline dataset 
+load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 23/baseline.rda")
+
+# merge screener and baseline
+Merged <- merge(da04368.0001,da28762.0001,
+              by="SWANID")
+dim(Merged) 
+
+# visit 10 dataset
+load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 23/VISIT10-Data.rda")
+
+# merge with other datasets
+merged_swan <- merge(Merged,da32961.0001,
+              by="SWANID")
+```
+
+## Cleaning Final Dataset `df_swan`   
+
+```{r include=FALSE}
+#Create dataset with chosen variables 
+
+#Rename variables
+#cleaning up column names 
+renamed_swan <- merged_swan %>% dplyr::rename("Education" = DEGREE, "Marital" = MARITAL10, "Income" = INCOME10, "BPMed" = BP110, "QualLife" = QLTYLIF10, "Sleep" = SLEEPQL10, "HBP" = HIGHBP10, "Age" = AGE10, "Race" = RACE.x, "Smoking" = SMOKERE10, "Caffeine" = DTCAFF0)
+```
+
+```{r include=FALSE}
+#primary outcome: hypertension (HBP)
+#primary predictor: overall sleep quality (Sleep) with the following variables: very good - fairly good - fairly bad - very bad 
+#other covariates: Age (continuous), Race (categorical), Smoking (yes/no), Education (categorical), Marital (categorical), BMI (continuous), Income (categorical), BPMed (Yes/No), QualLife (ordinal), Caffeine (continuous)
+df_swan <- renamed_swan %>% dplyr::select(SWANID, HBP, Sleep, Age, Race, Smoking, Education, Marital, BMI, Income, BPMed, QualLife, Caffeine)
+
+#final data set dimensions and column names 
+dim(df_swan)
+head(df_swan)
+```
+
+## Removing Observations with Missing Points   
+
+```{r include=FALSE}
+df_swan <- na.omit(df_swan)
+dim(df_swan)
+# some subjects lost, acceptable to study standard 
+```
+
+## Set reference levels   
+
+<font color = "purple">   
+**What is blocked out**: I removed the coding process on how we recoded our reference levels for our covariates, but I decided to include a brief bullet point list to show what those reference levels are and why.   
+</font>   
+* High Blood Pressure: `No`, given the majority of this sample does not have high blood pressure and we're seeking a change in what is associated with high blood pressure.    
+
+* Sleep Quality: `Very good` and `fairly good` categories collapsed into one reference category, since we're assessing if poor sleep is associated with high blood pressure.   
+
+* Race: `Caucasian/White Non-Hispanic` due to white privilege, and systemic and institutional racism in the U.S.   
+
+* Smoking Status: `No`, given the majority of the sample are non-smokers.   
+
+* Education: `College Graduate` and `Post-Graduate` given previous knowledge that at a generalized population-level, those with higher education often have better health outcomes, typically due to having more health literacy and higher income.   
+* Marital Status: `Currently Married`, since the majority of the population is married.   
+
+* Income: `$100,000 or more` which is the highest income category, given the opportunity for better health care quality and access.   
+
+* Taking Blood Pressure Medication: `Yes`, given that people taking medication for high blood pressure will likely have lower blood pressure than those who are not taking any.    
+
+* Quality of Life: This was a tricky category and we ended up using the median value which was around a score of 8 out of 10. There should've been more research conducted to decide what our cut-off point should've been.   
+
+
+```{r include=FALSE}
+# dataframe for reference levels   
+df_swan$HBP01 <- dplyr::recode_factor(df_swan$HBP, 
+                                     "(1) No" = "0", 
+                                     "(2) Yes" = "1")
+
+df_swan$Sleep01 <- dplyr::recode_factor(df_swan$Sleep, 
+                                       "(1) Very good" = "0", 
+                                       "(2) Fairly good" = "0", 
+                                        "(3) Fairly bad" = "1", 
+                                        "(4) Very bad" = "2")
+
+df_swan$Race <- dplyr::recode_factor(df_swan$Race, "(4) Caucasian/White Non-Hispanic" = "(0) Caucasian/White Non-Hispanic")
+
+df_swan$Smoking01 <- dplyr::recode_factor(df_swan$Smoking, 
+                                         "(1) No" = "0", 
+                                         "(2) Yes" = "1")
+
+df_swan$Education01 <- dplyr::recode_factor(df_swan$Education, 
+                                           "(5) Post graduate education" = "0",
+                                           "(4) College graduate" = "0", 
+                                           "(1) Less than high school" = "1", 
+                                           "(2) High school graduate" = "2", 
+                                           "(3) Some college/technical school" = "3")
+
+df_swan$Marital01 <- dplyr::recode_factor(df_swan$Marital, 
+                                         "(2) Currently married/living as married" = "0", 
+                                         "(1) Single/never married" = "1", 
+                                         "(3) Separated" = "2", 
+                                         "(4) Widowed" = "3", 
+                                         "(5) Divorced" = "4")
+
+df_swan$Income01 <- dplyr::recode_factor(df_swan$Income, 
+                                           "(4) $100,000 or More" = "0", 
+                                           "(1) Less Than $19,999" = "1", 
+                                           "(2) $20,000 to $49,999" = "2",
+                                           "(3) $50,000 to $99,999" = "3") 
+
+df_swan$BPMed01 <- dplyr::recode_factor(df_swan$BPMed, 
+                                       "(2) Yes" = "0", 
+                                       "(1) No" = "1")
+
+
+df_swan$QualLife01 <- as.numeric(df_swan$QualLife)
+skimr::skim(df_swan$QualLife)
+median(df_swan$QualLife)
+# with a median of 8 , will use 8 as the reference group
+  # /leq 7 = worse than median
+  # =  8 = median
+  # /geq 9 = better than median
+
+df_swan$QualLife <- na.omit(df_swan$QualLife) 
+
+df_swan$QualLife01 <- dplyr::recode_factor(df_swan$QualLife, 
+                                            "0" = "1",
+                                            "1" = "1", 
+                                            "2" = "1", 
+                                            "3" = "1", 
+                                            "4" = "1",
+                                            "5" = "1", 
+                                            "6" = "1", 
+                                            "7" = "1", 
+                                            "8" = "0", 
+                                            "9" = "2", 
+                                            "10" = "2", 
+                                            "11" = "2",
+                                            "12" = "2"
+                                             ) 
+summary(df_swan$QualLife01)
+### Code still works, but message is relevant for 1 NA observation
+```
+
+## Summary new dataset
+
+```{r include=FALSE}
+str(df_swan)   
+skimr::skim(df_swan)
+```
+
+# Table 1: Descriptive Statistics 
+
+```{r echo=FALSE}
+table1 <- df_swan %>% tbl_summary(
+  by = HBP, # stratifying by this blood pressure
+  label = list(                       # row name appearance
+    Sleep ~ "Sleep Quality",
+    Age ~ "Age (Years)",
+    Race ~ "Race/Ethnicity", 
+    Smoking ~ "Smoking Status", 
+    Education ~ "Educational Attainment",
+    Marital ~ "Marital Status",
+    BMI ~ "Body Mass Index (BMI)",
+    Income ~ "Annual Income", 
+    BPMed ~ "Taking Blood Pressure Medication", 
+    QualLife ~ "Quality of Life", 
+    Caffeine ~ "Caffeine Intake (mg)"
+  ),
+  include = c( 
+    HBP, Sleep, Age, Race, Smoking, Education, Marital, BMI, Income, BPMed, QualLife, Caffeine)) %>% 
+  add_overall() %>% ## this didn't run for us
+  modify_header(label ~ "Characteristic") %>%
+  modify_footnote(
+    all_stat_cols() ~ "Median (IQR); Frequency (%)") %>%
+ bold_labels() %>% 
+## to use gt() functions, add `as_gt()` then include gt() functions
+ as_gt() %>% 
+  tab_header(
+    title = "Table 1",
+    subtitle = "SWAN Participant Characteristics Stratified by High Blood Pressure") %>% 
+  tab_options(heading.title.font.size = "small",
+              heading.title.font.weight = "bold",
+              heading.subtitle.font.size = "large",
+              heading.subtitle.font.weight = "80",
+              heading.align = "right") %>% 
+  opt_table_outline(style = "solid", width = px(5)) %>%
+  opt_stylize(style = 6, color = "cyan")
+table1
+```
+
+
+
+# Exploratory Data Analysis   
+
+## Frequency Distributions
+
+```{r include=FALSE}
+g1 <- ggplot(df_swan, aes(x = HBP)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(x = "High Blood Pressure", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+g2 <- ggplot(df_swan, aes(x = Sleep)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(x = "Sleep Quality Very Good (1) to Very Bad (4)", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1)) + 
+  scale_x_discrete(labels = c("(1)", "(2)", "(3)", "(4)"))
+
+g3 <- ggplot(df_swan, aes(x = Age)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(x = "Age (Years)", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+g4 <- ggplot(df_swan, aes(x = Race)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(x = "Race/Ethnicity", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1)) + 
+  scale_x_discrete(labels = c("Black", "Chinese", "Japanese", "White"))
+
+g5 <- ggplot(df_swan, aes(x = Income)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(x = "Income USD ($)", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1)) + 
+  scale_x_discrete(labels = c("< 19K", "20K - 50K", "50K - 100K", "> 100K"))
+
+g6 <- ggplot(df_swan, aes(x = Education)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1)) + 
+  scale_x_discrete(labels = c("< High School", "High School", "Some College", "College Graduate", "Post Graduate"))
+
+g7 <- ggplot(df_swan, aes(x = Smoking)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(x = "Smoking Status", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1)) + 
+  scale_x_discrete(labels = c("No", "Yes"))
+
+g8 <- ggplot(df_swan, aes(x = Marital)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(x = "Marital Status", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1)) + 
+  scale_x_discrete(labels = c("Single \n Never Married", "Married \n Partnered", "Separated", "Widowed", "Divorced"))
+
+g9 <- ggplot(df_swan, aes(x = BMI)) + geom_histogram(bins = 60, color = "black", fill = "lightgray") + 
+  labs(y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+g10 <- ggplot(df_swan, aes(x = BPMed)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(x = "Taking Blood Pressure Meds", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))  + 
+  scale_x_discrete(labels = c("No", "Yes"))
+
+g11 <- ggplot(df_swan, aes(x = QualLife)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(x = "Quality of Life Scale (1-11)", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+g12 <- ggplot(df_swan, aes(x = Caffeine)) + geom_histogram(bins = 50, color = "black", fill = "lightgray") + 
+  labs(x = "Caffeine Intake (mg)", y = "") + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+gridExtra::grid.arrange(g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12)
+```
+
+### ggpairs comparison
+
+```{r include=FALSE}
+df_swan_minusID <- df_swan %>% dplyr::select(HBP, Sleep, Age, Race, Smoking, Education, Marital, BMI, Income, BPMed, QualLife, Caffeine)
+ggpairs(df_swan_minusID)
+```
+
+## Contigency Tables   
+
+<font color = "purple">   
+**Note**: This code below is gifted from my professor at the time. I became more familiar with `lapply()` throughout her course and the use of contingency tables came as a life saver, so with that note, enjoy.   
+</font>   
+
+```{r}
+#Contingency Tables np > 5, all meet this standard, except for Hispanic, which will be excluded in further analyses due to issues within the SWAN dataset. 
+df_swan_cat <- df_swan_minusID %>% dplyr::select_if(., ~class(.) == "factor") 
+
+lapply(df_swan_cat, function(x) table(df_swan_cat$HBP, x))
+```
+
+There are sufficient cases in all cells.    
+
+# Model Building
+
+## Step 1 Univariable Analysis     
+
+<font color = "purple">   
+**Note**: I chose to show this code below since it was life changing for me. This code was also at the sole hands of my professor and I take no credit for this except for including the relevant covariates.
+</font>  
+
+```{r}
+#summarize and pull coefficients for univariate analysis for factored variables
+slr_df_swan = df_swan %>% dplyr::select(-Age, -BMI, -Caffeine, -Sleep, -HBP, -Race, -Education, -Marital, -QualLife, -Smoking, -HBP01, -SWANID, - Income, -BPMed)
+
+lapply(slr_df_swan, function(x)summary(glm(df_swan$HBP01 ~ x, family = "binomial"))$coefficients)
+```
+
+All of our variables move on to the creation of a preliminary model.
+
+```{r include=FALSE}
+# univariate analysis continued 
+all.var.model <- glm(HBP01 ~ Age + BMI + Caffeine + Sleep01 + Race + Smoking01 + Education01 + Marital01 + Income01 + BPMed01 + QualLife01, data = df_swan, family = "binomial")
+
+summary(all.var.model)
+```
+
+## Step 2 Preliminary Variable Selection
+
+### Initial Model Comparisons
+
+Based on the p values, our initial model would include Sleep01 (clinically significant + meets 0.25 criteria), Race (clinically significant and meets 0.05 criteria), Marital01 (meets 0.05 criteria), BMI (meets 0.05 criteria), BPMed01, (meets 0.05 criteria) and Income01 (meets 0.25 criteria) because the model with all variables is less precise at predicting hypertension in this given sample.
+
+HO: the beta coefficients are equal to zero    
+HA: one or more beta coefficients are unequal to zero    
+
+```{r include=FALSE}
+#initial model, with all variables with p-values < 0.25
+initial.model <- glm(HBP01 ~ Sleep01 + Race + Marital01 + BMI + BPMed01 + Income01,
+              family = binomial, 
+              data = df_swan)
+summary(initial.model)
+```
+
+For our next step, Sleep01 (clinically significant), Race (p \< 0.05), Marital01 (p \<0.05), BMI (p \< 0.05), and BPMed01 (p \< 0.05) will be retained in the next iteration of the model. The model with income will not move forward.
+
+
+```{r include=FALSE}
+#reduced model, with all variables with p-values < 0.05 or clinically significant, LRT to test if our categorical variable of Income should be included or excluded. 
+initial.reduced.model <- glm(HBP01 ~ Sleep01 + Race + Marital01 + BMI + BPMed01,
+              family = binomial, 
+              data = df_swan)
+### likelihood ratio test: initial (full) vs initial.reduced (reduced)   
+
+lmtest::lrtest(initial.model, initial.reduced.model) 
+# 0.3623, we should not include Income in our model. 
+```
+
+Fail to reject the null hypothesis. With a p-value greater than 0.05, we choose the reduced model.
+
+At this point, our model is $$logit((\pi(HBP01| \text{Sleep01}, \text{Race}, \text{Marital01} + \text{BPMed01} + BMI)) = \\ \\beta_0 + \beta_1 \text{Fairly Bad Sleep} + \beta_2 \text{Very Bad Sleep} + \beta_3 \text{Black/African-American} \\ + \beta_4 \text{Chinese/Chinese-American} + \beta_5 \text{Japanese/Japanese-American} + \beta_6 \text{Single/never married} + \beta_7 \text{Separated} \\ + \beta_8 \text{Widowed} + \beta_9 \text{Divorced} + \beta_{10} \text{BPMed01} + \beta_{11} \text{BMI}$$
+
+## Step 3 Assessing Change in Coefficients in Reduced Model
+
+### Assessing Without 'Income01'
+
+Checking for change greater than 20% in coefficients.   
+
+```{r include=FALSE}
+#full = initial.model, reduced = initial.reduced.model
+
+summary(initial.model);summary(initial.reduced.model)
+```
+
+```{r include=FALSE}
+#Change between full and reduced models:
+Sleep011.change <- 100*(0.47144-0.44817 )/0.47144
+Sleep012.change <- 100*(0.97776-0.98717)/0.97776
+Race1.change <- 100*(1.02938-1.02927)/1.02938
+Race2.change<- 100*(0.02416-0.05726)/0.02416
+Race3.change<- 100*(1.10728-1.09787)/1.10728
+Marital011.change<- 100*(-0.98783--1.03687)/-0.98783
+Marital012.change<- 100*(-0.26615--0.30132)/-0.26615
+Marital013.change<- 100*(-0.67542--0.71549)/-0.67542
+Marital014.change<- 100*(-0.18008--0.22205)/-0.18008
+BPMed01.change <- 100*(-6.70745--6.65902)/-6.70745
+BMI.change <- 100*(0.06436-0.06508)/0.06436
+Sleep011.change;Sleep012.change;Race1.change;Race2.change;Race3.change;Marital011.change;Marital012.change;Marital013.change;Marital014.change;BPMed01.change;BMI.change
+```
+
+There is evidence that some confounding may be occurring due to the high percent change among two variables, therefore income should remain in the model because it is potentially a confounder.
+
+
+## Step 4 Adding Excluded Variables to the Reduced Model    
+
+<font color = "purple">   
+**What is blocked out**: For this step we ran a likelihood ratio test with the initial model as the reduced model and the initial model with the included covariate that we were assessing as the full model.   
+</font>   
+
+#### Assessing Age
+
+```{r include=FALSE}
+age.model <- glm(formula = HBP01 ~ Sleep01 + Race + Marital01 + BMI + BPMed01 + Income01 + Age, 
+                 family = binomial, 
+                 data = df_swan)
+lmtest::lrtest(age.model, initial.model)
+
+#p = 0.9551, not statistically significant to add to model 
+```
+
+#### Assessing Smoking01
+
+```{r include=FALSE}
+smoking.model <- glm(formula = HBP01 ~ Sleep01 + Race + Marital01 + BMI + BPMed01 + Income01 + Smoking01, 
+                 family = binomial, 
+                 data = df_swan)
+lmtest::lrtest(smoking.model,initial.model)
+
+#p = 0.6877, not statistically significant to add to model 
+```
+
+#### Assessing Education01
+
+```{r include=FALSE}
+education.model <- glm(formula = HBP01 ~ Sleep01 + Race + Marital01 + BMI + BPMed01 + Income01 + Education01, 
+                 family = binomial, 
+                 data = df_swan)
+lmtest::lrtest(education.model,initial.model)
+
+#p = 0.7386, not statistically significant to add to model 
+```
+
+#### Assessing Caffeine
+
+```{r include=FALSE}
+caffeine.model <- glm(formula = HBP01 ~ Sleep01 + Race + Marital01 + BMI + BPMed01 + Income01 + Caffeine, 
+                 family = binomial, 
+                 data = df_swan)
+lmtest::lrtest(caffeine.model,initial.model)
+
+#p = 0.9524, not statistically significant to add to model 
+```
+
+#### Assessing QualLife01
+
+```{r include=FALSE}
+quallife.model <- glm(formula = HBP01 ~ Sleep01 + Race + Marital01 + BMI + BPMed01 + Income01 + QualLife01, 
+                 family = binomial, 
+                 data = df_swan)
+lmtest::lrtest(quallife.model,initial.model)
+
+#p = 0.6211, not statistically significant to add to model 
+```
+
+None of the initially excluded variables should be added back into the model.
+
+### Collapse Variable Kevels  
+
+```{r include=FALSE}
+# collapse variables: Sleep, Race, Marital Status
+#Sleep was attempted to be further dichotomized to improve the model fit, between Good and Bad Sleep. 
+
+df_swan$Sleep02 <- dplyr::recode_factor(df_swan$Sleep, 
+                                       "(1) Very good" = "0",
+                                       "(2) Fairly good" = "0",
+                                        "(3) Fairly bad" = "1",
+                                        "(4) Very bad" = "1")
+
+#White is already the reference group. Chinese/Chinese American had insignificant coefficients in the model building process, while Japanese/Japanese American and Black/African American had semi-consistent significance in preliminary model building. Attempted to join C/CA to the reference group to determine if race categorization could improve the model. 
+ 
+df_swan$Race02 <- dplyr::recode_factor(df_swan$Race, 
+                                     "(0) Caucasian/White Non-Hispanic" = "(0) White/Chinese/Chinese American",
+                                     "(1) Black/African American" = "(1) Black/African American/Japanese/Japanese American",
+                                     "(2) Chinese/Chinese American" = "(0) White/Chinese/Chinese American",
+                                     "(3) Japanese/Japanese American" = "(1) Black/African American/Japanese/Japanese American")
+
+summary(df_swan$Sleep02)
+summary(df_swan$Race02)
+
+# df_swan$Education02 <- dplyr::recode_factor(df_swan$Education, 
+#                                            "(5) Post graduate education" = "0",
+#                                            "(4) College graduate" = "0", 
+#                                            "(1) Less than high school" = "1", 
+#                                            "(2) High school graduate" = "2", 
+#                                            "(3) Some college/technical school" = "3")
+
+df_swan$Marital02 <- dplyr::recode_factor(df_swan$Marital,
+                                         "(2) Currently married/living as married" = "0",
+                                         "(1) Single/never married" = "1",
+                                         "(3) Separated" = "1",
+                                         "(4) Widowed" = "1",
+                                         "(5) Divorced" = "1")
+summary(df_swan$Marital02)
+
+# df_swan$Income02 <- dplyr::recode_factor(df_swan$Income, 
+#                                            "(4) $100,000 or More" = "0", 
+#                                            "(1) Less Than $19,999" = "1", 
+#                                            "(2) $20,000 to $49,999" = "2", 
+#                                            "(3) $50,000 to $99,999" = "3") 
+# df_swan$QualLife01 <- as.numeric(df_swan$QualLife)
+# skimr::skim(df_swan$QualLife)
+# median(df_swan$QualLife)
+# # with a median of 9 , will use 9 as the reference group
+#   # /leq 8 = worse than median
+#   # =  9 = median
+#   # /geq 10 = better than median
+# 
+# df_swan$QualLife <- na.omit(df_swan$QualLife) 
+# 
+# df_swan$QualLife01 <- dplyr::recode_factor(df_swan$QualLife, 
+#                                             "1" = "1", 
+#                                             "2" = "1", 
+#                                             "3" = "1", 
+#                                             "4" = "1",
+#                                             "5" = "1", 
+#                                             "6" = "1", 
+#                                             "7" = "1", 
+#                                             "8" = "1", 
+#                                             "9" = "0", 
+#                                             "10" = "2", 
+#                                             "11" = "2") 
+### Code still works, but message is relevant for 1 NA observation
+```
+
+
+#### Assessing binary sleep quality with our preliminary main effects model
+
+```{r include=FALSE}
+sleep2.model <- glm(formula = HBP01 ~ Sleep02 + Race + Marital01 + BMI + BPMed01 + Income01,
+                 family = binomial, 
+                 data = df_swan)
+lmtest::lrtest(sleep2.model,initial.model)
+
+#p = 0.3986, not a significantly better model
+```
+
+#### Assessing binary race with our preliminary main effects model
+
+```{r include=FALSE}
+race2.model <- glm(formula = HBP01 ~ Sleep01 + Race02 + Marital01 + BMI + BPMed01 + Income01,
+                 family = binomial, 
+                 data = df_swan)
+lmtest::lrtest(race2.model,initial.model)
+
+#p = 0.09718, close to a better model but not enough to test coefficient change. 
+```
+
+#### Assessing binary marital status with our preliminary main effects model
+
+```{r include=FALSE}
+marry2.model <- glm(formula = HBP01 ~ Sleep01 + Race + Marital02 + BMI + BPMed01 + Income01,
+                 family = binomial, 
+                 data = df_swan)
+lmtest::lrtest(marry2.model,initial.model)
+
+#p = 0.4593, not a better model
+```
+
+## Preliminary Main Effects Model
+
+```{r include=FALSE}
+summary(initial.model)
+```
+
+## Step 5 Assessing Scale for Continuous Variables
+
+### Smoothed Scatter Plots
+
+```{r include=FALSE}
+gloess_a = df_swan %>% mutate(HBP01 = as.numeric(HBP01) - 1)
+loess_fit_a = loess(HBP01 ~ BMI, span = 0.8, data=gloess_a)
+gloess_a = gloess_a %>% mutate(pred = predict(loess_fit_a),
+                           pred_log_odds = log(pred/(1-pred)))
+
+ggplot(gloess_a, aes(x=BMI, y=pred_log_odds)) +
+  geom_point() +
+  geom_smooth(method = loess, span = 0.01) +
+  xlab("BMI") +
+  ylab("Logit-odds") +
+  labs(title = "Smoothed Scatterplot: HBP01~BMI") +
+  theme(text = element_text(size = 12))
+
+#looks pretty linear but let's check with a second method. 
+```
+
+### Fractional Polynomials   
+
+<font color = "purple">    
+This was running prior but for some reason isn't as of this point in time of me trying to render this page. I'm keeping it in just for the sake of showing we assessed fractional polynomials.   
+</font>   
+
+```{r}
+#fracpoly_b = mfp(HBP01~ fp(BMI, df = 4) + Age + BPMed01 + Sleep01 + Income01 + Marital01,
+#               data=df_swan, family = "binomial", verbose = T)
+
+#fracpoly_b$fptable
+
+#linear model works for BMI
+```
+
+## Main effects model
+
+### Model   
+
+```{r}
+main.effects.model <- initial.model
+```
+
+
+After assessing the linearity of our continuous variables, the best performing model continues to be 'initial.model', renamed as 'main.effects.model'     
+
+
+## Step 6 Interactions   
+
+<font color = "purple">   
+**Note**: I have no idea how to fix this issue below. I have include and echo = FALSE but given the structure of the code (hint: it's `lapply` and `function` but pulling stuff from the environment so it is kind of creating it's own separate code chunk with its own set of laws I suppose).    
+</font>   
+
+```{r include=TRUE, echo=FALSE}
+#create a matrix
+vars = c("Sleep01", "Race", "BPMed01", "BMI", "Income01", "Marital01")
+
+ints <- lapply(1:2,
+function(n) {.env <- environment()
+cb <- combn(c("Sleep01", "Race", "BPMed01", "BMI", "Income01", "Marital01"), n, function(x) paste(x, collapse=" * "))
+lapply(cb, function(cb) summary(glm(reformulate(c(vars, cb), "HBP01", env=.env), data = df_swan, family = binomial))) })
+
+ints[[2]]
+```
+
+There are no significant interactions present between the levels of Sleep01 and other variables included in our main effects model at the alpha = 0.05 level.
+
+## Preliminary Final Model
+
+### Model
+
+After assessing the linearity of our continuous variables, the best performing model continues to be 'main.effects.model'   
+
+## Step 7 Addressing Issues and Assessing Model Fit
+
+### VIF
+
+```{r message=FALSE, warning=FALSE}
+library(car)
+car::vif(main.effects.model)
+```
+
+There does not appear to be an issue with colinearity.
+
+### Pearson Goodness of Fit    
+
+We do not use Pearson Goodness of fit due to the continuous BMI Variable.   
+
+### Hosmer Lemeshow Goodness of Fit
+
+Covariate pattern is greater than six due to the existence of a continuous variable in the model.
+
+$H_0:$ the model fits the data well    
+$H_A:$ the model does not fit the data well    
+
+```{r include=FALSE}
+df_swan2 = df_swan %>% mutate(HBP01 = as.numeric(HBP01)-1)
+
+library(ResourceSelection)
+hoslem.test(df_swan2$HBP01, fitted(main.effects.model), g = 10)
+```
+
+Conclusion: Fail to reject null hypothesis. Thus, the selected model for SWAN dataset fits the data relatively well.
+
+### ROC Curve and AUC    
+
+To quantify how well our model predicts a binary outcome.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(pROC)
+
+predicted <- predict(main.effects.model, df_swan2, type="response")
+
+#define object to plot and calculate AUC
+rocobj <- roc(df_swan2$HBP01, predicted)
+auc <- round(auc(df_swan2$HBP01, predicted),4)
+
+#create ROC plot
+roc <- ggroc(rocobj, colour ='cyan', size = 2) +
+  ggtitle(paste0('ROC Curve ', '(AUC = ', auc, ')')) +
+  theme(text = element_text(size = 16)) +
+  xlab("False Positive Rate (1 - Specificity)") +
+  ylab("True Positive Rate (Sensitivity)")
+
+roc 
+```
+
+
+Our ROC is quite good, 0.973 is excellent, perhaps excessively so for a class project model using real-world data.
+
+### AIC and BIC
+
+```{r include=FALSE}
+aic1 <- AIC(main.effects.model)
+bic1 <- BIC(main.effects.model)
+aic1;bic1
+```
+
+```{r include=FALSE}
+AIC(all.var.model)
+BIC(all.var.model)
+
+change.aic <- 575.8122-562.1198
+change.bic <- 702.4764 -644.7269
+change.aic;change.bic
+```
+
+The AIC and BIC are equivalent between the two models, 557.47/601.52, meaning they are comparable.
+
+### Visual Logistic Diagnostics
+
+#### Charts
+
+```{r}
+source("Logistic_Dx_Functions.R") 
+```
+
+```{r include=FALSE}
+diagnost_pf = dx(main.effects.model)
+head(diagnost_pf)
+dim(diagnost_pf)
+```
+
+Plot the change in standardized deviance residuals against the estimated/predicted probabilities.
+
+```{r include=FALSE, fig.height=5, fig.width=6}
+ggplot(diagnost_pf) + geom_point(aes(x=P, y=dDev)) + 
+  xlab("Estimated/Predicted Probability of Hypertension") +
+  ylab("Change in Std. Deviance Residual") +
+  theme(text = element_text(size = 16))
+```
+
+Plot the change in coefficient estimates against the estimated/predicted probabilities.
+
+```{r include=FALSE, fig.height=5, fig.width=6}
+ggplot(diagnost_pf) + geom_point(aes(x=P, y=dBhat)) + 
+  xlab("Estimated/Predicted Probability of Hypertension") +
+  ylab("Change in Coefficient Estimates") +
+  theme(text = element_text(size = 16))
+```
+
+#### Diagnostic points
+
+```{r include=FALSE}
+diagnost_points = diagnost_pf %>% 
+  mutate(Cov_patt = 1:nrow(.)) %>%
+  filter(dDev > 4.5 | dBhat > 1 | h > 0.002196595 | sdr > 4) 
+# cook.cutoff
+
+display_points = diagnost_points %>% 
+  dplyr::select(Cov_patt, y, P, h, dDev, dBhat) %>%
+  round(., 2)
+
+kable(display_points) %>% kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
+
+dim(display_points)
+# 1431    6
+```
+
+```{r include=FALSE, fig.height=6, fig.width=8}
+influenceIndexPlot(main.effects.model) # about 6 observations are showing significant influence but given our previously nice fitting ROC curve with AIC = 0.97, I think it's better to keep these points in but keep them in the back of our minds if something comes up   
+```   
+
+
+```{r include=FALSE}
+infl.resid.data <- stats::influence(main.effects.model)
+cooksd.hat <- infl.resid.data$hat
+cook.cutoff <- 4/nrow(df_swan)
+infl.points <- cooksd.hat > cook.cutoff
+infl.points
+cooks.distance(main.effects.model)
+
+filtered_data <- df_swan[!diagnost_points, ]
+dim(filtered_data) 
+# 15909    24
+```
+
+```{r include=FALSE}
+#create a model without outliers with the same variables as the preliminary final model 
+no.outlier.model <- glm(formula = HBP01 ~ Sleep01 + Race + Marital01 + BMI + BPMed01 + Income01, 
+                 family = binomial, 
+                 data = filtered_data)
+summary(no.outlier.model)
+
+aic_without_influential <- AIC(no.outlier.model)
+bic_without_influential <- BIC(no.outlier.model)
+```
+
+```{r include=FALSE}
+# Create a comparison table 
+comparison_table <- data.frame(
+  Model = c("With Influential", "Without Influential"),
+  AIC = c(aic1, aic_without_influential),
+  BIC = c(bic1, bic_without_influential)
+)
+
+print(comparison_table)
+```
+
+The AIC and BIC are very small when influential points are excluded, so it is likely the model is over fit when the influential points are removed.
+
+```{r include=FALSE, fig.height=5, fig.width=6, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(pROC)
+
+filtered2 <- filtered_data %>% mutate(HBP01 = as.numeric(HBP01)-1)
+
+predicted <- predict(no.outlier.model, filtered2, type="response")
+
+#define object to plot and calculate AUC
+rocobj <- roc(filtered2$HBP01, predicted)
+auc <- round(auc(filtered2$HBP01, predicted),4)
+
+#create ROC plot
+ggroc(rocobj, colour = 'steelblue', size = 2) +
+  ggtitle(paste0('ROC Curve ', '(AUC = ', auc, ')')) +
+  theme(text = element_text(size = 16)) +
+  xlab("False Positive Rate (1 - Specificity)") +
+  ylab("True Positive Rate (Sensitivity)")
+  
+```
+
+The ROC and AUC are comparable to that of the preliminary final model.
+
+# Results
+
+## Estimated Logistic Regression Equation
+
+With covariates included $$logit((\hat{\pi}(HBP01| \text{Sleep01}, \text{Race}, \text{Marital01} + \text{BPMed01} + BMI + \text{Income01})) = \\ 1.29180 + 0.47144 \cdot \text{Fairly Bad Sleep} + 0.97776 \cdot \text{Very Bad Sleep} + 1.02938 \cdot \text{Black/African-American} \\ + 0.02416 \cdot \text{Chinese/Chinese-American} + 1.10728 \cdot \text{Japanese/Japanese-American} - 0.98783 \cdot \text{Single/never married} \\ - 0.26615 \cdot \text{Separated} - 0.6754 \cdot \text{Widowed} - -0.18008 \cdot \text{Divorced} - 6.70745 \cdot \text{BPMed01} + 0.06436 \cdot \text{BMI} \\ +  - 0.08290 \cdot \text {Annual Income}<19,999 - 0.10850 \cdot \text{Annual Income}20-49,999 + 0.47616 \cdot \text{Annual Income}50-99,999$$   
+
+## Odds Ratio Tables
+
+```{r include=FALSE}
+coef_final = summary(main.effects.model)$coefficients
+logistic.display(main.effects.model)
+```
+
+```{r echo=FALSE, include=FALSE}
+coef_final = summary(main.effects.model)$coefficients
+log.disp <- logistic.display(main.effects.model)
+
+# Get the logistic display table
+(logistic_table <- log.disp)
+
+# Convert the table to a data frame
+table_data <- as.data.frame(logistic_table)
+
+colnames(table_data) <- c("Covariate", "Crude OR", "Adjusted OR", "P-value (Wald's Test)", "P-value (LR Test")
+
+table_data <- table_data[, -1]
+table_data <- table_data[, -5]
+
+# Print the table using kable()
+table2 <- kable(table_data, align = "l", format = "html") %>% kable_styling(bootstrap_options = "hover", "striped")
+```   
+
+```{r}
+table2
+```
+
+

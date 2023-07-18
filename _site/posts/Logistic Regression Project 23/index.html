@@ -1,0 +1,2281 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Saffron">
+<meta name="dcterms.date" content="2023-07-17">
+
+<title>Saffron Evergreen - Logistic Regression Project 23</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+<script src="../../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Saffron Evergreen</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Logistic Regression Project 23</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">news</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Saffron </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 17, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="disclosure" class="level1">
+<h1>Disclosure</h1>
+<p><strong>It is against the academic policy to share the projects and content from our courses. Therefore, I have redacted a lot, and have shown the highlights of what was done.</strong></p>
+<p>This project was done in the Spring 2023 term with 2 other peers. This project is essentially the same but with more of a focus on categorical data analysis compared to ‘Logistic Regression Project 22’. This was the first project I had really felt like I had a full understanding of; there are definitely some parts that I wish I could have done more precisely but I am far more comfortable with the outcome of this model than the other.</p>
+<p>As with the other logistic regression project, the data used is from the <a href="https://www.icpsr.umich.edu/web/ICPSR/series/00253">SWAN database</a>.</p>
+</section>
+<section id="research-proposal" class="level1">
+<h1>Research Proposal</h1>
+<p>The goal of this project was to assess stress and cardiovascular health on middle-aged women in the U.S. The outcome variable is high blood pressure, the primary predictor is self-assessed sleep quality along with the covariates; age, race, smoking status, education, marital status, BMI, income, taking blood pressure medication, self-assessed quality of life and average daily caffeine intake.</p>
+<section id="libraries-used" class="level2">
+<h2 class="anchored" data-anchor-id="libraries-used">Libraries Used</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Hmisc)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(grid)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats) <span class="co"># for categorical variables</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># for tables</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtable)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># data mgmt and visual</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtsummary)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mfp)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ResourceSelection)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiDisplay)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="loading-datasets-and-merging" class="level1">
+<h1>Loading Datasets and Merging</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># screening dataset</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 23/SCREENING.rda"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># baseline dataset </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 23/baseline.rda"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># merge screener and baseline</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>Merged <span class="ot">&lt;-</span> <span class="fu">merge</span>(da04368<span class="fl">.0001</span>,da28762<span class="fl">.0001</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">by=</span><span class="st">"SWANID"</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(Merged) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3302  851</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visit 10 dataset</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 23/VISIT10-Data.rda"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># merge with other datasets</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>merged_swan <span class="ot">&lt;-</span> <span class="fu">merge</span>(Merged,da32961<span class="fl">.0001</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">by=</span><span class="st">"SWANID"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="cleaning-final-dataset-df_swan" class="level2">
+<h2 class="anchored" data-anchor-id="cleaning-final-dataset-df_swan">Cleaning Final Dataset <code>df_swan</code></h2>
+</section>
+<section id="removing-observations-with-missing-points" class="level2">
+<h2 class="anchored" data-anchor-id="removing-observations-with-missing-points">Removing Observations with Missing Points</h2>
+</section>
+<section id="set-reference-levels" class="level2">
+<h2 class="anchored" data-anchor-id="set-reference-levels">Set reference levels</h2>
+<p><font color="purple"><br>
+<strong>What is blocked out</strong>: I removed the coding process on how we recoded our reference levels for our covariates, but I decided to include a brief bullet point list to show what those reference levels are and why.<br>
+</font><br>
+* High Blood Pressure: <code>No</code>, given the majority of this sample does not have high blood pressure and we’re seeking a change in what is associated with high blood pressure.</p>
+<ul>
+<li><p>Sleep Quality: <code>Very good</code> and <code>fairly good</code> categories collapsed into one reference category, since we’re assessing if poor sleep is associated with high blood pressure.</p></li>
+<li><p>Race: <code>Caucasian/White Non-Hispanic</code> due to white privilege, and systemic and institutional racism in the U.S.</p></li>
+<li><p>Smoking Status: <code>No</code>, given the majority of the sample are non-smokers.</p></li>
+<li><p>Education: <code>College Graduate</code> and <code>Post-Graduate</code> given previous knowledge that at a generalized population-level, those with higher education often have better health outcomes, typically due to having more health literacy and higher income.<br>
+</p></li>
+<li><p>Marital Status: <code>Currently Married</code>, since the majority of the population is married.</p></li>
+<li><p>Income: <code>$100,000 or more</code> which is the highest income category, given the opportunity for better health care quality and access.</p></li>
+<li><p>Taking Blood Pressure Medication: <code>Yes</code>, given that people taking medication for high blood pressure will likely have lower blood pressure than those who are not taking any.</p></li>
+<li><p>Quality of Life: This was a tricky category and we ended up using the median value which was around a score of 8 out of 10. There should’ve been more research conducted to decide what our cut-off point should’ve been.</p></li>
+</ul>
+</section>
+<section id="summary-new-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="summary-new-dataset">Summary new dataset</h2>
+</section>
+</section>
+<section id="table-1-descriptive-statistics" class="level1">
+<h1>Table 1: Descriptive Statistics</h1>
+<div class="cell">
+<div class="cell-output-display">
+
+<div id="jizhojskyv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jizhojskyv table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#jizhojskyv thead, #jizhojskyv tbody, #jizhojskyv tfoot, #jizhojskyv tr, #jizhojskyv td, #jizhojskyv th {
+  border-style: none;
+}
+
+#jizhojskyv p {
+  margin: 0;
+  padding: 0;
+}
+
+#jizhojskyv .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 5px;
+  border-top-color: #5F5F5F;
+  border-right-style: solid;
+  border-right-width: 5px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 5px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: solid;
+  border-left-width: 5px;
+  border-left-color: #D3D3D3;
+}
+
+#jizhojskyv .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#jizhojskyv .gt_title {
+  color: #333333;
+  font-size: small;
+  font-weight: bold;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#jizhojskyv .gt_subtitle {
+  color: #333333;
+  font-size: large;
+  font-weight: 80;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#jizhojskyv .gt_heading {
+  background-color: #FFFFFF;
+  text-align: right;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jizhojskyv .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+
+#jizhojskyv .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jizhojskyv .gt_col_heading {
+  color: #FFFFFF;
+  background-color: #01837B;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#jizhojskyv .gt_column_spanner_outer {
+  color: #FFFFFF;
+  background-color: #01837B;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#jizhojskyv .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#jizhojskyv .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#jizhojskyv .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#jizhojskyv .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#jizhojskyv .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#jizhojskyv .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+  vertical-align: middle;
+}
+
+#jizhojskyv .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#jizhojskyv .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#jizhojskyv .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: none;
+  border-top-width: 1px;
+  border-top-color: #D5D5D5;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D5D5D5;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D5D5D5;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#jizhojskyv .gt_stub {
+  color: #333333;
+  background-color: #A5FEF2;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D5D5D5;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jizhojskyv .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#jizhojskyv .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#jizhojskyv .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#jizhojskyv .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jizhojskyv .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #5F5F5F;
+}
+
+#jizhojskyv .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#jizhojskyv .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+
+#jizhojskyv .gt_grand_summary_row {
+  color: #333333;
+  background-color: #D5D5D5;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jizhojskyv .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #5F5F5F;
+}
+
+#jizhojskyv .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #5F5F5F;
+}
+
+#jizhojskyv .gt_striped {
+  background-color: #EBFBF9;
+}
+
+#jizhojskyv .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #5F5F5F;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #5F5F5F;
+}
+
+#jizhojskyv .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jizhojskyv .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jizhojskyv .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jizhojskyv .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jizhojskyv .gt_left {
+  text-align: left;
+}
+
+#jizhojskyv .gt_center {
+  text-align: center;
+}
+
+#jizhojskyv .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#jizhojskyv .gt_font_normal {
+  font-weight: normal;
+}
+
+#jizhojskyv .gt_font_bold {
+  font-weight: bold;
+}
+
+#jizhojskyv .gt_font_italic {
+  font-style: italic;
+}
+
+#jizhojskyv .gt_super {
+  font-size: 65%;
+}
+
+#jizhojskyv .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#jizhojskyv .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#jizhojskyv .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#jizhojskyv .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#jizhojskyv .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#jizhojskyv .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#jizhojskyv .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="4" class="gt_heading gt_title gt_font_normal" style="">Table 1</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="">SWAN Participant Characteristics Stratified by High Blood Pressure</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Characteristic">Characteristic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="<strong>Overall</strong>, N = 1,821<span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>"><strong>Overall</strong>, N = 1,821<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="<strong>(1) No</strong>, N = 1,202<span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>"><strong>(1) No</strong>, N = 1,202<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="<strong>(2) Yes</strong>, N = 619<span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>"><strong>(2) Yes</strong>, N = 619<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="label" class="gt_row gt_left" style="font-weight: bold;">Sleep Quality</td>
+<td headers="stat_0" class="gt_row gt_center"></td>
+<td headers="stat_1" class="gt_row gt_center"></td>
+<td headers="stat_2" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(1) Very good</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">438 (24%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">319 (27%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">119 (19%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(2) Fairly good</td>
+<td headers="stat_0" class="gt_row gt_center">985 (54%)</td>
+<td headers="stat_1" class="gt_row gt_center">651 (54%)</td>
+<td headers="stat_2" class="gt_row gt_center">334 (54%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(3) Fairly bad</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">329 (18%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">195 (16%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">134 (22%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(4) Very bad</td>
+<td headers="stat_0" class="gt_row gt_center">69 (3.8%)</td>
+<td headers="stat_1" class="gt_row gt_center">37 (3.1%)</td>
+<td headers="stat_2" class="gt_row gt_center">32 (5.2%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped" style="font-weight: bold;">Age (Years)</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">56.00 (54.00, 58.00)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">56.00 (54.00, 58.00)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">56.00 (54.00, 58.00)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left" style="font-weight: bold;">Race/Ethnicity</td>
+<td headers="stat_0" class="gt_row gt_center"></td>
+<td headers="stat_1" class="gt_row gt_center"></td>
+<td headers="stat_2" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(0) Caucasian/White Non-Hispanic</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">950 (52%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">706 (59%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">244 (39%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(1) Black/African American</td>
+<td headers="stat_0" class="gt_row gt_center">476 (26%)</td>
+<td headers="stat_1" class="gt_row gt_center">193 (16%)</td>
+<td headers="stat_2" class="gt_row gt_center">283 (46%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(2) Chinese/Chinese American</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">191 (10%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">148 (12%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">43 (6.9%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(3) Japanese/Japanese American</td>
+<td headers="stat_0" class="gt_row gt_center">204 (11%)</td>
+<td headers="stat_1" class="gt_row gt_center">155 (13%)</td>
+<td headers="stat_2" class="gt_row gt_center">49 (7.9%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(5) Hispanic</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">0 (0%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">0 (0%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">0 (0%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left" style="font-weight: bold;">Smoking Status</td>
+<td headers="stat_0" class="gt_row gt_center"></td>
+<td headers="stat_1" class="gt_row gt_center"></td>
+<td headers="stat_2" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(1) No</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">1,613 (89%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">1,080 (90%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">533 (86%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(2) Yes</td>
+<td headers="stat_0" class="gt_row gt_center">208 (11%)</td>
+<td headers="stat_1" class="gt_row gt_center">122 (10%)</td>
+<td headers="stat_2" class="gt_row gt_center">86 (14%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped" style="font-weight: bold;">Educational Attainment</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped"></td>
+<td headers="stat_1" class="gt_row gt_center gt_striped"></td>
+<td headers="stat_2" class="gt_row gt_center gt_striped"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(1) Less than high school</td>
+<td headers="stat_0" class="gt_row gt_center">63 (3.5%)</td>
+<td headers="stat_1" class="gt_row gt_center">32 (2.7%)</td>
+<td headers="stat_2" class="gt_row gt_center">31 (5.0%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(2) High school graduate</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">277 (15%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">153 (13%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">124 (20%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(3) Some college/technical school</td>
+<td headers="stat_0" class="gt_row gt_center">566 (31%)</td>
+<td headers="stat_1" class="gt_row gt_center">340 (28%)</td>
+<td headers="stat_2" class="gt_row gt_center">226 (37%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(4) College graduate</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">426 (23%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">321 (27%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">105 (17%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(5) Post graduate education</td>
+<td headers="stat_0" class="gt_row gt_center">489 (27%)</td>
+<td headers="stat_1" class="gt_row gt_center">356 (30%)</td>
+<td headers="stat_2" class="gt_row gt_center">133 (21%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped" style="font-weight: bold;">Marital Status</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped"></td>
+<td headers="stat_1" class="gt_row gt_center gt_striped"></td>
+<td headers="stat_2" class="gt_row gt_center gt_striped"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(1) Single/never married</td>
+<td headers="stat_0" class="gt_row gt_center">207 (11%)</td>
+<td headers="stat_1" class="gt_row gt_center">125 (10%)</td>
+<td headers="stat_2" class="gt_row gt_center">82 (13%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(2) Currently married/living as married</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">1,177 (65%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">825 (69%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">352 (57%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(3) Separated</td>
+<td headers="stat_0" class="gt_row gt_center">57 (3.1%)</td>
+<td headers="stat_1" class="gt_row gt_center">34 (2.8%)</td>
+<td headers="stat_2" class="gt_row gt_center">23 (3.7%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(4) Widowed</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">86 (4.7%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">47 (3.9%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">39 (6.3%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(5) Divorced</td>
+<td headers="stat_0" class="gt_row gt_center">294 (16%)</td>
+<td headers="stat_1" class="gt_row gt_center">171 (14%)</td>
+<td headers="stat_2" class="gt_row gt_center">123 (20%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped" style="font-weight: bold;">Body Mass Index (BMI)</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">25 (22, 30)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">24 (21, 27)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">28 (24, 34)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left" style="font-weight: bold;">Annual Income</td>
+<td headers="stat_0" class="gt_row gt_center"></td>
+<td headers="stat_1" class="gt_row gt_center"></td>
+<td headers="stat_2" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(1) Less Than $19,999</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">159 (8.7%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">74 (6.2%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">85 (14%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(2) $20,000 to $49,999</td>
+<td headers="stat_0" class="gt_row gt_center">467 (26%)</td>
+<td headers="stat_1" class="gt_row gt_center">307 (26%)</td>
+<td headers="stat_2" class="gt_row gt_center">160 (26%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(3) $50,000 to $99,999</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">404 (22%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">258 (21%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">146 (24%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(4) $100,000 or More</td>
+<td headers="stat_0" class="gt_row gt_center">791 (43%)</td>
+<td headers="stat_1" class="gt_row gt_center">563 (47%)</td>
+<td headers="stat_2" class="gt_row gt_center">228 (37%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped" style="font-weight: bold;">Taking Blood Pressure Medication</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped"></td>
+<td headers="stat_1" class="gt_row gt_center gt_striped"></td>
+<td headers="stat_2" class="gt_row gt_center gt_striped"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">&nbsp;&nbsp;&nbsp;&nbsp;(1) No</td>
+<td headers="stat_0" class="gt_row gt_center">1,233 (68%)</td>
+<td headers="stat_1" class="gt_row gt_center">1,184 (99%)</td>
+<td headers="stat_2" class="gt_row gt_center">49 (7.9%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped">&nbsp;&nbsp;&nbsp;&nbsp;(2) Yes</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">588 (32%)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">18 (1.5%)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">570 (92%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left" style="font-weight: bold;">Quality of Life</td>
+<td headers="stat_0" class="gt_row gt_center">8.00 (7.00, 9.00)</td>
+<td headers="stat_1" class="gt_row gt_center">8.00 (7.00, 9.00)</td>
+<td headers="stat_2" class="gt_row gt_center">8.00 (7.00, 9.00)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left gt_striped" style="font-weight: bold;">Caffeine Intake (mg)</td>
+<td headers="stat_0" class="gt_row gt_center gt_striped">179 (65, 317)</td>
+<td headers="stat_1" class="gt_row gt_center gt_striped">191 (68, 321)</td>
+<td headers="stat_2" class="gt_row gt_center gt_striped">159 (61, 310)</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="4"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span> Median (IQR); Frequency (%)</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="exploratory-data-analysis" class="level1">
+<h1>Exploratory Data Analysis</h1>
+<section id="frequency-distributions" class="level2">
+<h2 class="anchored" data-anchor-id="frequency-distributions">Frequency Distributions</h2>
+<section id="ggpairs-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="ggpairs-comparison">ggpairs comparison</h3>
+</section>
+</section>
+<section id="contigency-tables" class="level2">
+<h2 class="anchored" data-anchor-id="contigency-tables">Contigency Tables</h2>
+<p><font color="purple"><br>
+<strong>Note</strong>: This code below is gifted from my professor at the time. I became more familiar with <code>lapply()</code> throughout her course and the use of contingency tables came as a life saver, so with that note, enjoy.<br>
+</font></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Contingency Tables np &gt; 5, all meet this standard, except for Hispanic, which will be excluded in further analyses due to issues within the SWAN dataset. </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df_swan_cat <span class="ot">&lt;-</span> df_swan_minusID <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select_if</span>(., <span class="sc">~</span><span class="fu">class</span>(.) <span class="sc">==</span> <span class="st">"factor"</span>) </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(df_swan_cat, <span class="cf">function</span>(x) <span class="fu">table</span>(df_swan_cat<span class="sc">$</span>HBP, x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$HBP
+         x
+          (1) No (2) Yes
+  (1) No    1202       0
+  (2) Yes      0     619
+
+$Sleep
+         x
+          (1) Very good (2) Fairly good (3) Fairly bad (4) Very bad
+  (1) No            319             651            195           37
+  (2) Yes           119             334            134           32
+
+$Race
+         x
+          (0) Caucasian/White Non-Hispanic (1) Black/African American
+  (1) No                               706                        193
+  (2) Yes                              244                        283
+         x
+          (2) Chinese/Chinese American (3) Japanese/Japanese American
+  (1) No                           148                            155
+  (2) Yes                           43                             49
+         x
+          (5) Hispanic
+  (1) No             0
+  (2) Yes            0
+
+$Smoking
+         x
+          (1) No (2) Yes
+  (1) No    1080     122
+  (2) Yes    533      86
+
+$Education
+         x
+          (1) Less than high school (2) High school graduate
+  (1) No                         32                      153
+  (2) Yes                        31                      124
+         x
+          (3) Some college/technical school (4) College graduate
+  (1) No                                340                  321
+  (2) Yes                               226                  105
+         x
+          (5) Post graduate education
+  (1) No                          356
+  (2) Yes                         133
+
+$Marital
+         x
+          (1) Single/never married (2) Currently married/living as married
+  (1) No                       125                                     825
+  (2) Yes                       82                                     352
+         x
+          (3) Separated (4) Widowed (5) Divorced
+  (1) No             34          47          171
+  (2) Yes            23          39          123
+
+$Income
+         x
+          (1) Less Than $19,999 (2) $20,000 to $49,999 (3) $50,000 to $99,999
+  (1) No                     74                    307                    258
+  (2) Yes                    85                    160                    146
+         x
+          (4) $100,000 or More
+  (1) No                   563
+  (2) Yes                  228
+
+$BPMed
+         x
+          (1) No (2) Yes
+  (1) No    1184      18
+  (2) Yes     49     570</code></pre>
+</div>
+</div>
+<p>There are sufficient cases in all cells.</p>
+</section>
+</section>
+<section id="model-building" class="level1">
+<h1>Model Building</h1>
+<section id="step-1-univariable-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-univariable-analysis">Step 1 Univariable Analysis</h2>
+<p><font color="purple"><br>
+<strong>Note</strong>: I chose to show this code below since it was life changing for me. This code was also at the sole hands of my professor and I take no credit for this except for including the relevant covariates. </font></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summarize and pull coefficients for univariate analysis for factored variables</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>slr_df_swan <span class="ot">=</span> df_swan <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Age, <span class="sc">-</span>BMI, <span class="sc">-</span>Caffeine, <span class="sc">-</span>Sleep, <span class="sc">-</span>HBP, <span class="sc">-</span>Race, <span class="sc">-</span>Education, <span class="sc">-</span>Marital, <span class="sc">-</span>QualLife, <span class="sc">-</span>Smoking, <span class="sc">-</span>HBP01, <span class="sc">-</span>SWANID, <span class="sc">-</span> Income, <span class="sc">-</span>BPMed)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(slr_df_swan, <span class="cf">function</span>(x)<span class="fu">summary</span>(<span class="fu">glm</span>(df_swan<span class="sc">$</span>HBP01 <span class="sc">~</span> x, <span class="at">family =</span> <span class="st">"binomial"</span>))<span class="sc">$</span>coefficients)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Sleep01
+              Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept) -0.7614039 0.05690722 -13.379743 7.942151e-41
+x1           0.3862442 0.12581464   3.069946 2.140972e-03
+x2           0.6162219 0.24802310   2.484534 1.297210e-02
+
+$Smoking01
+              Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept) -0.7061949 0.05293484 -13.340833 1.339535e-40
+x1           0.3565211 0.15042183   2.370142 1.778124e-02
+
+$Education01
+              Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept) -1.0454006 0.07535765 -13.872521 9.295206e-44
+x1           1.0136519 0.26303392   3.853693 1.163496e-04
+x2           0.8352442 0.14240520   5.865265 4.484153e-09
+x3           0.6369900 0.11421353   5.577185 2.444421e-08
+
+$Marital01
+              Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept) -0.8517522 0.06366338 -13.378997 8.022254e-41
+x1           0.4301577 0.15571817   2.762412 5.737604e-03
+x2           0.4608859 0.27738611   1.661532 9.660664e-02
+x3           0.6651663 0.22576680   2.946254 3.216485e-03
+x4           0.5222730 0.13427979   3.889439 1.004763e-04
+
+$Income01
+              Estimate Std. Error    z value     Pr(&gt;|z|)
+(Intercept) -0.9039340  0.0784994 -11.515170 1.106407e-30
+x1           1.0425202  0.1773143   5.879503 4.115007e-09
+x2           0.2522601  0.1251778   2.015214 4.388223e-02
+x3           0.3345810  0.1299517   2.574657 1.003395e-02
+
+$BPMed01
+             Estimate Std. Error   z value      Pr(&gt;|z|)
+(Intercept)  3.455265  0.2393946  14.43335  3.192144e-47
+x1          -6.640098  0.2802901 -23.69009 4.561404e-124
+
+$QualLife01
+              Estimate Std. Error   z value     Pr(&gt;|z|)
+(Intercept) -0.5260931 0.07822327 -6.725531 1.749527e-11
+x0          -0.1967592 0.11654625 -1.688250 9.136318e-02
+x2          -0.2623643 0.12332795 -2.127371 3.338930e-02</code></pre>
+</div>
+</div>
+<p>All of our variables move on to the creation of a preliminary model.</p>
+</section>
+<section id="step-2-preliminary-variable-selection" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-preliminary-variable-selection">Step 2 Preliminary Variable Selection</h2>
+<section id="initial-model-comparisons" class="level3">
+<h3 class="anchored" data-anchor-id="initial-model-comparisons">Initial Model Comparisons</h3>
+<p>Based on the p values, our initial model would include Sleep01 (clinically significant + meets 0.25 criteria), Race (clinically significant and meets 0.05 criteria), Marital01 (meets 0.05 criteria), BMI (meets 0.05 criteria), BPMed01, (meets 0.05 criteria) and Income01 (meets 0.25 criteria) because the model with all variables is less precise at predicting hypertension in this given sample.</p>
+<p>HO: the beta coefficients are equal to zero<br>
+HA: one or more beta coefficients are unequal to zero</p>
+<p>For our next step, Sleep01 (clinically significant), Race (p &lt; 0.05), Marital01 (p &lt;0.05), BMI (p &lt; 0.05), and BPMed01 (p &lt; 0.05) will be retained in the next iteration of the model. The model with income will not move forward.</p>
+<p>Fail to reject the null hypothesis. With a p-value greater than 0.05, we choose the reduced model.</p>
+<p>At this point, our model is <span class="math display">\[logit((\pi(HBP01| \text{Sleep01}, \text{Race}, \text{Marital01} + \text{BPMed01} + BMI)) = \\ \\beta_0 + \beta_1 \text{Fairly Bad Sleep} + \beta_2 \text{Very Bad Sleep} + \beta_3 \text{Black/African-American} \\ + \beta_4 \text{Chinese/Chinese-American} + \beta_5 \text{Japanese/Japanese-American} + \beta_6 \text{Single/never married} + \beta_7 \text{Separated} \\ + \beta_8 \text{Widowed} + \beta_9 \text{Divorced} + \beta_{10} \text{BPMed01} + \beta_{11} \text{BMI}\]</span></p>
+</section>
+</section>
+<section id="step-3-assessing-change-in-coefficients-in-reduced-model" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-assessing-change-in-coefficients-in-reduced-model">Step 3 Assessing Change in Coefficients in Reduced Model</h2>
+<section id="assessing-without-income01" class="level3">
+<h3 class="anchored" data-anchor-id="assessing-without-income01">Assessing Without ‘Income01’</h3>
+<p>Checking for change greater than 20% in coefficients.</p>
+<p>There is evidence that some confounding may be occurring due to the high percent change among two variables, therefore income should remain in the model because it is potentially a confounder.</p>
+</section>
+</section>
+<section id="step-4-adding-excluded-variables-to-the-reduced-model" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-adding-excluded-variables-to-the-reduced-model">Step 4 Adding Excluded Variables to the Reduced Model</h2>
+<p><font color="purple"><br>
+<strong>What is blocked out</strong>: For this step we ran a likelihood ratio test with the initial model as the reduced model and the initial model with the included covariate that we were assessing as the full model.<br>
+</font></p>
+<section id="assessing-age" class="level4">
+<h4 class="anchored" data-anchor-id="assessing-age">Assessing Age</h4>
+</section>
+<section id="assessing-smoking01" class="level4">
+<h4 class="anchored" data-anchor-id="assessing-smoking01">Assessing Smoking01</h4>
+</section>
+<section id="assessing-education01" class="level4">
+<h4 class="anchored" data-anchor-id="assessing-education01">Assessing Education01</h4>
+</section>
+<section id="assessing-caffeine" class="level4">
+<h4 class="anchored" data-anchor-id="assessing-caffeine">Assessing Caffeine</h4>
+</section>
+<section id="assessing-quallife01" class="level4">
+<h4 class="anchored" data-anchor-id="assessing-quallife01">Assessing QualLife01</h4>
+<p>None of the initially excluded variables should be added back into the model.</p>
+</section>
+<section id="collapse-variable-kevels" class="level3">
+<h3 class="anchored" data-anchor-id="collapse-variable-kevels">Collapse Variable Kevels</h3>
+<section id="assessing-binary-sleep-quality-with-our-preliminary-main-effects-model" class="level4">
+<h4 class="anchored" data-anchor-id="assessing-binary-sleep-quality-with-our-preliminary-main-effects-model">Assessing binary sleep quality with our preliminary main effects model</h4>
+</section>
+<section id="assessing-binary-race-with-our-preliminary-main-effects-model" class="level4">
+<h4 class="anchored" data-anchor-id="assessing-binary-race-with-our-preliminary-main-effects-model">Assessing binary race with our preliminary main effects model</h4>
+</section>
+<section id="assessing-binary-marital-status-with-our-preliminary-main-effects-model" class="level4">
+<h4 class="anchored" data-anchor-id="assessing-binary-marital-status-with-our-preliminary-main-effects-model">Assessing binary marital status with our preliminary main effects model</h4>
+</section>
+</section>
+</section>
+<section id="preliminary-main-effects-model" class="level2">
+<h2 class="anchored" data-anchor-id="preliminary-main-effects-model">Preliminary Main Effects Model</h2>
+</section>
+<section id="step-5-assessing-scale-for-continuous-variables" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-assessing-scale-for-continuous-variables">Step 5 Assessing Scale for Continuous Variables</h2>
+<section id="smoothed-scatter-plots" class="level3">
+<h3 class="anchored" data-anchor-id="smoothed-scatter-plots">Smoothed Scatter Plots</h3>
+</section>
+<section id="fractional-polynomials" class="level3">
+<h3 class="anchored" data-anchor-id="fractional-polynomials">Fractional Polynomials</h3>
+<p><font color="purple"><br>
+This was running prior but for some reason isn’t as of this point in time of me trying to render this page. I’m keeping it in just for the sake of showing we assessed fractional polynomials.<br>
+</font></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#fracpoly_b = mfp(HBP01~ fp(BMI, df = 4) + Age + BPMed01 + Sleep01 + Income01 + Marital01,</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#               data=df_swan, family = "binomial", verbose = T)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#fracpoly_b$fptable</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#linear model works for BMI</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="main-effects-model" class="level2">
+<h2 class="anchored" data-anchor-id="main-effects-model">Main effects model</h2>
+<section id="model" class="level3">
+<h3 class="anchored" data-anchor-id="model">Model</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>main.effects.model <span class="ot">&lt;-</span> initial.model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After assessing the linearity of our continuous variables, the best performing model continues to be ‘initial.model’, renamed as ‘main.effects.model’</p>
+</section>
+</section>
+<section id="step-6-interactions" class="level2">
+<h2 class="anchored" data-anchor-id="step-6-interactions">Step 6 Interactions</h2>
+<p><font color="purple"><br>
+<strong>Note</strong>: I have no idea how to fix this issue below. I have include and echo = FALSE but given the structure of the code (hint: it’s <code>lapply</code> and <code>function</code> but pulling stuff from the environment so it is kind of creating it’s own separate code chunk with its own set of laws I suppose).<br>
+</font></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[[1]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                              Estimate Std. Error z value
+(Intercept)                                    1.56042    0.62781   2.485
+Sleep011                                      -0.10963    0.48197  -0.227
+Sleep012                                      -0.02100    1.00728  -0.021
+Race(1) Black/African American                 0.60335    0.37758   1.598
+Race(2) Chinese/Chinese American              -0.20639    0.53947  -0.383
+Race(3) Japanese/Japanese American             0.96150    0.42391   2.268
+BPMed011                                      -6.78456    0.31822 -21.320
+BMI                                            0.06239    0.02013   3.100
+Income011                                     -0.13915    0.50819  -0.274
+Income012                                     -0.12330    0.33666  -0.366
+Income013                                      0.51445    0.32541   1.581
+Marital011                                    -0.96083    0.46253  -2.077
+Marital012                                    -0.29235    0.74636  -0.392
+Marital013                                    -0.66475    0.61208  -1.086
+Marital014                                    -0.18417    0.37680  -0.489
+Sleep011:Race(1) Black/African American        1.37644    0.74615   1.845
+Sleep012:Race(1) Black/African American        1.82494    1.21404   1.503
+Sleep011:Race(2) Chinese/Chinese American      1.25486    1.16657   1.076
+Sleep012:Race(2) Chinese/Chinese American    -11.85917  591.31736  -0.020
+Sleep011:Race(3) Japanese/Japanese American    0.48137    1.06091   0.454
+Sleep012:Race(3) Japanese/Japanese American   12.44606 1455.39799   0.009
+                                            Pr(&gt;|z|)    
+(Intercept)                                  0.01294 *  
+Sleep011                                     0.82007    
+Sleep012                                     0.98337    
+Race(1) Black/African American               0.11006    
+Race(2) Chinese/Chinese American             0.70204    
+Race(3) Japanese/Japanese American           0.02332 *  
+BPMed011                                     &lt; 2e-16 ***
+BMI                                          0.00194 ** 
+Income011                                    0.78422    
+Income012                                    0.71418    
+Income013                                    0.11390    
+Marital011                                   0.03777 *  
+Marital012                                   0.69528    
+Marital013                                   0.27746    
+Marital014                                   0.62501    
+Sleep011:Race(1) Black/African American      0.06508 .  
+Sleep012:Race(1) Black/African American      0.13279    
+Sleep011:Race(2) Chinese/Chinese American    0.28207    
+Sleep012:Race(2) Chinese/Chinese American    0.98400    
+Sleep011:Race(3) Japanese/Japanese American  0.65002    
+Sleep012:Race(3) Japanese/Japanese American  0.99318    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.5  on 1820  degrees of freedom
+Residual deviance:  525.8  on 1800  degrees of freedom
+AIC: 567.8
+
+Number of Fisher Scoring iterations: 14
+
+
+[[2]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                    Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         1.283439   0.619927   2.070  0.03842 *  
+Sleep011                            0.786703   0.765332   1.028  0.30399    
+Sleep012                           -0.037535   1.085317  -0.035  0.97241    
+Race(1) Black/African American      1.011852   0.320778   3.154  0.00161 ** 
+Race(2) Chinese/Chinese American    0.007866   0.473709   0.017  0.98675    
+Race(3) Japanese/Japanese American  1.107460   0.394037   2.811  0.00495 ** 
+BPMed011                           -6.692071   0.344239 -19.440  &lt; 2e-16 ***
+BMI                                 0.064413   0.019874   3.241  0.00119 ** 
+Income011                          -0.072334   0.514299  -0.141  0.88815    
+Income012                          -0.099978   0.332353  -0.301  0.76355    
+Income013                           0.465729   0.323356   1.440  0.14978    
+Marital011                         -0.956631   0.468640  -2.041  0.04122 *  
+Marital012                         -0.252366   0.757010  -0.333  0.73885    
+Marital013                         -0.693576   0.610387  -1.136  0.25584    
+Marital014                         -0.179125   0.373172  -0.480  0.63122    
+Sleep011:BPMed011                  -0.395966   0.855614  -0.463  0.64352    
+Sleep012:BPMed011                   1.180241   1.213732   0.972  0.33085    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  531.03  on 1804  degrees of freedom
+AIC: 565.03
+
+Number of Fisher Scoring iterations: 6
+
+
+[[3]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                     Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         1.4309101  0.7418752   1.929  0.05376 .  
+Sleep011                            0.0344342  1.1824329   0.029  0.97677    
+Sleep012                            0.9843446  2.0459917   0.481  0.63044    
+Race(1) Black/African American      1.0313280  0.3205687   3.217  0.00129 ** 
+Race(2) Chinese/Chinese American    0.0114880  0.4730464   0.024  0.98063    
+Race(3) Japanese/Japanese American  1.1035742  0.3936501   2.803  0.00506 ** 
+BPMed011                           -6.7155294  0.3129457 -21.459  &lt; 2e-16 ***
+BMI                                 0.0595600  0.0249609   2.386  0.01703 *  
+Income011                          -0.1029611  0.5192188  -0.198  0.84281    
+Income012                          -0.1147497  0.3327172  -0.345  0.73018    
+Income013                           0.4743448  0.3223023   1.472  0.14109    
+Marital011                         -0.9910955  0.4704926  -2.107  0.03516 *  
+Marital012                         -0.2706109  0.7497872  -0.361  0.71816    
+Marital013                         -0.6618042  0.6123452  -1.081  0.27980    
+Marital014                         -0.1819259  0.3727933  -0.488  0.62554    
+Sleep011:BMI                        0.0154446  0.0400876   0.385  0.70004    
+Sleep012:BMI                        0.0003948  0.0660636   0.006  0.99523    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  531.97  on 1804  degrees of freedom
+AIC: 565.97
+
+Number of Fisher Scoring iterations: 6
+
+
+[[4]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                   Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         1.14122    0.62595   1.823  0.06828 .  
+Sleep011                            0.87988    0.49410   1.781  0.07495 .  
+Sleep012                            1.54734    0.82887   1.867  0.06193 .  
+Race(1) Black/African American      1.02999    0.32125   3.206  0.00135 ** 
+Race(2) Chinese/Chinese American    0.01377    0.47207   0.029  0.97672    
+Race(3) Japanese/Japanese American  1.13423    0.39309   2.885  0.00391 ** 
+BPMed011                           -6.72042    0.31329 -21.451  &lt; 2e-16 ***
+BMI                                 0.06571    0.02018   3.256  0.00113 ** 
+Income011                           0.14579    0.63536   0.229  0.81852    
+Income012                           0.17013    0.37766   0.450  0.65235    
+Income013                           0.56681    0.37665   1.505  0.13236    
+Marital011                         -0.98891    0.47239  -2.093  0.03631 *  
+Marital012                         -0.27791    0.74356  -0.374  0.70858    
+Marital013                         -0.64259    0.62098  -1.035  0.30076    
+Marital014                         -0.13161    0.37549  -0.350  0.72597    
+Sleep011:Income011                 -0.42898    1.10299  -0.389  0.69733    
+Sleep012:Income011                 -1.66471    1.67488  -0.994  0.32026    
+Sleep011:Income012                 -1.07495    0.84152  -1.277  0.20147    
+Sleep012:Income012                 -1.71441    1.69364  -1.012  0.31141    
+Sleep011:Income013                 -0.44914    0.82911  -0.542  0.58801    
+Sleep012:Income013                 -0.22559    1.18940  -0.190  0.84957    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  528.84  on 1800  degrees of freedom
+AIC: 570.84
+
+Number of Fisher Scoring iterations: 6
+
+
+[[5]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients: (1 not defined because of singularities)
+                                    Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                          1.35617    0.62068   2.185  0.02889 *  
+Sleep011                             0.40093    0.41468   0.967  0.33363    
+Sleep012                             1.36569    0.60866   2.244  0.02485 *  
+Race(1) Black/African American       1.03074    0.32136   3.207  0.00134 ** 
+Race(2) Chinese/Chinese American     0.01987    0.47081   0.042  0.96634    
+Race(3) Japanese/Japanese American   1.10420    0.39440   2.800  0.00511 ** 
+BPMed011                            -6.72736    0.31459 -21.384  &lt; 2e-16 ***
+BMI                                  0.06168    0.02010   3.069  0.00215 ** 
+Income011                           -0.01202    0.53155  -0.023  0.98195    
+Income012                           -0.06614    0.33268  -0.199  0.84242    
+Income013                            0.47009    0.32250   1.458  0.14494    
+Marital011                          -1.17576    0.54071  -2.174  0.02967 *  
+Marital012                          -0.66047    0.93076  -0.710  0.47795    
+Marital013                          -0.52086    0.69144  -0.753  0.45127    
+Marital014                           0.01153    0.42207   0.027  0.97821    
+Sleep011:Marital011                  0.89502    1.04748   0.854  0.39286    
+Sleep012:Marital011                 -0.35902    1.68035  -0.214  0.83081    
+Sleep011:Marital012                  1.13744    1.45092   0.784  0.43307    
+Sleep012:Marital012                       NA         NA      NA       NA    
+Sleep011:Marital013                 -0.26598    1.71142  -0.155  0.87649    
+Sleep012:Marital013                -13.54186  709.56262  -0.019  0.98477    
+Sleep011:Marital014                 -0.43770    0.91037  -0.481  0.63067    
+Sleep012:Marital014                 -2.22310    1.96595  -1.131  0.25814    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  528.29  on 1799  degrees of freedom
+AIC: 572.29
+
+Number of Fisher Scoring iterations: 14
+
+
+[[6]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                             Estimate Std. Error z value
+(Intercept)                                   1.25868    0.62657   2.009
+Sleep011                                      0.45799    0.32679   1.402
+Sleep012                                      0.95832    0.53998   1.775
+Race(1) Black/African American                0.85423    0.53112   1.608
+Race(2) Chinese/Chinese American              1.04538    1.06584   0.981
+Race(3) Japanese/Japanese American           14.75406  616.10033   0.024
+BPMed011                                     -6.57544    0.39848 -16.501
+BMI                                           0.06246    0.01955   3.195
+Income011                                    -0.05439    0.50587  -0.108
+Income012                                    -0.11552    0.33194  -0.348
+Income013                                     0.48715    0.32410   1.503
+Marital011                                   -0.98460    0.46451  -2.120
+Marital012                                   -0.30817    0.74049  -0.416
+Marital013                                   -0.67766    0.60189  -1.126
+Marital014                                   -0.17412    0.36773  -0.474
+Race(1) Black/African American:BPMed011       0.22512    0.62517   0.360
+Race(2) Chinese/Chinese American:BPMed011    -1.63565    1.30190  -1.256
+Race(3) Japanese/Japanese American:BPMed011 -13.78653  616.10047  -0.022
+                                            Pr(&gt;|z|)    
+(Intercept)                                   0.0446 *  
+Sleep011                                      0.1611    
+Sleep012                                      0.0759 .  
+Race(1) Black/African American                0.1078    
+Race(2) Chinese/Chinese American              0.3267    
+Race(3) Japanese/Japanese American            0.9809    
+BPMed011                                      &lt;2e-16 ***
+BMI                                           0.0014 ** 
+Income011                                     0.9144    
+Income012                                     0.7278    
+Income013                                     0.1328    
+Marital011                                    0.0340 *  
+Marital012                                    0.6773    
+Marital013                                    0.2602    
+Marital014                                    0.6359    
+Race(1) Black/African American:BPMed011       0.7188    
+Race(2) Chinese/Chinese American:BPMed011     0.2090    
+Race(3) Japanese/Japanese American:BPMed011   0.9821    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  528.04  on 1803  degrees of freedom
+AIC: 564.04
+
+Number of Fisher Scoring iterations: 16
+
+
+[[7]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                       Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                             1.37585    0.85012   1.618  0.10557    
+Sleep011                                0.44089    0.33045   1.334  0.18214    
+Sleep012                                1.02068    0.54156   1.885  0.05947 .  
+Race(1) Black/African American          1.66642    1.27444   1.308  0.19102    
+Race(2) Chinese/Chinese American       -6.26118    2.40784  -2.600  0.00931 ** 
+Race(3) Japanese/Japanese American      1.79959    2.38999   0.753  0.45147    
+BPMed011                               -6.77650    0.32005 -21.173  &lt; 2e-16 ***
+BMI                                     0.06259    0.02918   2.145  0.03195 *  
+Income011                              -0.04964    0.52346  -0.095  0.92445    
+Income012                              -0.09452    0.33537  -0.282  0.77807    
+Income013                               0.49735    0.32564   1.527  0.12669    
+Marital011                             -0.96841    0.47975  -2.019  0.04353 *  
+Marital012                             -0.22154    0.73639  -0.301  0.76353    
+Marital013                             -0.68280    0.62815  -1.087  0.27704    
+Marital014                             -0.16290    0.37653  -0.433  0.66528    
+Race(1) Black/African American:BMI     -0.02091    0.04231  -0.494  0.62111    
+Race(2) Chinese/Chinese American:BMI    0.26223    0.09681   2.709  0.00675 ** 
+Race(3) Japanese/Japanese American:BMI -0.02952    0.10127  -0.292  0.77065    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  522.74  on 1803  degrees of freedom
+AIC: 558.74
+
+Number of Fisher Scoring iterations: 6
+
+
+[[8]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                             Estimate Std. Error z value
+(Intercept)                                   1.30106    0.62418   2.084
+Sleep011                                      0.50344    0.32978   1.527
+Sleep012                                      0.98297    0.54702   1.797
+Race(1) Black/African American                1.16812    0.53399   2.188
+Race(2) Chinese/Chinese American              0.69325    0.64116   1.081
+Race(3) Japanese/Japanese American            0.45906    0.65119   0.705
+BPMed011                                     -6.77442    0.31947 -21.205
+BMI                                           0.06531    0.01992   3.278
+Income011                                    -0.62625    0.83636  -0.749
+Income012                                     0.07351    0.47983   0.153
+Income013                                     0.40344    0.48997   0.823
+Marital011                                   -0.95487    0.46734  -2.043
+Marital012                                   -0.32005    0.75877  -0.422
+Marital013                                   -0.70153    0.60049  -1.168
+Marital014                                   -0.13334    0.37929  -0.352
+Race(1) Black/African American:Income011      0.64942    1.06662   0.609
+Race(2) Chinese/Chinese American:Income011    0.43473    2.20175   0.197
+Race(3) Japanese/Japanese American:Income011 -0.11530    3.25302  -0.035
+Race(1) Black/African American:Income012     -0.70536    0.79130  -0.891
+Race(2) Chinese/Chinese American:Income012   -1.62690    1.18703  -1.371
+Race(3) Japanese/Japanese American:Income012  1.02195    0.94502   1.081
+Race(1) Black/African American:Income013     -0.01481    0.78351  -0.019
+Race(2) Chinese/Chinese American:Income013   -1.38165    1.17284  -1.178
+Race(3) Japanese/Japanese American:Income013  1.19847    0.92406   1.297
+                                             Pr(&gt;|z|)    
+(Intercept)                                   0.03712 *  
+Sleep011                                      0.12687    
+Sleep012                                      0.07234 .  
+Race(1) Black/African American                0.02870 *  
+Race(2) Chinese/Chinese American              0.27959    
+Race(3) Japanese/Japanese American            0.48084    
+BPMed011                                      &lt; 2e-16 ***
+BMI                                           0.00105 ** 
+Income011                                     0.45399    
+Income012                                     0.87824    
+Income013                                     0.41028    
+Marital011                                    0.04103 *  
+Marital012                                    0.67317    
+Marital013                                    0.24271    
+Marital014                                    0.72518    
+Race(1) Black/African American:Income011      0.54261    
+Race(2) Chinese/Chinese American:Income011    0.84348    
+Race(3) Japanese/Japanese American:Income011  0.97173    
+Race(1) Black/African American:Income012      0.37272    
+Race(2) Chinese/Chinese American:Income012    0.17051    
+Race(3) Japanese/Japanese American:Income012  0.27952    
+Race(1) Black/African American:Income013      0.98492    
+Race(2) Chinese/Chinese American:Income013    0.23878    
+Race(3) Japanese/Japanese American:Income013  0.19464    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  524.33  on 1797  degrees of freedom
+AIC: 572.33
+
+Number of Fisher Scoring iterations: 6
+
+
+[[9]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                              Estimate Std. Error z value
+(Intercept)                                    1.36437    0.61438   2.221
+Sleep011                                       0.44482    0.33024   1.347
+Sleep012                                       0.99189    0.54449   1.822
+Race(1) Black/African American                 0.94419    0.42391   2.227
+Race(2) Chinese/Chinese American               0.12708    0.53506   0.238
+Race(3) Japanese/Japanese American             0.98285    0.44387   2.214
+BPMed011                                      -6.76753    0.32034 -21.126
+BMI                                            0.06444    0.01981   3.253
+Income011                                     -0.13782    0.53275  -0.259
+Income012                                     -0.09609    0.33547  -0.286
+Income013                                      0.49708    0.32392   1.535
+Marital011                                    -0.97043    0.69881  -1.389
+Marital012                                    -0.82210    1.64310  -0.500
+Marital013                                    -1.29979    0.96144  -1.352
+Marital014                                    -0.21428    0.58087  -0.369
+Race(1) Black/African American:Marital011      0.22114    0.96109   0.230
+Race(2) Chinese/Chinese American:Marital011   -1.44056    1.45729  -0.989
+Race(3) Japanese/Japanese American:Marital011  0.07479    1.98187   0.038
+Race(1) Black/African American:Marital012      0.77441    1.89299   0.409
+Race(2) Chinese/Chinese American:Marital012    0.69836    3.31944   0.210
+Race(3) Japanese/Japanese American:Marital012  0.47673    3.83073   0.124
+Race(1) Black/African American:Marital013      0.43212    1.30390   0.331
+Race(2) Chinese/Chinese American:Marital013    1.29374    2.26170   0.572
+Race(3) Japanese/Japanese American:Marital013  2.16745    1.50353   1.442
+Race(1) Black/African American:Marital014      0.12267    0.82102   0.149
+Race(2) Chinese/Chinese American:Marital014   -0.44326    1.62551  -0.273
+Race(3) Japanese/Japanese American:Marital014  0.20135    1.20515   0.167
+                                              Pr(&gt;|z|)    
+(Intercept)                                    0.02637 *  
+Sleep011                                       0.17799    
+Sleep012                                       0.06850 .  
+Race(1) Black/African American                 0.02593 *  
+Race(2) Chinese/Chinese American               0.81226    
+Race(3) Japanese/Japanese American             0.02681 *  
+BPMed011                                       &lt; 2e-16 ***
+BMI                                            0.00114 ** 
+Income011                                      0.79586    
+Income012                                      0.77455    
+Income013                                      0.12489    
+Marital011                                     0.16493    
+Marital012                                     0.61684    
+Marital013                                     0.17640    
+Marital014                                     0.71220    
+Race(1) Black/African American:Marital011      0.81802    
+Race(2) Chinese/Chinese American:Marital011    0.32290    
+Race(3) Japanese/Japanese American:Marital011  0.96990    
+Race(1) Black/African American:Marital012      0.68247    
+Race(2) Chinese/Chinese American:Marital012    0.83337    
+Race(3) Japanese/Japanese American:Marital012  0.90096    
+Race(1) Black/African American:Marital013      0.74034    
+Race(2) Chinese/Chinese American:Marital013    0.56731    
+Race(3) Japanese/Japanese American:Marital013  0.14942    
+Race(1) Black/African American:Marital014      0.88123    
+Race(2) Chinese/Chinese American:Marital014    0.78509    
+Race(3) Japanese/Japanese American:Marital014  0.86731    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  528.74  on 1794  degrees of freedom
+AIC: 582.74
+
+Number of Fisher Scoring iterations: 6
+
+
+[[10]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                   Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         2.64505    1.05770   2.501  0.01239 *  
+Sleep011                            0.44389    0.32776   1.354  0.17563    
+Sleep012                            0.95084    0.54138   1.756  0.07903 .  
+Race(1) Black/African American      0.99884    0.31618   3.159  0.00158 ** 
+Race(2) Chinese/Chinese American   -0.01643    0.49578  -0.033  0.97357    
+Race(3) Japanese/Japanese American  1.15556    0.40064   2.884  0.00392 ** 
+BPMed011                           -8.46216    1.19238  -7.097 1.28e-12 ***
+BMI                                 0.01637    0.03503   0.467  0.64020    
+Income011                          -0.04911    0.50423  -0.097  0.92242    
+Income012                          -0.10908    0.33386  -0.327  0.74387    
+Income013                           0.48649    0.32368   1.503  0.13285    
+Marital011                         -0.95338    0.46085  -2.069  0.03857 *  
+Marital012                         -0.26923    0.75379  -0.357  0.72096    
+Marital013                         -0.68278    0.60243  -1.133  0.25705    
+Marital014                         -0.16046    0.37106  -0.432  0.66543    
+BPMed011:BMI                        0.06243    0.03976   1.570  0.11632    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  529.84  on 1805  degrees of freedom
+AIC: 561.84
+
+Number of Fisher Scoring iterations: 6
+
+
+[[11]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                   Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         1.38591    0.65908   2.103  0.03549 *  
+Sleep011                            0.43284    0.32840   1.318  0.18750    
+Sleep012                            0.91839    0.52841   1.738  0.08221 .  
+Race(1) Black/African American      1.03819    0.31911   3.253  0.00114 ** 
+Race(2) Chinese/Chinese American    0.03094    0.48296   0.064  0.94892    
+Race(3) Japanese/Japanese American  1.12533    0.39829   2.825  0.00472 ** 
+BPMed011                           -6.79080    0.46714 -14.537  &lt; 2e-16 ***
+BMI                                 0.06348    0.01958   3.242  0.00119 ** 
+Income011                          -0.90032    0.63782  -1.412  0.15808    
+Income012                          -0.02766    0.61065  -0.045  0.96387    
+Income013                           1.34348    1.07870   1.245  0.21296    
+Marital011                         -0.99234    0.46327  -2.142  0.03219 *  
+Marital012                         -0.35328    0.72832  -0.485  0.62763    
+Marital013                         -0.71560    0.59516  -1.202  0.22922    
+Marital014                         -0.20351    0.37315  -0.545  0.58549    
+BPMed011:Income011                  1.49964    0.79301   1.891  0.05862 .  
+BPMed011:Income012                 -0.12341    0.73188  -0.169  0.86610    
+BPMed011:Income013                 -0.95115    1.13915  -0.835  0.40373    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  526.64  on 1803  degrees of freedom
+AIC: 562.64
+
+Number of Fisher Scoring iterations: 7
+
+
+[[12]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                     Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                          1.190253   0.630297   1.888  0.05897 .  
+Sleep011                             0.476017   0.326834   1.456  0.14527    
+Sleep012                             0.983765   0.539665   1.823  0.06832 .  
+Race(1) Black/African American       1.031145   0.322105   3.201  0.00137 ** 
+Race(2) Chinese/Chinese American     0.009365   0.470194   0.020  0.98411    
+Race(3) Japanese/Japanese American   1.095500   0.392249   2.793  0.00522 ** 
+BPMed011                            -6.586487   0.382266 -17.230  &lt; 2e-16 ***
+BMI                                  0.064660   0.019886   3.252  0.00115 ** 
+Income011                           -0.065775   0.531515  -0.124  0.90151    
+Income012                           -0.110428   0.332671  -0.332  0.73993    
+Income013                            0.479812   0.321167   1.494  0.13518    
+Marital011                          -0.925456   0.633058  -1.462  0.14377    
+Marital012                          12.703182 496.312880   0.026  0.97958    
+Marital013                          -0.056510   1.075610  -0.053  0.95810    
+Marital014                          -0.182469   0.685690  -0.266  0.79015    
+BPMed011:Marital011                 -0.064857   0.881572  -0.074  0.94135    
+BPMed011:Marital012                -13.480348 496.313962  -0.027  0.97833    
+BPMed011:Marital013                 -1.180383   1.489617  -0.792  0.42812    
+BPMed011:Marital014                  0.006055   0.788735   0.008  0.99387    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  529.94  on 1802  degrees of freedom
+AIC: 567.94
+
+Number of Fisher Scoring iterations: 15
+
+
+[[13]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                    Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         0.315583   0.887546   0.356  0.72216    
+Sleep011                            0.502386   0.331118   1.517  0.12921    
+Sleep012                            0.972887   0.549682   1.770  0.07674 .  
+Race(1) Black/African American      1.024278   0.323054   3.171  0.00152 ** 
+Race(2) Chinese/Chinese American    0.002979   0.464039   0.006  0.99488    
+Race(3) Japanese/Japanese American  1.125004   0.396413   2.838  0.00454 ** 
+BPMed011                           -6.762386   0.317151 -21.322  &lt; 2e-16 ***
+BMI                                 0.102477   0.031199   3.285  0.00102 ** 
+Income011                           0.498585   1.818145   0.274  0.78391    
+Income012                           0.983624   1.333666   0.738  0.46080    
+Income013                           3.196710   1.376198   2.323  0.02019 *  
+Marital011                         -0.988340   0.472232  -2.093  0.03636 *  
+Marital012                         -0.270663   0.748400  -0.362  0.71761    
+Marital013                         -0.650182   0.611307  -1.064  0.28751    
+Marital014                         -0.203199   0.374672  -0.542  0.58758    
+BMI:Income011                      -0.024693   0.057232  -0.431  0.66613    
+BMI:Income012                      -0.041067   0.047155  -0.871  0.38381    
+BMI:Income013                      -0.100878   0.049944  -2.020  0.04340 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  527.84  on 1803  degrees of freedom
+AIC: 563.84
+
+Number of Fisher Scoring iterations: 6
+
+
+[[14]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                   Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         1.58211    0.78338   2.020  0.04342 *  
+Sleep011                            0.45483    0.32711   1.390  0.16439    
+Sleep012                            1.03466    0.54228   1.908  0.05639 .  
+Race(1) Black/African American      1.01710    0.32155   3.163  0.00156 ** 
+Race(2) Chinese/Chinese American   -0.01606    0.47346  -0.034  0.97294    
+Race(3) Japanese/Japanese American  1.07766    0.39358   2.738  0.00618 ** 
+BPMed011                           -6.72695    0.31484 -21.366  &lt; 2e-16 ***
+BMI                                 0.05421    0.02678   2.024  0.04294 *  
+Income011                          -0.11705    0.52422  -0.223  0.82332    
+Income012                          -0.09297    0.33308  -0.279  0.78015    
+Income013                           0.48777    0.32365   1.507  0.13179    
+Marital011                         -2.25854    1.50172  -1.504  0.13259    
+Marital012                          0.56140    3.15687   0.178  0.85885    
+Marital013                          0.46822    2.72212   0.172  0.86343    
+Marital014                         -0.71324    1.43534  -0.497  0.61925    
+BMI:Marital011                      0.04221    0.04745   0.890  0.37370    
+BMI:Marital012                     -0.02920    0.11336  -0.258  0.79670    
+BMI:Marital013                     -0.03867    0.09290  -0.416  0.67718    
+BMI:Marital014                      0.01944    0.04941   0.393  0.69405    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  530.85  on 1802  degrees of freedom
+AIC: 568.85
+
+Number of Fisher Scoring iterations: 6
+
+
+[[15]]
+
+Call:
+glm(formula = reformulate(c(vars, cb), "HBP01", env = .env), 
+    family = binomial, data = df_swan)
+
+Coefficients:
+                                    Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)                         1.469764   0.631645   2.327  0.01997 *  
+Sleep011                            0.451884   0.331023   1.365  0.17222    
+Sleep012                            1.025742   0.550423   1.864  0.06238 .  
+Race(1) Black/African American      1.010216   0.321705   3.140  0.00169 ** 
+Race(2) Chinese/Chinese American    0.003417   0.479237   0.007  0.99431    
+Race(3) Japanese/Japanese American  1.113929   0.394628   2.823  0.00476 ** 
+BPMed011                           -6.840611   0.330909 -20.672  &lt; 2e-16 ***
+BMI                                 0.061862   0.020035   3.088  0.00202 ** 
+Income011                           0.644566   0.952429   0.677  0.49856    
+Income012                          -0.207287   0.421030  -0.492  0.62248    
+Income013                           0.483421   0.378291   1.278  0.20128    
+Marital011                         -0.835400   0.981333  -0.851  0.39461    
+Marital012                         -0.770281   1.387083  -0.555  0.57867    
+Marital013                         -1.391565   0.958184  -1.452  0.14642    
+Marital014                          0.044020   0.632396   0.070  0.94451    
+Income011:Marital011               -0.247593   1.534024  -0.161  0.87178    
+Income012:Marital011               -0.449977   1.231241  -0.365  0.71476    
+Income013:Marital011               -0.708678   1.404843  -0.504  0.61394    
+Income011:Marital012               -0.921711   2.285121  -0.403  0.68669    
+Income012:Marital012                0.776991   2.225427   0.349  0.72698    
+Income013:Marital012                1.339378   1.776618   0.754  0.45091    
+Income011:Marital013               -0.106891   1.796217  -0.060  0.95255    
+Income012:Marital013                0.668799   1.541345   0.434  0.66436    
+Income013:Marital013                1.856966   1.435691   1.293  0.19586    
+Income011:Marital014               -1.929189   1.371690  -1.406  0.15960    
+Income012:Marital014                0.339140   0.891680   0.380  0.70369    
+Income013:Marital014               -0.552293   1.013895  -0.545  0.58594    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2334.47  on 1820  degrees of freedom
+Residual deviance:  525.28  on 1794  degrees of freedom
+AIC: 579.28
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+</div>
+<p>There are no significant interactions present between the levels of Sleep01 and other variables included in our main effects model at the alpha = 0.05 level.</p>
+</section>
+<section id="preliminary-final-model" class="level2">
+<h2 class="anchored" data-anchor-id="preliminary-final-model">Preliminary Final Model</h2>
+<section id="model-1" class="level3">
+<h3 class="anchored" data-anchor-id="model-1">Model</h3>
+<p>After assessing the linearity of our continuous variables, the best performing model continues to be ‘main.effects.model’</p>
+</section>
+</section>
+<section id="step-7-addressing-issues-and-assessing-model-fit" class="level2">
+<h2 class="anchored" data-anchor-id="step-7-addressing-issues-and-assessing-model-fit">Step 7 Addressing Issues and Assessing Model Fit</h2>
+<section id="vif" class="level3">
+<h3 class="anchored" data-anchor-id="vif">VIF</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">vif</span>(main.effects.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              GVIF Df GVIF^(1/(2*Df))
+Sleep01   1.099543  2        1.024007
+Race      1.432084  3        1.061683
+Marital01 1.374184  4        1.040532
+BMI       1.238386  1        1.112828
+BPMed01   1.208420  1        1.099282
+Income01  1.269470  3        1.040568</code></pre>
+</div>
+</div>
+<p>There does not appear to be an issue with colinearity.</p>
+</section>
+<section id="pearson-goodness-of-fit" class="level3">
+<h3 class="anchored" data-anchor-id="pearson-goodness-of-fit">Pearson Goodness of Fit</h3>
+<p>We do not use Pearson Goodness of fit due to the continuous BMI Variable.</p>
+</section>
+<section id="hosmer-lemeshow-goodness-of-fit" class="level3">
+<h3 class="anchored" data-anchor-id="hosmer-lemeshow-goodness-of-fit">Hosmer Lemeshow Goodness of Fit</h3>
+<p>Covariate pattern is greater than six due to the existence of a continuous variable in the model.</p>
+<p><span class="math inline">\(H_0:\)</span> the model fits the data well<br>
+<span class="math inline">\(H_A:\)</span> the model does not fit the data well</p>
+<p>Conclusion: Fail to reject null hypothesis. Thus, the selected model for SWAN dataset fits the data relatively well.</p>
+</section>
+<section id="roc-curve-and-auc" class="level3">
+<h3 class="anchored" data-anchor-id="roc-curve-and-auc">ROC Curve and AUC</h3>
+<p>To quantify how well our model predicts a binary outcome.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Our ROC is quite good, 0.973 is excellent, perhaps excessively so for a class project model using real-world data.</p>
+</section>
+<section id="aic-and-bic" class="level3">
+<h3 class="anchored" data-anchor-id="aic-and-bic">AIC and BIC</h3>
+<p>The AIC and BIC are equivalent between the two models, 557.47/601.52, meaning they are comparable.</p>
+</section>
+<section id="visual-logistic-diagnostics" class="level3">
+<h3 class="anchored" data-anchor-id="visual-logistic-diagnostics">Visual Logistic Diagnostics</h3>
+<section id="charts" class="level4">
+<h4 class="anchored" data-anchor-id="charts">Charts</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Logistic_Dx_Functions.R"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Plot the change in standardized deviance residuals against the estimated/predicted probabilities.</p>
+<p>Plot the change in coefficient estimates against the estimated/predicted probabilities.</p>
+</section>
+<section id="diagnostic-points" class="level4">
+<h4 class="anchored" data-anchor-id="diagnostic-points">Diagnostic points</h4>
+<p>The AIC and BIC are very small when influential points are excluded, so it is likely the model is over fit when the influential points are removed.</p>
+<p>The ROC and AUC are comparable to that of the preliminary final model.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="results" class="level1">
+<h1>Results</h1>
+<section id="estimated-logistic-regression-equation" class="level2">
+<h2 class="anchored" data-anchor-id="estimated-logistic-regression-equation">Estimated Logistic Regression Equation</h2>
+<p>With covariates included <span class="math display">\[logit((\hat{\pi}(HBP01| \text{Sleep01}, \text{Race}, \text{Marital01} + \text{BPMed01} + BMI + \text{Income01})) = \\ 1.29180 + 0.47144 \cdot \text{Fairly Bad Sleep} + 0.97776 \cdot \text{Very Bad Sleep} + 1.02938 \cdot \text{Black/African-American} \\ + 0.02416 \cdot \text{Chinese/Chinese-American} + 1.10728 \cdot \text{Japanese/Japanese-American} - 0.98783 \cdot \text{Single/never married} \\ - 0.26615 \cdot \text{Separated} - 0.6754 \cdot \text{Widowed} - -0.18008 \cdot \text{Divorced} - 6.70745 \cdot \text{BPMed01} + 0.06436 \cdot \text{BMI} \\ +  - 0.08290 \cdot \text {Annual Income}&lt;19,999 - 0.10850 \cdot \text{Annual Income}20-49,999 + 0.47616 \cdot \text{Annual Income}50-99,999\]</span></p>
+</section>
+<section id="odds-ratio-tables" class="level2">
+<h2 class="anchored" data-anchor-id="odds-ratio-tables">Odds Ratio Tables</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>table2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<table class="table table-hover" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:left;"> Crude OR </th>
+   <th style="text-align:left;"> Adjusted OR </th>
+   <th style="text-align:left;"> P-value (Wald's Test) </th>
+   <th style="text-align:left;"> P-value (LR Test </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Sleep01..ref..0 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> 0.109 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X...1 </td>
+   <td style="text-align:left;"> 1.47 (1.15,1.88) </td>
+   <td style="text-align:left;"> 1.6 (0.85,3.04) </td>
+   <td style="text-align:left;"> 0.149 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X...2 </td>
+   <td style="text-align:left;"> 1.85 (1.14,3.01) </td>
+   <td style="text-align:left;"> 2.66 (0.92,7.65) </td>
+   <td style="text-align:left;"> 0.07 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Race..ref...0..Caucasian.White.Non.Hispanic </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> 0.001 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X....1..Black.African.American </td>
+   <td style="text-align:left;"> 4.24 (3.36,5.36) </td>
+   <td style="text-align:left;"> 2.8 (1.49,5.25) </td>
+   <td style="text-align:left;"> 0.001 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X....2..Chinese.Chinese.American </td>
+   <td style="text-align:left;"> 0.84 (0.58,1.22) </td>
+   <td style="text-align:left;"> 1.02 (0.41,2.58) </td>
+   <td style="text-align:left;"> 0.959 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X....3..Japanese.Japanese.American </td>
+   <td style="text-align:left;"> 0.91 (0.64,1.3) </td>
+   <td style="text-align:left;"> 3.03 (1.4,6.53) </td>
+   <td style="text-align:left;"> 0.005 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X.1 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Marital01..ref..0 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> 0.265 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X...1.1 </td>
+   <td style="text-align:left;"> 1.54 (1.13,2.09) </td>
+   <td style="text-align:left;"> 0.37 (0.15,0.94) </td>
+   <td style="text-align:left;"> 0.035 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X...2.1 </td>
+   <td style="text-align:left;"> 1.59 (0.92,2.73) </td>
+   <td style="text-align:left;"> 0.77 (0.18,3.33) </td>
+   <td style="text-align:left;"> 0.722 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X...3 </td>
+   <td style="text-align:left;"> 1.94 (1.25,3.03) </td>
+   <td style="text-align:left;"> 0.51 (0.15,1.68) </td>
+   <td style="text-align:left;"> 0.267 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X...4 </td>
+   <td style="text-align:left;"> 1.69 (1.3,2.19) </td>
+   <td style="text-align:left;"> 0.84 (0.4,1.73) </td>
+   <td style="text-align:left;"> 0.628 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X.2 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BMI..cont..var.. </td>
+   <td style="text-align:left;"> 1.13 (1.11,1.15) </td>
+   <td style="text-align:left;"> 1.07 (1.03,1.11) </td>
+   <td style="text-align:left;"> 0.001 </td>
+   <td style="text-align:left;"> 0.002 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X.3 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> BPMed01..1.vs.0 </td>
+   <td style="text-align:left;"> 0 (0,0) </td>
+   <td style="text-align:left;"> 0 (0,0) </td>
+   <td style="text-align:left;"> &lt; 0.001 </td>
+   <td style="text-align:left;"> &lt; 0.001 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X.4 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Income01..ref..0 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> 0.362 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X...1.2 </td>
+   <td style="text-align:left;"> 2.84 (2,4.02) </td>
+   <td style="text-align:left;"> 0.92 (0.33,2.54) </td>
+   <td style="text-align:left;"> 0.873 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X...2.2 </td>
+   <td style="text-align:left;"> 1.29 (1.01,1.64) </td>
+   <td style="text-align:left;"> 0.9 (0.47,1.72) </td>
+   <td style="text-align:left;"> 0.743 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X...3.1 </td>
+   <td style="text-align:left;"> 1.4 (1.08,1.8) </td>
+   <td style="text-align:left;"> 1.61 (0.86,3.03) </td>
+   <td style="text-align:left;"> 0.139 </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> X.5 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;">  </td>
+  </tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
