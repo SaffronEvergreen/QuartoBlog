@@ -2,7 +2,7 @@
 title: "Logistic Regression Project Winter 2022"
 author: "Saffron"
 date: "2023-07-16"
-categories: [news]
+categories: [analysis][code]
 image: ""
 ---
 

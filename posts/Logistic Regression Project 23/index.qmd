@@ -2,7 +2,7 @@
 title: "Logistic Regression Project 23"
 author: "Saffron"
 date: "2023-07-17"
-categories: [news]
+categories: [analysis][code]
 ---    
 
 
