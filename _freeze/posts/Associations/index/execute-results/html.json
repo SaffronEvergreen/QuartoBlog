@@ -1,0 +1,14 @@
+{
+  "hash": "1de3c1aad9b250ab31c2b6721c7741c7",
+  "result": {
+    "markdown": "---\ntitle: \"Associations\"\nauthor: \"Saffron\"\ndate: \"2023-07-26\"\ncategories: [Analysis]\n---\n\n\nI mess around with correlations and associations here (eventually).\n\nI like to seek out random associations, correlations, assumed causations just for fun (e.g., is daily juice drinking associated with athlete's foot outbreaks?). So this is just one of those that I am messing around with.\n\nThe data I'm using is from the SWAN study; I'm using the baseline dataset and visit 10 dataset.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(pacman)\np_load(tidyr, magrittr, knitr, tidyverse, janitor, broom, infer, glue, ggplot2, ggfortify, forcats, epiR, epiDisplay, epitools, dplyr, DescTools, describedata, datawizard, corrplot, caret, car, nlme)\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\n# visit 1  \nload(\"C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Associations/ICPSR_29221-V3/ICPSR_29221/DS0001/29221-0001-Data.rda\")\nfirstvisit <- da29221.0001\n\n# visit 10\nload(\"C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Associations/ICPSR_32961-V2 (2)/ICPSR_32961/DS0001/32961-0001-Data.rda\")\ntenthvisit <- da32961.0001\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nnames(firstvisit) %>% head(n = 5)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] \"SWANID\"   \"VISIT\"    \"INTDAY1\"  \"AGE1\"     \"LANGINT1\"\n```\n:::\n\n```{.r .cell-code}\nnames(tenthvisit) %>% head(n = 5)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] \"SWANID\"    \"VISIT\"     \"AGE10\"     \"INTDAY10\"  \"LANGINT10\"\n```\n:::\n:::\n\n\nBased off of what I read (here)\\[https://www.icpsr.umich.edu/web/ICPSR/studies/32961\\] under \"Scope of Project\", the SWANID's are linked across studies, so I will assume at this point in time that the SWANID's from Visit 1 and Visit 10 are dependent.\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

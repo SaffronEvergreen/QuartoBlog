@@ -3,7 +3,7 @@ title: "First Post"
 author: "Saffron"
 date: "2023-07-13"
 categories: [news]
-image: "image.jpg"
+image: "beach1.jpg"
 ---
 
 This is my first attempt at posting a blog using Quarto!
@@ -19,8 +19,11 @@ A new tool that I've been lightly tinkering with is typst.app which is what I've
 ```{r}
 # This is for me to edit my resume 
 # https://typst.app/project/wfidmzdG33SwaQ2Adu5pNG  
+
 # This is for me to edit my cover letter 
 # https://typst.app/project/w14mwPCsdNobGkuX_i_knB 
 ```
 
-
+```{r}
+1 + 1
+```

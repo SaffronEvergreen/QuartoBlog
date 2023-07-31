@@ -2,9 +2,11 @@
 title: "Logistic Regression Project Winter 2022"
 author: "Saffron"
 date: "2023-07-16"
-categories: [analysis][code]
+categories: [analysis, code]
 image: ""
 ---
+
+A fun little group project assessing CRP values and stress.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.height=5, fig.width=7, message = F, warning = F)

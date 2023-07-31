@@ -2,11 +2,13 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/ClinVar/index.html",
+      "/posts/Associations/index.html",
       "/posts/Logistic Regression Project 23/index.html",
       "/posts/Logistic Regression Project 22/index.html",
+      "/posts/Sampling Analysis 23/index.html",
       "/posts/First Blog Post/index.html",
-      "/posts/post-with-code/index.html",
-      "/posts/welcome/index.html"
+      "/posts/post-with-code/index.html"
     ]
   }
 ]

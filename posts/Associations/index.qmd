@@ -1,0 +1,34 @@
+---
+title: "Associations"
+author: "Saffron"
+date: "2023-07-26"
+categories: [Analysis]
+---
+
+I mess around with correlations and associations here (eventually).
+
+I like to seek out random associations, correlations, assumed causations just for fun (e.g., is daily juice drinking associated with athlete's foot outbreaks?). So this is just one of those that I am messing around with.
+
+The data I'm using is from the SWAN study; I'm using the baseline dataset and visit 10 dataset.
+
+```{r packages}
+library(pacman)
+p_load(tidyr, magrittr, knitr, tidyverse, janitor, broom, infer, glue, ggplot2, ggfortify, forcats, epiR, epiDisplay, epitools, dplyr, DescTools, describedata, datawizard, corrplot, caret, car, nlme)
+```
+
+```{r load data}
+# visit 1  
+load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Associations/ICPSR_29221-V3/ICPSR_29221/DS0001/29221-0001-Data.rda")
+firstvisit <- da29221.0001
+
+# visit 10
+load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Associations/ICPSR_32961-V2 (2)/ICPSR_32961/DS0001/32961-0001-Data.rda")
+tenthvisit <- da32961.0001
+```
+
+```{r variable names}
+names(firstvisit) %>% head(n = 5)
+names(tenthvisit) %>% head(n = 5)
+```
+
+Based off of what I read (here)\[https://www.icpsr.umich.edu/web/ICPSR/studies/32961\] under "Scope of Project", the SWANID's are linked across studies, so I will assume at this point in time that the SWANID's from Visit 1 and Visit 10 are dependent.

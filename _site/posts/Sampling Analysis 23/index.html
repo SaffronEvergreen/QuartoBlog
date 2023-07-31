@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Saffron">
+<meta name="dcterms.date" content="2023-07-16">
+
+<title>Saffron Evergreen - Survey and Sampling Analysis Project Spring 2023</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Saffron Evergreen</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Survey and Sampling Analysis Project Spring 2023</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">news</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Saffron </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 16, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>A lovely light-hearted survey and sampling analysis that felt like absolute hell but was an important learning curve.</p>
+<section id="disclosure" class="level1">
+<h1>Disclosure</h1>
+<p><strong>It is against the academic policy to share the projects and content from our courses. Therefore, I have redacted a lot, and have shown the highlights of what was done.</strong></p>
+<p>This project was done in the Spring 2023 term with immense help from one other peer. The goal of this project was to take a public health concern that can be generalized to the total U.S. population and create various sampling techniques to gather population proportion estimates during two separate time periods, then to assess if there is an association between one or more auxiliary variables and our response variable. We chose to run an analysis on accidental injuries and/or poisonings in the year 2009 and 2011, which is one year before and after the first wave of the Affordable Care Act was implemented. Our goal was to see if the population proportion of those who sought care for an accidental injury or poisoning were greater after the ACA implementation compared to prior.</p>
+<p>The data used is from the <a href="https://nhis.ipums.org/nhis/">IPUMS Health Survey database</a>.</p>
+<div class="cell">
+
+</div>
+</section>
+<section id="main-dataset" class="level1">
+<h1>Main Dataset</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Use of data from IPUMS NHIS is subject to conditions including that users
+should cite the data appropriately. Use command `ipums_conditions()` for more
+details.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 190321     32</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "YEAR"        "SERIAL"      "NUMPREC"     "QUARTER"     "STRATA"     
+ [6] "PSU"         "NHISHID"     "HHWEIGHT"    "FAMNUMTOT"   "REGION"     
+[11] "PERNUM"      "NHISPID"     "HHX"         "FMX"         "PX"         
+[16] "PERWEIGHT"   "SAMPWEIGHT"  "FWEIGHT"     "ASTATFLG"    "CSTATFLG"   
+[21] "AGE"         "SEX"         "RACENEW"     "EMPSTATWKYR" "POORYN"     
+[26] "INCFAM07ON"  "HINOTCOVE"   "INJURY3MO"   "INJURY3MONO" "LANY"       
+[31] "FLANY"       "HEARING"    </code></pre>
+</div>
+</div>
+<section id="re-coding-response-variable-injury" class="level2">
+<h2 class="anchored" data-anchor-id="re-coding-response-variable-injury">Re-Coding Response Variable: INJURY</h2>
+<div class="cell">
+
+</div>
+</section>
+<section id="proportions-of-injuries-for-2009-and-2011" class="level2">
+<h2 class="anchored" data-anchor-id="proportions-of-injuries-for-2009-and-2011">Proportions of Injuries for 2009 and 2011</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2099</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2607</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02373199</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02559018</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="determining-sufficient-sample-size" class="level1">
+<h1>Determining Sufficient Sample Size</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1000</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.024</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3459</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3064</code></pre>
+</div>
+</div>
+<section id="simple-random-sample" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample">Simple Random Sample</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>          mean     SE
+INJURY 0.02573 0.0026</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           2.5 %     97.5 %
+INJURY 0.0205571 0.03090286</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.025075 0.0025</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.026762 0.0029</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %    97.5 %
+INJURY 0.02113361 0.0323912</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.026055 0.0027</code></pre>
+</div>
+</div>
+<section id="chi-squared-test-for-association" class="level3">
+<h3 class="anchored" data-anchor-id="chi-squared-test-for-association">Chi-Squared Test for Association</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY      2009      2011
+     0 45694.162 46572.321
+     1  1206.760  1280.661</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY  2009  2011
+     0 45694 46572
+     1  1207  1281
+
+    Pearson's X^2: Rao &amp; Scott adjustment
+
+data:  svychisq(~INJURY + YEAR, design = srs.des.merge, statistic = "Chisq")
+X-squared = 0.067992, df = 1, p-value = 0.7873</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="post-stratify-quarter-on-srs" class="level2">
+<h2 class="anchored" data-anchor-id="post-stratify-quarter-on-srs">Post-Stratify <code>QUARTER</code> on SRS</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %     97.5 %
+INJURY 0.02049483 0.03082097</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.025007 0.0025</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>          mean     SE
+INJURY 0.02655 0.0029</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %     97.5 %
+INJURY 0.02096167 0.03213899</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.025854 0.0027</code></pre>
+</div>
+</div>
+<section id="chi-squared-test-for-association-1" class="level3">
+<h3 class="anchored" data-anchor-id="chi-squared-test-for-association-1">Chi-Squared Test for Association</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY      2009      2011
+     0 86176.661 99170.185
+     1  2269.339  2704.815</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY  2009  2011
+     0 86177 99170
+     1  2269  2705
+
+    Pearson's X^2: Rao &amp; Scott adjustment
+
+data:  svychisq(~INJURY + YEAR, design = post_strat.des.merge, statistic = "Chisq")
+X-squared = 0.050773, df = 1, p-value = 0.8146</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="post-stratify-region-on-srs" class="level2">
+<h2 class="anchored" data-anchor-id="post-stratify-region-on-srs">Post-Stratify <code>REGION</code> on SRS</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.025812 0.0027</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %     97.5 %
+INJURY 0.02061612 0.03100836</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.025153 0.0025</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.026787 0.0029</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %     97.5 %
+INJURY 0.02114993 0.03242353</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.026078 0.0027</code></pre>
+</div>
+</div>
+<section id="chi-squared-test-for-association-2" class="level3">
+<h3 class="anchored" data-anchor-id="chi-squared-test-for-association-2">Chi-Squared Test for Association</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY      2009      2011
+     0 86163.011 99146.102
+     1  2282.989  2728.898</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY  2009  2011
+     0 86163 99146
+     1  2283  2729
+
+    Pearson's X^2: Rao &amp; Scott adjustment
+
+data:  svychisq(~INJURY + YEAR, design = post_strat.des.merge, statistic = "Chisq")
+X-squared = 0.060097, df = 1, p-value = 0.7995</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="stratified-sampling-by-region" class="level2">
+<h2 class="anchored" data-anchor-id="stratified-sampling-by-region">Stratified Sampling by Region</h2>
+<section id="proportional-allocation" class="level3">
+<h3 class="anchored" data-anchor-id="proportional-allocation">Proportional Allocation</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    1     2     3     4 
+14458 18093 32308 23587 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1    2    3    4 
+ 565  708 1264  922 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3459</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.023418 0.0025</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %     97.5 %
+INJURY 0.01847843 0.02835826</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.022877 0.0024</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    1     2     3     4 
+15835 20988 36672 28380 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1    2    3    4 
+ 476  631 1103  854 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3064</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.026437 0.0029</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           2.5 %     97.5 %
+INJURY 0.0208506 0.03202405</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.025747 0.0027</code></pre>
+</div>
+</div>
+<section id="chi-squared-test-of-association" class="level4">
+<h4 class="anchored" data-anchor-id="chi-squared-test-of-association">Chi-Squared Test of Association</h4>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY      2009      2011
+     0 86374.741 99181.698
+     1  2071.259  2693.302</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY  2009  2011
+     0 86375 99182
+     1  2071  2693
+
+    Pearson's X^2: Rao &amp; Scott adjustment
+
+data:  svychisq(~INJURY + YEAR, design = prop.alloc.merge.des, statistic = "Chisq")
+X-squared = 0.60592, df = 1, p-value = 0.4175</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="optimal-allocation" class="level3">
+<h3 class="anchored" data-anchor-id="optimal-allocation">Optimal Allocation</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  REGION         x num_total    denom      pi_h
+1      1 0.1506692     14458 13451.54 0.1619425
+2      2 0.1621666     18093 13451.54 0.2181224
+3      3 0.1524347     32308 13451.54 0.3661187
+4      4 0.1447501     23587 13451.54 0.2538164</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1    2    3    4 
+ 561  755 1267  878 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    1     2     3     4 
+14458 18093 32308 23587 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.024233 0.0026</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %   97.5 %
+INJURY 0.01921315 0.029253</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.023653 0.0024</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  REGION         x num_total    denom      pi_h
+1      1 0.1559617     15835 16084.89 0.1535387
+2      2 0.1629639     20988 16084.89 0.2126396
+3      3 0.1568058     36672 16084.89 0.3575020
+4      4 0.1566093     28380 16084.89 0.2763197</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1    2    3    4 
+ 459  641 1072  894 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    1     2     3     4 
+15835 20988 36672 28380 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.025067 0.0028</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %     97.5 %
+INJURY 0.01961731 0.03051754</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.024447 0.0026</code></pre>
+</div>
+</div>
+<section id="chi-squared-test-of-association-1" class="level4">
+<h4 class="anchored" data-anchor-id="chi-squared-test-of-association-1">Chi-Squared Test of Association</h4>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY      2009      2011
+     0 86302.682 99321.256
+     1  2143.318  2553.744</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY  2009  2011
+     0 86303 99321
+     1  2143  2554
+
+    Pearson's X^2: Rao &amp; Scott adjustment
+
+data:  svychisq(~INJURY + YEAR, design = opt.alloc.merge.des, statistic = "Chisq")
+X-squared = 0.046957, df = 1, p-value = 0.822</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="stratified-sampling-by-quarter" class="level2">
+<h2 class="anchored" data-anchor-id="stratified-sampling-by-quarter">Stratified Sampling by Quarter</h2>
+<section id="proportional-allocation-1" class="level3">
+<h3 class="anchored" data-anchor-id="proportional-allocation-1">Proportional Allocation</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    1     2     3     4 
+ 9443 23093 22375 33535 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1    2    3    4 
+ 369  903  875 1312 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3459</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.024616 0.0026</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %     97.5 %
+INJURY 0.01954614 0.02968686</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.024017 0.0025</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    1     2     3     4 
+25032 26944 25325 24574 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  1   2   3   4 
+753 811 762 739 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3065</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.027158 0.0029</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %     97.5 %
+INJURY 0.02147682 0.03283926</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.026429 0.0027</code></pre>
+</div>
+</div>
+<section id="chi-squared-test-of-association-2" class="level4">
+<h4 class="anchored" data-anchor-id="chi-squared-test-of-association-2">Chi-Squared Test of Association</h4>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY      2009      2011
+     0 86354.346 99310.055
+     1  2179.391  2772.358</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY  2009  2011
+     0 86354 99310
+     1  2179  2772
+
+    Pearson's X^2: Rao &amp; Scott adjustment
+
+data:  svychisq(~INJURY + YEAR, design = prop.alloc.merge.des, statistic = "Chisq")
+X-squared = 0.41427, df = 1, p-value = 0.5037</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+<section id="one-stage-sample" class="level1">
+<h1>One-Stage Sample</h1>
+<p><span class="math display">\[w_{h} = \frac{N_h}{n_h} , \ \text{where} \ h \  \text{is strata level}\]</span></p>
+<p><span class="math display">\[w_{q} = \frac{N_q}{n_q} , \ \\ \text{where} \ q \  \text{is quarter level (1,2,3,4)}\]</span></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  1   2   3   4 
+231 295 517 341 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    1     2     3     4 
+14458 18093 32308 23587 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1    2    3    4 
+ 586  774 1332 1017 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            mean        SE   DEff
+INJURY 0.0259459 0.0026497 1.0752</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %    97.5 %
+INJURY 0.02075261 0.0311392</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            mean        SE   DEff
+INJURY 0.0259907 0.0027147 1.1267</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %    97.5 %
+INJURY 0.02066994 0.0313114</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.025322 0.0026</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 2
+# Groups:   Hi [15]
+      Hi     n
+   &lt;int&gt; &lt;int&gt;
+ 1     1  8900
+ 2     2 10695
+ 3     3  5422
+ 4     4  4943
+ 5     5  2350
+ 6     6   929
+ 7     7   375
+ 8     8   119
+ 9     9    65
+10    10    31
+11    11    12
+12    12    11
+13    13     2
+14    14     1
+15    18     1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt; table of extent 0 &gt;</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    1     2     3     4 
+15835 20988 36672 28380 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1    2    3    4 
+ 518  668 1101  910 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            mean        SE  DEff
+INJURY 0.0218777 0.0025377 0.993</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    1     2     3     4 
+25032 26944 25325 24574 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.021791 0.0026</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            2.5 %     97.5 %
+INJURY 0.01668022 0.02690275</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       variance     SE
+INJURY 0.021323 0.0025</code></pre>
+</div>
+</div>
+<section id="chi-squared-test-of-association-3" class="level3">
+<h3 class="anchored" data-anchor-id="chi-squared-test-of-association-3">Chi-Squared Test of Association</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY      2009      2011
+     0 86147.230 99654.992
+     1  2298.770  2220.008</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      YEAR
+INJURY  2009  2011
+     0 86147 99655
+     1  2299  2220
+
+    Pearson's X^2: Rao &amp; Scott adjustment
+
+data:  svychisq(~INJURY + YEAR, design = mult.post.des.merge, statistic = "Chisq")
+X-squared = 1.3069, df = 1, p-value = 0.2668</code></pre>
+</div>
+</div>
+</section>
+<section id="bootstrap-variance-estimates" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrap-variance-estimates">Bootstrap Variance Estimates</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.025995 0.0027</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.021789 0.0026</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02600201</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="768"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = bootstrap_results09, type = "basic")
+
+Intervals : 
+Level      Basic         
+95%   ( 0.0208,  0.0310 )  
+Calculations and Intervals on Original Scale</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY 0.025946 0.0027</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      mean         SE         lb         ub 
+0.02602866 0.00379972 0.02097091 0.03107365 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       mean          SE          lb          ub 
+0.021843967 0.003592572 0.017039251 0.026781728 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="768"></p>
+</div>
+</div>
+</section>
+<section id="intraclass-correlation-icc-within-households" class="level3">
+<h3 class="anchored" data-anchor-id="intraclass-correlation-icc-within-households">Intraclass Correlation (ICC) Within Households</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                     Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+as.factor(NHISHID) 1383  40.69 0.02942   1.295 2.67e-08 ***
+Residuals          2325  52.82 0.02272                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$ICC
+[1] 0.09920881
+
+$LowerCI
+[1] 0.0627486
+
+$UpperCI
+[1] 0.1365643
+
+$N
+[1] 1384
+
+$k
+[1] 2.679248
+
+$varw
+[1] 0.02271941
+
+$vara
+[1] 0.002502206</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  icc.samp.ICC icc.samp.LowerCI icc.samp.UpperCI
+1   0.09920881        0.0627486        0.1365643</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                     Df Sum Sq Mean Sq F value Pr(&gt;F)  
+as.factor(NHISHID) 1226  28.09 0.02292   1.118 0.0145 *
+Residuals          1970  40.37 0.02049                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  icc.samp.ICC icc.samp.LowerCI icc.samp.UpperCI
+1   0.04337345      0.004368684       0.08356196</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="ratio-estimation" class="level1">
+<h1>Ratio Estimation</h1>
+<section id="simple-random-sample---quarter" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---quarter">Simple Random Sample - Quarter</h2>
+<p><strong>Assessing proportion of injuries per year by quarter</strong></p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>   QUARTER
+1 2.904529</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+       as.numeric(QUARTER)
+INJURY          0.02540821
+
+$se
+       as.numeric(QUARTER)
+INJURY         0.002608762</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02540821 0.02029503 0.03052138</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  QUARTER
+1 2.48531</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+       as.numeric(QUARTER)
+INJURY          0.02640864
+
+$se
+       as.numeric(QUARTER)
+INJURY         0.002838812</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02640864 0.02084457 0.03197271</code></pre>
+</div>
+</div>
+</section>
+<section id="simple-random-sample---age" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---age">Simple Random Sample - Age</h2>
+<p><strong>Assessing proportion of injuries per year by age</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+              AGE
+INJURY 0.02571345
+
+$se
+               AGE
+INJURY 0.002650076</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02571345 0.02051930 0.03090760</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+              AGE
+INJURY 0.02663461
+
+$se
+               AGE
+INJURY 0.002869556</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02663461 0.02101028 0.03225894</code></pre>
+</div>
+</div>
+</section>
+<section id="simple-random-sample---sex" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---sex">Simple Random Sample - Sex</h2>
+<p><strong>Assessing proportion of injuries per year by sex</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+              SEX
+INJURY 0.02569184
+
+$se
+              SEX
+INJURY 0.00264173</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02569184 0.02051404 0.03086963</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+              SEX
+INJURY 0.02650775
+
+$se
+               SEX
+INJURY 0.002852794</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02650775 0.02091628 0.03209923</code></pre>
+</div>
+</div>
+</section>
+<section id="simple-random-sample---race" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---race">Simple Random Sample - Race</h2>
+<p><strong>Assessing proportion of injuries per year by race</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+          RACENEW
+INJURY 0.02582102
+
+$se
+           RACENEW
+INJURY 0.002667604</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02582102 0.02059251 0.03104952</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+          RACENEW
+INJURY 0.02666452
+
+$se
+          RACENEW
+INJURY 0.00287207</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02666452 0.02103526 0.03229378</code></pre>
+</div>
+</div>
+</section>
+<section id="simple-random-sample---abovebelow-poverty-line" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---abovebelow-poverty-line">Simple Random Sample - Above/Below Poverty Line</h2>
+<p><strong>Assessing proportion of injuries per year by status of being above or below the poverty line</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+           POORYN
+INJURY 0.02580386
+
+$se
+           POORYN
+INJURY 0.00270671</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02580386 0.02049871 0.03110901</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+           POORYN
+INJURY 0.02663204
+
+$se
+            POORYN
+INJURY 0.002913605</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02663204 0.02092137 0.03234270</code></pre>
+</div>
+</div>
+</section>
+<section id="simple-random-sample---age-sex-race" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---age-sex-race">Simple Random Sample - Age + Sex + Race</h2>
+<p><strong>Assessing proportion of injuries per year by age, sex and race</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+         AGE       SEX    RACENEW
+1 0.02571345 0.6044988 0.02582102
+
+$se
+          AGE        SEX     RACENEW
+1 0.002650076 0.06215682 0.002667604</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$AGE
+[1] 0.02571345
+
+$SEX
+[1] 0.6044988
+
+$RACENEW
+[1] 0.02582102
+
+$AGE
+[1] 0.0205193
+
+$SEX
+[1] 0.4826714
+
+$RACENEW
+[1] 0.02059251
+
+$AGE
+[1] 0.0309076
+
+$SEX
+[1] 0.7263261
+
+$RACENEW
+[1] 0.03104952</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+         AGE       SEX    RACENEW
+1 0.02627255 0.6230714 0.02633119
+
+$se
+          AGE        SEX     RACENEW
+1 0.002830548 0.06705564 0.002836167</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$AGE
+[1] 0.02627255
+
+$SEX
+[1] 0.6230714
+
+$RACENEW
+[1] 0.02633119
+
+$AGE
+[1] 0.02072467
+
+$SEX
+[1] 0.4916424
+
+$RACENEW
+[1] 0.0207723
+
+$AGE
+[1] 0.03182042
+
+$SEX
+[1] 0.7545005
+
+$RACENEW
+[1] 0.03189008</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="ratio-estimation-1" class="level1">
+<h1>Ratio Estimation</h1>
+<section id="main-sampling-design---age" class="level2">
+<h2 class="anchored" data-anchor-id="main-sampling-design---age">Main Sampling Design - Age</h2>
+<p><strong>Post-stratify by age</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+              AGE
+INJURY 0.02741572
+
+$se
+               AGE
+INJURY 0.002892153</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02741572 0.02174710 0.03308434</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                AGE
+INJURY 6.580796e-09</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+              AGE
+INJURY 0.02222087
+
+$se
+              AGE
+INJURY 0.00267332</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02222087 0.01698117 0.02746058</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                AGE
+INJURY 5.470782e-09</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    2-sample test for equality of proportions with continuity correction
+
+data:  c(x1 * n1, x2 * n2) out of c(n1, n2)
+X-squared = 1.6931, df = 1, p-value = 0.1932
+alternative hypothesis: two.sided
+95 percent confidence interval:
+ -0.002425969  0.012815669
+sample estimates:
+    prop 1     prop 2 
+0.02741572 0.02222087 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.301192</code></pre>
+</div>
+</div>
+</section>
+<section id="main-sampling-design---sex" class="level2">
+<h2 class="anchored" data-anchor-id="main-sampling-design---sex">Main Sampling Design - Sex</h2>
+<p><strong>Post-stratify by sex</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+              SEX
+INJURY 0.02610033
+
+$se
+               SEX
+INJURY 0.002737903</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02610033 0.02073404 0.03146662</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                SEX
+INJURY 3.264921e-06</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+              SEX
+INJURY 0.02612651
+
+$se
+               SEX
+INJURY 0.002740649</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02612651 0.02075483 0.03149818</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                SEX
+INJURY 3.264921e-06</code></pre>
+</div>
+</div>
+</section>
+<section id="main-sampling-design---race" class="level2">
+<h2 class="anchored" data-anchor-id="main-sampling-design---race">Main Sampling Design - Race</h2>
+<p><strong>Post-stratify by race</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+          RACENEW
+INJURY 0.02532012
+
+$se
+           RACENEW
+INJURY 0.002692587</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02532012 0.02004265 0.03059759</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           RACENEW
+INJURY 3.28981e-10</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+          RACENEW
+INJURY 0.02564065
+
+$se
+           RACENEW
+INJURY 0.002726672</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02564065 0.02029637 0.03098493</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           RACENEW
+INJURY 3.28981e-10</code></pre>
+</div>
+</div>
+</section>
+<section id="main-sampling-design---abovebelow-poverty-line" class="level2">
+<h2 class="anchored" data-anchor-id="main-sampling-design---abovebelow-poverty-line">Main Sampling Design - Above/Below Poverty Line</h2>
+<p>_Post-stratify by poverty status of being above or below the poverty line__</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+           POORYN
+INJURY 0.02568653
+
+$se
+           POORYN
+INJURY 0.00287087</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02568653 0.02005962 0.03131343</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             POORYN
+INJURY 1.819397e-06</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+           POORYN
+INJURY 0.02271839
+
+$se
+            POORYN
+INJURY 0.002917812</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02271839 0.01699948 0.02843730</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             POORYN
+INJURY 1.916214e-06</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    2-sample test for equality of proportions with continuity correction
+
+data:  c(x1 * n1, x2 * n2) out of c(n1, n2)
+X-squared = 0.030396, df = 1, p-value = 0.8616
+alternative hypothesis: two.sided
+95 percent confidence interval:
+ -0.008809279  0.006884459
+sample estimates:
+    prop 1     prop 2 
+0.02568653 0.02664894 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1743445</code></pre>
+</div>
+</div>
+</section>
+<section id="main-sampling-design---age-sex-race" class="level2">
+<h2 class="anchored" data-anchor-id="main-sampling-design---age-sex-race">Main Sampling Design - Age + Sex + Race</h2>
+<p><strong>Post-stratify by age, sex and race</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+         AGE       SEX    RACENEW
+1 0.02571345 0.6044988 0.02582102
+
+$se
+          AGE        SEX     RACENEW
+1 0.002650076 0.06215682 0.002667604</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$AGE
+[1] 0.02571345
+
+$SEX
+[1] 0.6044988
+
+$RACENEW
+[1] 0.02582102
+
+$AGE
+[1] 0.0205193
+
+$SEX
+[1] 0.4826714
+
+$RACENEW
+[1] 0.02059251
+
+$AGE
+[1] 0.0309076
+
+$SEX
+[1] 0.7263261
+
+$RACENEW
+[1] 0.03104952</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                AGE         SEX      RACENEW
+INJURY 5.525261e-09 3.03958e-06 3.229045e-10</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$total
+         AGE       SEX    RACENEW
+1 0.02627255 0.6230714 0.02633119
+
+$se
+          AGE        SEX     RACENEW
+1 0.002830548 0.06705564 0.002836167</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$AGE
+[1] 0.02627255
+
+$SEX
+[1] 0.6230714
+
+$RACENEW
+[1] 0.02633119
+
+$AGE
+[1] 0.02072467
+
+$SEX
+[1] 0.4916424
+
+$RACENEW
+[1] 0.0207723
+
+$AGE
+[1] 0.03182042
+
+$SEX
+[1] 0.7545005
+
+$RACENEW
+[1] 0.03189008</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                AGE          SEX      RACENEW
+INJURY 6.303432e-09 3.537583e-06 3.650019e-10</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="regression-estimation" class="level1">
+<h1>Regression Estimation</h1>
+<section id="simple-random-sample---quarter-1" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---quarter-1">Simple Random Sample - Quarter</h2>
+<p><strong>Model based population estimates by quarter</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+svyglm(formula = INJURY ~ as.numeric(QUARTER), design = srs.des.2009, 
+    family = "binomial")
+
+Survey design:
+svydesign(id = ~1, data = srs.2009, fpc = ~rep(N.2009, n.2009))
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         -3.84276    0.35445 -10.842   &lt;2e-16 ***
+as.numeric(QUARTER)  0.07015    0.11244   0.624    0.533    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1.000662)
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    link    SE
+1 -3.639 0.106</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>as.numeric(QUARTER) 
+           1.072666 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.8604348 1.3372463 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+svyglm(formula = INJURY ~ as.numeric(QUARTER), design = srs.des.2011, 
+    family = "binomial")
+
+Survey design:
+svydesign(id = ~1, data = srs.2011, fpc = ~rep(N.2011, n.2011))
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         -3.76764    0.26491 -14.222   &lt;2e-16 ***
+as.numeric(QUARTER)  0.06805    0.09283   0.733    0.464    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 0.9998915)
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     link     SE
+1 -3.5985 0.1107</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>as.numeric(QUARTER) 
+           1.070422 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.8922825 1.2841250 </code></pre>
+</div>
+</div>
+</section>
+<section id="simple-random-sample---age-1" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---age-1">Simple Random Sample - Age</h2>
+<p><strong>Model based population estimates by age</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+svyglm(formula = INJURY ~ AGE, design = srs.des.2009, family = "binomial")
+
+Survey design:
+svydesign(id = ~1, data = srs.2009, fpc = ~rep(N.2009, n.2009))
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.676261   0.205173 -17.918   &lt;2e-16 ***
+AGE          0.001175   0.004860   0.242    0.809    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1.000313)
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     link     SE
+1 -3.6344 0.1053</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     AGE 
+1.001175 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.9916805 1.0107609 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+svyglm(formula = INJURY ~ AGE, design = srs.des.2011, family = "binomial")
+
+Survey design:
+svydesign(id = ~1, data = srs.2011, fpc = ~rep(N.2011, n.2011))
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -3.722900   0.214296 -17.373   &lt;2e-16 ***
+AGE          0.003479   0.004835   0.719    0.472    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1.000282)
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     link     SE
+1 -3.5972 0.1106</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     AGE 
+1.003485 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.9940159 1.0130444 </code></pre>
+</div>
+</div>
+</section>
+<section id="simple-random-sample---sex-1" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---sex-1">Simple Random Sample - Sex</h2>
+<p><strong>Model based population estimates by sex</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>   link     SE
+1 -3.64 0.1059</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      SEX 
+0.7916548 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.5232267 1.1977930 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     link     SE
+1 -3.6017 0.1112</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     SEX 
+0.718863 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.4655596 1.1099848 </code></pre>
+</div>
+</div>
+</section>
+<section id="simple-random-sample---race-1" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---race-1">Simple Random Sample - Race</h2>
+<p><strong>Model based population estimates by race</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     link     SE
+1 -3.6368 0.1056</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  RACENEW 
+0.9992693 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.9970198 1.0015239 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Independent Sampling design
+svydesign(id = ~1, data = srs.2011, fpc = ~rep(N.2011, n.2011))
+
+Call:  svyglm(formula = INJURY ~ RACENEW, design = srs.des.2011, family = "binomial")
+
+Coefficients:
+(Intercept)      RACENEW  
+  -3.797418     0.001288  
+
+Degrees of Freedom: 3063 Total (i.e. Null);  3062 Residual
+Null Deviance:      755.6 
+Residual Deviance: 753.8    AIC: 757.8</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     link     SE
+1 -3.6038 0.1113</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> RACENEW 
+1.001289 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.9994387 1.0031420 </code></pre>
+</div>
+</div>
+</section>
+<section id="simple-random-sample---abovebelow-poverty" class="level2">
+<h2 class="anchored" data-anchor-id="simple-random-sample---abovebelow-poverty">Simple Random Sample - Above/Below Poverty</h2>
+<p><strong>Model based population estimates by status of being above or below poverty line</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     link     SE
+1 -3.6408 0.1061</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   POORYN 
+0.9539852 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.8696225 1.0465321 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Independent Sampling design
+svydesign(id = ~1, data = srs.2011, fpc = ~rep(N.2011, n.2011))
+
+Call:  svyglm(formula = INJURY ~ POORYN, design = srs.des.2011, family = "binomial")
+
+Coefficients:
+(Intercept)       POORYN  
+  -3.606859     0.006189  
+
+Degrees of Freedom: 3063 Total (i.e. Null);  3062 Residual
+Null Deviance:      755.6 
+Residual Deviance: 755.6    AIC: 759.6</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     link     SE
+1 -3.5938 0.1103</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  POORYN 
+1.006208 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5 %    97.5 % 
+0.9272497 1.0918892 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="regression-estimation-1" class="level1">
+<h1>Regression Estimation</h1>
+<section id="main-sampling-design---age-1" class="level2">
+<h2 class="anchored" data-anchor-id="main-sampling-design---age-1">Main Sampling Design - Age</h2>
+<p><strong>Model based population estimates on a post-stratified design, by age</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+svyglm(formula = INJURY ~ AGE, design = post_strat_des_2009)
+
+Survey design:
+svydesign(ids = ~NHISHID, fpc = ~Mi, strata = ~REGION, weights = ~post_strat_weight + 
+    w2, data = post_merge_2009, nest = T)
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 0.0198644  0.0046520   4.270 2.09e-05 ***
+AGE         0.0001814  0.0001300   1.395    0.163    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for gaussian family taken to be 0.02531078)
+
+Number of Fisher Scoring iterations: 2</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       2.5 %     97.5 %
+1 0.02087369 0.03178631</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       2.5 %     97.5 %
+1 0.01676609 0.02705727</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    2-sample test for equality of proportions with continuity correction
+
+data:  c(x1 * n1, x2 * n2) out of c(n1, n2)
+X-squared = 0.0013179, df = 1, p-value = 0.971
+alternative hypothesis: two.sided
+95 percent confidence interval:
+ -0.008329021  0.007465021
+sample estimates:
+  prop 1   prop 2 
+0.026330 0.026762 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.03630289</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Stratified 1 - level Cluster Sampling design
+With (2611) clusters.
+postStratify(design = mult.post.des.merge, strata = ~strata_var, 
+    population = table)
+
+Call:  svyglm(formula = INJURY ~ as.factor(YEAR), design = mult.post.des.merge)
+
+Coefficients:
+        (Intercept)  as.factor(YEAR)2011  
+           0.025991            -0.004199  
+
+Degrees of Freedom: 6905 Total (i.e. Null);  2602 Residual
+Null Deviance:      160.1 
+Residual Deviance: 160  AIC: -6296</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Stratified 1 - level Cluster Sampling design
+With (2611) clusters.
+postStratify(design = mult.post.des.merge, strata = ~strata_var, 
+    population = table)
+
+Call:  svyglm(formula = INJURY ~ as.factor(YEAR) + AGE, design = mult.post.des.merge)
+
+Coefficients:
+        (Intercept)  as.factor(YEAR)2011                  AGE  
+          0.0199882           -0.0044897            0.0001776  
+
+Degrees of Freedom: 6905 Total (i.e. Null);  2601 Residual
+Null Deviance:      160.1 
+Residual Deviance: 159.9    AIC: -6299</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+svyglm(formula = INJURY ~ as.factor(YEAR) + AGE, design = mult.post.des.merge)
+
+Survey design:
+postStratify(design = mult.post.des.merge, strata = ~strata_var, 
+    population = table)
+
+Coefficients:
+                      Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          1.999e-02  3.628e-03   5.510 3.94e-08 ***
+as.factor(YEAR)2011 -4.490e-03  3.768e-03  -1.192    0.234    
+AGE                  1.776e-04  8.372e-05   2.121    0.034 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for gaussian family taken to be 0.02316281)
+
+Number of Fisher Scoring iterations: 2</code></pre>
+</div>
+</div>
+</section>
+<section id="main-sampling-design---sex-1" class="level2">
+<h2 class="anchored" data-anchor-id="main-sampling-design---sex-1">Main Sampling Design - Sex</h2>
+<p><strong>Model based population estimates on a post-stratified design, by sex</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      link     SE
+1 0.025964 0.0027</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       2.5 %     97.5 %
+1 0.02063257 0.03129533</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      link     SE
+1 0.021782 0.0026</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       2.5 %     97.5 %
+1 0.01667449 0.02688884</code></pre>
+</div>
+</div>
+</section>
+<section id="main-sampling-design---race-1" class="level2">
+<h2 class="anchored" data-anchor-id="main-sampling-design---race-1">Main Sampling Design - Race</h2>
+<p><strong>Model based population estimates on a post-stratified design, by race</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      link     SE
+1 0.026059 0.0027</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       2.5 %     97.5 %
+1 0.02072449 0.03139273</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      link     SE
+1 0.021794 0.0026</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       2.5 %     97.5 %
+1 0.01668064 0.02690746</code></pre>
+</div>
+</div>
+</section>
+<section id="main-sampling-design---abovebelow-poverty" class="level2">
+<h2 class="anchored" data-anchor-id="main-sampling-design---abovebelow-poverty">Main Sampling Design - Above/Below Poverty</h2>
+<p><strong>Model based population estimates on a post-stratified design, by the status of being above or below the poverty line</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+svyglm(formula = INJURY ~ POORYN, design = post_strat_des_2009)
+
+Survey design:
+svydesign(ids = ~NHISHID, fpc = ~Mi, strata = ~REGION, weights = ~post_strat_weight + 
+    w2, data = post_merge_2009, nest = T)
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  0.0267671  0.0035390   7.563 7.13e-14 ***
+POORYN      -0.0003585  0.0009269  -0.387    0.699    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for gaussian family taken to be 0.02532512)
+
+Number of Fisher Scoring iterations: 2</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      link     SE
+1 0.026004 0.0027</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      link     SE
+1 0.021613 0.0026</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6904</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="imputation" class="level1">
+<h1>Imputation</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Multivariate Amputed Data Set
+Call: ampute(data = prime.samp.2009, patterns = c(1, 0, 1, 1, 1, 1))
+Class: mads
+Proportion of Missingness:  0.5
+Frequency of Patterns:  1
+Pattern Matrix:
+  NHISHID INJURY POORYN QUARTER REGION AGE
+1       1      0      1       1      1   1
+Mechanism:[1] "MAR"
+Weight Matrix:
+  NHISHID INJURY POORYN QUARTER REGION AGE
+1       1      0      1       1      1   1
+Type Vector:
+[1] "RIGHT"
+Odds Matrix:
+     [,1] [,2] [,3] [,4]
+[1,]    1    2    3    4
+Head of Amputed Data Set
+     NHISHID INJURY POORYN QUARTER REGION AGE
+1 2009049998     NA      1       4      1  51
+2 2009049998     NA      1       4      1  57
+3 2009049998      0      1       4      1  18
+4 2009034700     NA      1       3      1  48
+5 2009034700      0      1       3      1  58
+6 2009020900      0      1       2      1  68</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1873</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter imp variable
+  1   1  INJURY
+  1   2  INJURY
+  1   3  INJURY
+  1   4  INJURY
+  1   5  INJURY
+  2   1  INJURY
+  2   2  INJURY
+  2   3  INJURY
+  2   4  INJURY
+  2   5  INJURY
+  3   1  INJURY
+  3   2  INJURY
+  3   3  INJURY
+  3   4  INJURY
+  3   5  INJURY
+  4   1  INJURY
+  4   2  INJURY
+  4   3  INJURY
+  4   4  INJURY
+  4   5  INJURY
+  5   1  INJURY
+  5   2  INJURY
+  5   3  INJURY
+  5   4  INJURY
+  5   5  INJURY</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3709    6</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            mean     SE
+INJURY0 0.962888 0.0032
+INJURY1 0.037112 0.0032</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       mean          SE 
+0.027841301 0.002677817 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Multivariate Amputed Data Set
+Call: ampute(data = prime.samp.2009, patterns = c(1, 0, 1, 1, 1, 1))
+Class: mads
+Proportion of Missingness:  0.5
+Frequency of Patterns:  1
+Pattern Matrix:
+  NHISHID INJURY POORYN QUARTER REGION AGE
+1       1      0      1       1      1   1
+Mechanism:[1] "MAR"
+Weight Matrix:
+  NHISHID INJURY POORYN QUARTER REGION AGE
+1       1      0      1       1      1   1
+Type Vector:
+[1] "RIGHT"
+Odds Matrix:
+     [,1] [,2] [,3] [,4]
+[1,]    1    2    3    4
+Head of Amputed Data Set
+     NHISHID INJURY POORYN QUARTER REGION AGE
+1 2009049998      0      1       4      1  51
+2 2009049998     NA      1       4      1  57
+3 2009049998     NA      1       4      1  18
+4 2009034700     NA      1       3      1  48
+5 2009034700      0      1       3      1  58
+6 2009020900     NA      1       2      1  68</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1862</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ iter imp variable
+  1   1  INJURY
+  1   2  INJURY
+  1   3  INJURY
+  1   4  INJURY
+  1   5  INJURY
+  2   1  INJURY
+  2   2  INJURY
+  2   3  INJURY
+  2   4  INJURY
+  2   5  INJURY
+  3   1  INJURY
+  3   2  INJURY
+  3   3  INJURY
+  3   4  INJURY
+  3   5  INJURY
+  4   1  INJURY
+  4   2  INJURY
+  4   3  INJURY
+  4   4  INJURY
+  4   5  INJURY
+  5   1  INJURY
+  5   2  INJURY
+  5   3  INJURY
+  5   4  INJURY
+  5   5  INJURY</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3709    6</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean     SE
+INJURY0 0.96135 0.0033
+INJURY1 0.03865 0.0033</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       mean          SE 
+0.033891769 0.003051162 </code></pre>
+</div>
+</div>
+</section>
+<section id="forest-plot-of-estimates-with-cis" class="level1">
+<h1>Forest plot of estimates with CIs</h1>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section">2009</h2>
+</section>
+<section id="section-1" class="level2">
+<h2 class="anchored" data-anchor-id="section-1">2011</h2>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

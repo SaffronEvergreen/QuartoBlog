@@ -1,24 +1,25 @@
 ---
-title: "Logistic Regression Project 23"
+title: "Logistic Regression Project Spring 2023"
 author: "Saffron"
 date: "2023-07-17"
-categories: [analysis][code]
----    
+categories: [analysis, code]
+---
 
+This is nearly the same project as the "Logistic Regression Project Winter 2022" except my group and I had a better grasp of what to do.
 
-# Disclosure    
+# Disclosure
 
-**It is against the academic policy to share the projects and content from our courses. Therefore, I have redacted a lot, and have shown the highlights of what was done.**    
+**It is against the academic policy to share the projects and content from our courses. Therefore, I have redacted a lot, and have shown the highlights of what was done.**
 
-This project was done in the Spring 2023 term with 2 other peers. This project is essentially the same but with more of a focus on categorical data analysis compared to 'Logistic Regression Project 22'. This was the first project I had really felt like I had a full understanding of; there are definitely some parts that I wish I could have done more precisely but I am far more comfortable with the outcome of this model than the other.    
+This project was done in the Spring 2023 term with 2 other peers. This project is essentially the same but with more of a focus on categorical data analysis compared to 'Logistic Regression Project 22'. This was the first project I had really felt like I had a full understanding of; there are definitely some parts that I wish I could have done more precisely but I am far more comfortable with the outcome of this model than the other.
 
-As with the other logistic regression project, the data used is from the [SWAN database](https://www.icpsr.umich.edu/web/ICPSR/series/00253).      
+As with the other logistic regression project, the data used is from the [SWAN database](https://www.icpsr.umich.edu/web/ICPSR/series/00253).
 
 # Research Proposal
 
-The goal of this project was to assess stress and cardiovascular health on middle-aged women in the U.S. The outcome variable is high blood pressure, the primary predictor is self-assessed sleep quality along with the covariates; age, race, smoking status, education, marital status, BMI, income, taking blood pressure medication, self-assessed quality of life and average daily caffeine intake.  
+The goal of this project was to assess stress and cardiovascular health on middle-aged women in the U.S. The outcome variable is high blood pressure, the primary predictor is self-assessed sleep quality along with the covariates; age, race, smoking status, education, marital status, BMI, income, taking blood pressure medication, self-assessed quality of life and average daily caffeine intake.
 
-## Libraries Used   
+## Libraries Used
 
 ```{r setup, warning=FALSE, message=FALSE}
 library(dplyr)
@@ -45,9 +46,9 @@ library(ResourceSelection)
 library(epiDisplay)
 ```
 
-# Loading Datasets and Merging 
+# Loading Datasets and Merging
 
-```{r}   
+```{r}
 # screening dataset
 load("C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Logistic Regression Project 23/SCREENING.rda")
 
@@ -67,7 +68,7 @@ merged_swan <- merge(Merged,da32961.0001,
               by="SWANID")
 ```
 
-## Cleaning Final Dataset `df_swan`   
+## Cleaning Final Dataset `df_swan`
 
 ```{r include=FALSE}
 #Create dataset with chosen variables 
@@ -88,7 +89,7 @@ dim(df_swan)
 head(df_swan)
 ```
 
-## Removing Observations with Missing Points   
+## Removing Observations with Missing Points
 
 ```{r include=FALSE}
 df_swan <- na.omit(df_swan)
@@ -96,28 +97,28 @@ dim(df_swan)
 # some subjects lost, acceptable to study standard 
 ```
 
-## Set reference levels   
+## Set reference levels
 
-<font color = "purple">   
-**What is blocked out**: I removed the coding process on how we recoded our reference levels for our covariates, but I decided to include a brief bullet point list to show what those reference levels are and why.   
-</font>   
-* High Blood Pressure: `No`, given the majority of this sample does not have high blood pressure and we're seeking a change in what is associated with high blood pressure.    
+<font color = "purple">\
+**What is blocked out**: I removed the coding process on how we recoded our reference levels for our covariates, but I decided to include a brief bullet point list to show what those reference levels are and why.\
+</font>\
+\* High Blood Pressure: `No`, given the majority of this sample does not have high blood pressure and we're seeking a change in what is associated with high blood pressure.
 
-* Sleep Quality: `Very good` and `fairly good` categories collapsed into one reference category, since we're assessing if poor sleep is associated with high blood pressure.   
+-   Sleep Quality: `Very good` and `fairly good` categories collapsed into one reference category, since we're assessing if poor sleep is associated with high blood pressure.
 
-* Race: `Caucasian/White Non-Hispanic` due to white privilege, and systemic and institutional racism in the U.S.   
+-   Race: `Caucasian/White Non-Hispanic` due to white privilege, and systemic and institutional racism in the U.S.
 
-* Smoking Status: `No`, given the majority of the sample are non-smokers.   
+-   Smoking Status: `No`, given the majority of the sample are non-smokers.
 
-* Education: `College Graduate` and `Post-Graduate` given previous knowledge that at a generalized population-level, those with higher education often have better health outcomes, typically due to having more health literacy and higher income.   
-* Marital Status: `Currently Married`, since the majority of the population is married.   
+-   Education: `College Graduate` and `Post-Graduate` given previous knowledge that at a generalized population-level, those with higher education often have better health outcomes, typically due to having more health literacy and higher income.\
 
-* Income: `$100,000 or more` which is the highest income category, given the opportunity for better health care quality and access.   
+-   Marital Status: `Currently Married`, since the majority of the population is married.
 
-* Taking Blood Pressure Medication: `Yes`, given that people taking medication for high blood pressure will likely have lower blood pressure than those who are not taking any.    
+-   Income: `$100,000 or more` which is the highest income category, given the opportunity for better health care quality and access.
 
-* Quality of Life: This was a tricky category and we ended up using the median value which was around a score of 8 out of 10. There should've been more research conducted to decide what our cut-off point should've been.   
+-   Taking Blood Pressure Medication: `Yes`, given that people taking medication for high blood pressure will likely have lower blood pressure than those who are not taking any.
 
+-   Quality of Life: This was a tricky category and we ended up using the median value which was around a score of 8 out of 10. There should've been more research conducted to decide what our cut-off point should've been.
 
 ```{r include=FALSE}
 # dataframe for reference levels   
@@ -198,7 +199,7 @@ str(df_swan)
 skimr::skim(df_swan)
 ```
 
-# Table 1: Descriptive Statistics 
+# Table 1: Descriptive Statistics
 
 ```{r echo=FALSE}
 table1 <- df_swan %>% tbl_summary(
@@ -238,9 +239,7 @@ table1 <- df_swan %>% tbl_summary(
 table1
 ```
 
-
-
-# Exploratory Data Analysis   
+# Exploratory Data Analysis
 
 ## Frequency Distributions
 
@@ -322,11 +321,11 @@ df_swan_minusID <- df_swan %>% dplyr::select(HBP, Sleep, Age, Race, Smoking, Edu
 ggpairs(df_swan_minusID)
 ```
 
-## Contigency Tables   
+## Contigency Tables
 
-<font color = "purple">   
-**Note**: This code below is gifted from my professor at the time. I became more familiar with `lapply()` throughout her course and the use of contingency tables came as a life saver, so with that note, enjoy.   
-</font>   
+<font color = "purple">\
+**Note**: This code below is gifted from my professor at the time. I became more familiar with `lapply()` throughout her course and the use of contingency tables came as a life saver, so with that note, enjoy.\
+</font>
 
 ```{r}
 #Contingency Tables np > 5, all meet this standard, except for Hispanic, which will be excluded in further analyses due to issues within the SWAN dataset. 
@@ -335,15 +334,14 @@ df_swan_cat <- df_swan_minusID %>% dplyr::select_if(., ~class(.) == "factor")
 lapply(df_swan_cat, function(x) table(df_swan_cat$HBP, x))
 ```
 
-There are sufficient cases in all cells.    
+There are sufficient cases in all cells.
 
 # Model Building
 
-## Step 1 Univariable Analysis     
+## Step 1 Univariable Analysis
 
-<font color = "purple">   
-**Note**: I chose to show this code below since it was life changing for me. This code was also at the sole hands of my professor and I take no credit for this except for including the relevant covariates.
-</font>  
+<font color = "purple">\
+**Note**: I chose to show this code below since it was life changing for me. This code was also at the sole hands of my professor and I take no credit for this except for including the relevant covariates. </font>
 
 ```{r}
 #summarize and pull coefficients for univariate analysis for factored variables
@@ -367,8 +365,8 @@ summary(all.var.model)
 
 Based on the p values, our initial model would include Sleep01 (clinically significant + meets 0.25 criteria), Race (clinically significant and meets 0.05 criteria), Marital01 (meets 0.05 criteria), BMI (meets 0.05 criteria), BPMed01, (meets 0.05 criteria) and Income01 (meets 0.25 criteria) because the model with all variables is less precise at predicting hypertension in this given sample.
 
-HO: the beta coefficients are equal to zero    
-HA: one or more beta coefficients are unequal to zero    
+HO: the beta coefficients are equal to zero\
+HA: one or more beta coefficients are unequal to zero
 
 ```{r include=FALSE}
 #initial model, with all variables with p-values < 0.25
@@ -379,7 +377,6 @@ summary(initial.model)
 ```
 
 For our next step, Sleep01 (clinically significant), Race (p \< 0.05), Marital01 (p \<0.05), BMI (p \< 0.05), and BPMed01 (p \< 0.05) will be retained in the next iteration of the model. The model with income will not move forward.
-
 
 ```{r include=FALSE}
 #reduced model, with all variables with p-values < 0.05 or clinically significant, LRT to test if our categorical variable of Income should be included or excluded. 
@@ -400,7 +397,7 @@ At this point, our model is $$logit((\pi(HBP01| \text{Sleep01}, \text{Race}, \te
 
 ### Assessing Without 'Income01'
 
-Checking for change greater than 20% in coefficients.   
+Checking for change greater than 20% in coefficients.
 
 ```{r include=FALSE}
 #full = initial.model, reduced = initial.reduced.model
@@ -426,12 +423,11 @@ Sleep011.change;Sleep012.change;Race1.change;Race2.change;Race3.change;Marital01
 
 There is evidence that some confounding may be occurring due to the high percent change among two variables, therefore income should remain in the model because it is potentially a confounder.
 
+## Step 4 Adding Excluded Variables to the Reduced Model
 
-## Step 4 Adding Excluded Variables to the Reduced Model    
-
-<font color = "purple">   
-**What is blocked out**: For this step we ran a likelihood ratio test with the initial model as the reduced model and the initial model with the included covariate that we were assessing as the full model.   
-</font>   
+<font color = "purple">\
+**What is blocked out**: For this step we ran a likelihood ratio test with the initial model as the reduced model and the initial model with the included covariate that we were assessing as the full model.\
+</font>
 
 #### Assessing Age
 
@@ -490,7 +486,7 @@ lmtest::lrtest(quallife.model,initial.model)
 
 None of the initially excluded variables should be added back into the model.
 
-### Collapse Variable Kevels  
+### Collapse Variable Kevels
 
 ```{r include=FALSE}
 # collapse variables: Sleep, Race, Marital Status
@@ -558,7 +554,6 @@ summary(df_swan$Marital02)
 ### Code still works, but message is relevant for 1 NA observation
 ```
 
-
 #### Assessing binary sleep quality with our preliminary main effects model
 
 ```{r include=FALSE}
@@ -619,11 +614,11 @@ ggplot(gloess_a, aes(x=BMI, y=pred_log_odds)) +
 #looks pretty linear but let's check with a second method. 
 ```
 
-### Fractional Polynomials   
+### Fractional Polynomials
 
-<font color = "purple">    
-This was running prior but for some reason isn't as of this point in time of me trying to render this page. I'm keeping it in just for the sake of showing we assessed fractional polynomials.   
-</font>   
+<font color = "purple">\
+This was running prior but for some reason isn't as of this point in time of me trying to render this page. I'm keeping it in just for the sake of showing we assessed fractional polynomials.\
+</font>
 
 ```{r}
 #fracpoly_b = mfp(HBP01~ fp(BMI, df = 4) + Age + BPMed01 + Sleep01 + Income01 + Marital01,
@@ -636,21 +631,19 @@ This was running prior but for some reason isn't as of this point in time of me 
 
 ## Main effects model
 
-### Model   
+### Model
 
 ```{r}
 main.effects.model <- initial.model
 ```
 
+After assessing the linearity of our continuous variables, the best performing model continues to be 'initial.model', renamed as 'main.effects.model'
 
-After assessing the linearity of our continuous variables, the best performing model continues to be 'initial.model', renamed as 'main.effects.model'     
+## Step 6 Interactions
 
-
-## Step 6 Interactions   
-
-<font color = "purple">   
-**Note**: I have no idea how to fix this issue below. I have include and echo = FALSE but given the structure of the code (hint: it's `lapply` and `function` but pulling stuff from the environment so it is kind of creating it's own separate code chunk with its own set of laws I suppose).    
-</font>   
+<font color = "purple">\
+**Note**: I have no idea how to fix this issue below. I have include and echo = FALSE but given the structure of the code (hint: it's `lapply` and `function` but pulling stuff from the environment so it is kind of creating it's own separate code chunk with its own set of laws I suppose).\
+</font>
 
 ```{r include=TRUE, echo=FALSE}
 #create a matrix
@@ -670,7 +663,7 @@ There are no significant interactions present between the levels of Sleep01 and 
 
 ### Model
 
-After assessing the linearity of our continuous variables, the best performing model continues to be 'main.effects.model'   
+After assessing the linearity of our continuous variables, the best performing model continues to be 'main.effects.model'
 
 ## Step 7 Addressing Issues and Assessing Model Fit
 
@@ -683,16 +676,16 @@ car::vif(main.effects.model)
 
 There does not appear to be an issue with colinearity.
 
-### Pearson Goodness of Fit    
+### Pearson Goodness of Fit
 
-We do not use Pearson Goodness of fit due to the continuous BMI Variable.   
+We do not use Pearson Goodness of fit due to the continuous BMI Variable.
 
 ### Hosmer Lemeshow Goodness of Fit
 
 Covariate pattern is greater than six due to the existence of a continuous variable in the model.
 
-$H_0:$ the model fits the data well    
-$H_A:$ the model does not fit the data well    
+$H_0:$ the model fits the data well\
+$H_A:$ the model does not fit the data well
 
 ```{r include=FALSE}
 df_swan2 = df_swan %>% mutate(HBP01 = as.numeric(HBP01)-1)
@@ -703,7 +696,7 @@ hoslem.test(df_swan2$HBP01, fitted(main.effects.model), g = 10)
 
 Conclusion: Fail to reject null hypothesis. Thus, the selected model for SWAN dataset fits the data relatively well.
 
-### ROC Curve and AUC    
+### ROC Curve and AUC
 
 To quantify how well our model predicts a binary outcome.
 
@@ -726,7 +719,6 @@ roc <- ggroc(rocobj, colour ='cyan', size = 2) +
 
 roc 
 ```
-
 
 Our ROC is quite good, 0.973 is excellent, perhaps excessively so for a class project model using real-world data.
 
@@ -801,8 +793,7 @@ dim(display_points)
 
 ```{r include=FALSE, fig.height=6, fig.width=8}
 influenceIndexPlot(main.effects.model) # about 6 observations are showing significant influence but given our previously nice fitting ROC curve with AIC = 0.97, I think it's better to keep these points in but keep them in the back of our minds if something comes up   
-```   
-
+```
 
 ```{r include=FALSE}
 infl.resid.data <- stats::influence(main.effects.model)
@@ -868,7 +859,7 @@ The ROC and AUC are comparable to that of the preliminary final model.
 
 ## Estimated Logistic Regression Equation
 
-With covariates included $$logit((\hat{\pi}(HBP01| \text{Sleep01}, \text{Race}, \text{Marital01} + \text{BPMed01} + BMI + \text{Income01})) = \\ 1.29180 + 0.47144 \cdot \text{Fairly Bad Sleep} + 0.97776 \cdot \text{Very Bad Sleep} + 1.02938 \cdot \text{Black/African-American} \\ + 0.02416 \cdot \text{Chinese/Chinese-American} + 1.10728 \cdot \text{Japanese/Japanese-American} - 0.98783 \cdot \text{Single/never married} \\ - 0.26615 \cdot \text{Separated} - 0.6754 \cdot \text{Widowed} - -0.18008 \cdot \text{Divorced} - 6.70745 \cdot \text{BPMed01} + 0.06436 \cdot \text{BMI} \\ +  - 0.08290 \cdot \text {Annual Income}<19,999 - 0.10850 \cdot \text{Annual Income}20-49,999 + 0.47616 \cdot \text{Annual Income}50-99,999$$   
+With covariates included $$logit((\hat{\pi}(HBP01| \text{Sleep01}, \text{Race}, \text{Marital01} + \text{BPMed01} + BMI + \text{Income01})) = \\ 1.29180 + 0.47144 \cdot \text{Fairly Bad Sleep} + 0.97776 \cdot \text{Very Bad Sleep} + 1.02938 \cdot \text{Black/African-American} \\ + 0.02416 \cdot \text{Chinese/Chinese-American} + 1.10728 \cdot \text{Japanese/Japanese-American} - 0.98783 \cdot \text{Single/never married} \\ - 0.26615 \cdot \text{Separated} - 0.6754 \cdot \text{Widowed} - -0.18008 \cdot \text{Divorced} - 6.70745 \cdot \text{BPMed01} + 0.06436 \cdot \text{BMI} \\ +  - 0.08290 \cdot \text {Annual Income}<19,999 - 0.10850 \cdot \text{Annual Income}20-49,999 + 0.47616 \cdot \text{Annual Income}50-99,999$$
 
 ## Odds Ratio Tables
 
@@ -894,10 +885,8 @@ table_data <- table_data[, -5]
 
 # Print the table using kable()
 table2 <- kable(table_data, align = "l", format = "html") %>% kable_styling(bootstrap_options = "hover", "striped")
-```   
+```
 
 ```{r}
 table2
 ```
-
-

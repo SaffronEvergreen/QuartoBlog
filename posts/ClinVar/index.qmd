@@ -1,0 +1,33 @@
+---
+title: "ClinVar"
+author: "Saffron"
+date: "2023-07-27"
+categories: [Analysis]
+---
+
+(Work in progress) Just messing around with FOXP1 gene characteristics.
+
+```{r packages}
+library(pacman)
+p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, infer, glue, ggplot2, ggfortify, forcats, epiR, epiDisplay, epitools, dplyr, DescTools, describedata, datawizard, corrplot, caret, car, nlme)
+```
+
+```{r}
+# load data
+# imported from dierctory
+# Helpful note to self: when loading csv files from "copy path" delete 'C:' and change all \ to /
+CVFP1 <- read_csv("/Users/mckjo/OneDrive/Desktop/GitBlog/posts/ClinVar/ShinyClinVar.csv")
+
+# clean variable names
+janitor::clean_names(CVFP1)
+
+# number of rows (144)
+nrow(CVFP1)
+
+# convert character variables to factors
+CVFP1 <- CVFP1 %>%
+  mutate_if(is.character, as.factor)
+
+# summary of dataset 
+summary(CVFP1) %>% kable() 
+```

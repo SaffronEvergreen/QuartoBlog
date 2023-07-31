@@ -1,0 +1,2382 @@
+---
+title: "Survey and Sampling Analysis Project Spring 2023"
+author: "Saffron"
+date: "2023-07-16"
+categories: [news]
+---
+
+A lovely light-hearted survey and sampling analysis that felt like absolute hell but was an important learning curve.
+
+# Disclosure
+
+**It is against the academic policy to share the projects and content from our courses. Therefore, I have redacted a lot, and have shown the highlights of what was done.**
+
+This project was done in the Spring 2023 term with immense help from one other peer. The goal of this project was to take a public health concern that can be generalized to the total U.S. population and create various sampling techniques to gather population proportion estimates during two separate time periods, then to assess if there is an association between one or more auxiliary variables and our response variable. We chose to run an analysis on accidental injuries and/or poisonings in the year 2009 and 2011, which is one year before and after the first wave of the Affordable Care Act was implemented. Our goal was to see if the population proportion of those who sought care for an accidental injury or poisoning were greater after the ACA implementation compared to prior.
+
+The data used is from the [IPUMS Health Survey database](https://nhis.ipums.org/nhis/).
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, fig.height=6, fig.width=8, message = F, warning = F)
+```
+
+```{r libraries}
+# install.packages("pacman")
+
+pacman::p_load(
+  ggplot2, 
+  tidyr, 
+  dplyr, 
+  knitr, 
+  tidyverse, 
+  janitor,
+  survey, 
+  sampling, 
+  broom, 
+  ipumsr, 
+  kableExtra, 
+  tinytex, 
+  mice, 
+  haven,
+  boot, 
+  surveybootstrap, 
+  ICC
+  )
+```
+
+# Main Dataset
+
+```{r}
+### load data from IPUMS   
+ddi <- read_ipums_ddi("nhis_00031.xml")
+raw_df <- read_ipums_micro(ddi)
+dim(raw_df) # 190321     32   
+names(raw_df)
+```
+
+## Re-Coding Response Variable: INJURY
+
+```{r}
+# the samples for individual years are being treated as the " total population"
+
+# create a variable representing an injury in the last 3 months
+raw_df$INJURY <- ifelse(raw_df$INJURY3MO==2, 1, 0)
+
+# make the NAs for INJURY5W equal to zero for estimation purposes
+raw_df$INJURY <- ifelse(is.na(raw_df$INJURY),0,raw_df$INJURY)
+
+# 2009 population
+pop_2009 <- raw_df %>% filter(YEAR==2009)
+
+# 2011 population
+pop_2011 <- raw_df %>% filter(YEAR==2011)
+```
+
+## Proportions of Injuries for 2009 and 2011
+
+```{r}
+# for reference, the actual proportions and totals of injury variable in data set
+sum(pop_2009$INJURY[pop_2009$INJURY==1])
+
+sum(pop_2011$INJURY[pop_2011$INJURY==1])
+
+sum(pop_2009$INJURY[pop_2009$INJURY==1])/nrow(pop_2009)
+
+sum(pop_2011$INJURY[pop_2011$INJURY==1])/nrow(pop_2011)
+```
+
+# Determining Sufficient Sample Size
+
+```{r}
+# take a random sample of 1000 for 2009
+set.seed(123456789)
+pilot <- srswor(1000, nrow(pop_2009))
+pilot.samp <- getdata(pop_2009, pilot)
+
+nrow(pilot.samp)
+```
+
+```{r}
+# calculate sample size for estimating proportion of individuals who sought medical attention for an injury
+mean(pilot.samp$INJURY)
+
+n0 <- (1.96^2*mean(pilot.samp$INJURY)*(1-mean(pilot.samp$INJURY)))/(0.005^2)
+(n09 <- round(n0/(1+(n0/nrow(pop_2009)))))
+
+## Note: Our margin of error is 0.005 
+```
+
+```{r}
+# take a random sample of 1000 for 2011
+set.seed(123456789)
+pilot2 <- srswor(1000, nrow(pop_2011))
+pilot.samp2 <- getdata(pop_2011, pilot2)
+
+n1 <- (1.96^2*mean(pilot.samp2$INJURY)*(1-mean(pilot.samp2$INJURY)))/(0.005^2)
+(n11 <- round(n1/(1+(n1/nrow(pop_2011)))))
+## Note: Our margin of error is 0.005 
+```
+
+## Simple Random Sample
+
+```{r}
+# SRS for 2009; n = 3459
+set.seed(123456789)
+srs <- srswor(n09, nrow(pop_2009))
+srs.2009 <- getdata(pop_2009, srs)
+
+# 2009 population size
+N.2009 <- nrow(pop_2009) 
+# sample size 2009
+n.2009 <- nrow(srs.2009)
+
+# SRS design 2009
+srs.des.2009 <- svydesign(
+  id=~1, 
+  data = srs.2009, 
+  fpc = ~ rep(N.2009,n.2009))
+
+# proportion
+(inj.prop.2009 <- svymean(
+  ~INJURY, 
+  data = srs.2009, 
+  design = srs.des.2009))
+
+# CI
+(inj.prop.2009.CI <- confint(inj.prop.2009))
+
+# variance 
+svyvar(~INJURY, srs.des.2009)
+```
+
+```{r}
+# SRS for 2011; n = 3065
+set.seed(123456789)
+srs.2 <- srswor(n11, nrow(pop_2011))
+srs.2011 <- getdata(pop_2011, srs.2)
+
+# 2011 population size
+N.2011 <- nrow(pop_2011) 
+# sample size 2011
+n.2011 <- nrow(srs.2011)
+
+# SRS design 2011
+srs.des.2011 <- svydesign(
+  id=~1, 
+  data = srs.2011, 
+  fpc = ~ rep(N.2011,n.2011))
+
+# proportion
+(inj.prop.2011 <- svymean(
+  ~INJURY, 
+  data = srs.2011, 
+  design = srs.des.2011))
+
+# CI 
+(inj.prop.2011.CI <- confint(inj.prop.2011)) 
+
+# variance  
+svyvar(~INJURY, srs.des.2011)
+```
+
+### Chi-Squared Test for Association
+
+```{r}
+srs.2009$fpc <- nrow(pop_2009)
+srs.2011$fpc <- nrow(pop_2011)
+
+srs.samp.merge <- rbind(srs.2009,srs.2011)
+
+srs.des.merge <- svydesign(
+  data = srs.samp.merge, 
+  ids = ~1, 
+  fpc = ~fpc)
+
+(cont.table <- svytable(
+  ~ INJURY+YEAR, 
+  design = srs.des.merge))
+
+summary(cont.table, "Chisq")
+```
+
+## Post-Stratify `QUARTER` on SRS
+
+```{r}
+# make sampling weight for quarter (our post-strata) - 2009
+quarter_map_merge <- srs.2009 %>% 
+  group_by(YEAR, QUARTER) %>% 
+  summarize(sample = n())
+
+post_merge_2009 <- left_join(srs.2009, quarter_map_merge)
+
+post_strat_pop_2009 <- pop_2009 %>% 
+  group_by(QUARTER) %>% 
+  summarize(population = n())
+
+post_merge_2009 <- left_join(post_merge_2009, post_strat_pop_2009)
+
+post_merge_2009$inc_prob <- post_merge_2009$sample/post_merge_2009$population
+
+post_merge_2009$post_strat_weight <- 1/post_merge_2009$inc_prob
+
+# survey design
+post_strat_des_2009 <- svydesign(
+  ids=~1, 
+  fpc = ~population, 
+  weights = ~post_strat_weight, 
+  strata = ~QUARTER, 
+  data = post_merge_2009)
+
+# table for the stratification variable
+table <- data.frame(QUARTER=c(1,2,3,4), freq=c(9443,23093,22375,33535))
+
+# post stratify 
+post_strata_2009 <- postStratify(
+  design = post_strat_des_2009, 
+  strata = ~QUARTER, 
+  population = table)
+
+# proportion
+post_est2009 <- svymean(~INJURY, post_strata_2009)
+
+# CI
+(post_est2009.CI <- confint(post_est2009))   
+
+# Variance  
+svyvar(~INJURY, post_strata_2009)
+```
+
+```{r}
+# make sampling weight for quarter (our post-strata) - 2011
+quarter_map_merge <- srs.2011 %>% 
+  group_by(YEAR, QUARTER) %>% 
+  summarize(sample = n())
+
+post_merge_2011 <- left_join(srs.2011, quarter_map_merge)
+
+post_strat_pop_2011 <- pop_2011 %>% 
+  group_by(QUARTER) %>% 
+  summarize(population = n())
+
+post_merge_2011 <- left_join(post_merge_2011, post_strat_pop_2011)
+
+post_merge_2011$inc_prob <- post_merge_2011$sample/post_merge_2011$population
+
+post_merge_2011$post_strat_weight <- 1/post_merge_2011$inc_prob
+
+# survey design
+post_strat_des_2011 <- svydesign(
+  ids=~1, 
+  fpc = ~population, 
+  weights = ~post_strat_weight, 
+  strata = ~QUARTER, 
+  data = post_merge_2011)
+
+# table for the stratification variable
+table <- data.frame(QUARTER=c(1,2,3,4), freq=c(25032,26944,25325,24574))
+
+# post stratify
+post_strata_2011 <- postStratify(
+  design = post_strat_des_2011, 
+  strata = ~QUARTER, 
+  population = table)
+
+# proportion 
+(post_est2011 <- svymean(~INJURY, post_strata_2011))
+
+# CI 
+(post_est2011.CI <- confint(post_est2011))
+
+# Variance 
+svyvar(~INJURY, post_strata_2011)
+```
+
+### Chi-Squared Test for Association
+
+```{r}
+post_strat.samp.merge <- rbind(post_merge_2009,post_merge_2011)
+
+post_strat.des.merge <- svydesign(
+  data = post_strat.samp.merge, 
+  ids = ~1, 
+  strata = ~QUARTER, 
+  weights = ~post_strat_weight, 
+  fpc = ~population)
+
+(cont.table2 <- svytable(
+  ~ INJURY+YEAR, 
+  design = post_strat.des.merge))
+
+summary(cont.table2, "Chisq")
+```
+
+## Post-Stratify `REGION` on SRS
+
+```{r}
+# make sampling weight for quarter (our post-strata) - 2009
+region_map_merge <- srs.2009 %>% 
+  group_by(REGION) %>% 
+  summarize(sample = n())
+
+post_merge_2009 <- left_join(srs.2009, region_map_merge)
+
+post_strat_pop_2009 <- pop_2009 %>% 
+  group_by(REGION) %>% 
+  summarize(population = n())
+
+post_merge_2009 <- left_join(post_merge_2009, post_strat_pop_2009)
+
+post_merge_2009$inc_prob <- post_merge_2009$sample/post_merge_2009$population
+
+post_merge_2009$post_strat_weight <- 1/post_merge_2009$inc_prob
+
+# survey design
+post_strat_des_2009 <- svydesign(
+  ids=~1, 
+  fpc = ~population, 
+  weights = ~post_strat_weight, 
+  strata = ~REGION, 
+  data = post_merge_2009)
+
+# table for the stratification variable
+table <- data.frame(REGION=c(1,2,3,4), freq=c(14458,18093,32308,23587))
+
+# post stratify
+post_strata_2009 <- postStratify(
+  design = post_strat_des_2009, 
+  strata = ~REGION, 
+  population = table)
+
+# proportion
+(post_est2009.R <- svymean(~INJURY, post_strata_2009))
+
+# CI 
+(post_est2009.R.CI <- confint(post_est2009.R))
+
+# variance 
+svyvar(~INJURY, post_strata_2009)
+```
+
+```{r}
+# make sampling weight for quarter (our post-strata) - 2011
+region_map_merge <- srs.2011 %>% 
+  group_by(REGION) %>% 
+  summarize(sample = n())
+
+post_merge_2011 <- left_join(srs.2011, region_map_merge)
+
+post_strat_pop_2011 <- pop_2011 %>% 
+  group_by(REGION) %>% 
+  summarize(population = n())
+
+post_merge_2011 <- left_join(post_merge_2011, post_strat_pop_2011)
+
+post_merge_2011$inc_prob <- post_merge_2011$sample/post_merge_2011$population
+
+post_merge_2011$post_strat_weight <- 1/post_merge_2011$inc_prob
+
+# survey design 
+post_strat_des_2011 <- svydesign(
+  ids=~1, 
+  fpc = ~population, 
+  weights = ~post_strat_weight, 
+  strata= ~REGION, 
+  data = post_merge_2011)
+
+# table for the stratification variable
+table <- data.frame(REGION=c(1,2,3,4), freq=c(15835,20988,36672,28380))
+
+# post stratify
+post_strata_2011 <- postStratify(
+  design = post_strat_des_2011, 
+  strata = ~REGION, 
+  population = table)
+
+# proportion
+(post_est2011.R <- svymean(~INJURY, post_strata_2011))
+
+# CI
+(post_est2011.R.CI <- confint(post_est2011.R))  
+
+# variance  
+svyvar(~INJURY, post_strata_2011)
+```
+
+### Chi-Squared Test for Association
+
+```{r}
+post_strat.samp.merge <- rbind(post_merge_2009,post_merge_2011)
+
+post_strat.des.merge <- svydesign(
+  data = post_strat.samp.merge, 
+  ids = ~1, strata = ~REGION, 
+  weights = ~post_strat_weight, 
+  fpc = ~population)
+
+(cont.table3 <- svytable(
+  ~ INJURY+YEAR, 
+  design = post_strat.des.merge))
+
+summary(cont.table3, "Chisq")
+```
+
+## Stratified Sampling by Region
+
+### Proportional Allocation
+
+```{r}
+# for 2009
+set.seed(123456789)
+
+# proportion for sample_frac below
+prop09 <- 3459/nrow(pop_2009)
+
+# draw stratified sample with proportional allocation
+set.seed(123456789)
+strat.samp <- pop_2009 %>% 
+  group_by(REGION) %>% 
+  sample_frac(prop09, replace = F)
+
+# tables below are used to create weight and fpc variables
+table(pop_2009$REGION)
+table(strat.samp$REGION)
+
+# check sample size
+nrow(strat.samp) 
+
+# set weight and fpc
+strat.samp <- strat.samp %>% mutate(
+  weight = case_when(REGION==1 ~ 14458/565,
+                     REGION==2 ~ 18093/708,
+                     REGION==3 ~ 32308/1264,
+                     REGION==4 ~ 23587/922
+                                          ),
+  fpc = case_when(REGION==1 ~ 14458,
+                  REGION==2 ~ 18093,
+                  REGION==3 ~ 32308,
+                  REGION==4 ~ 23587
+                                          )
+                                    )
+
+# survey design
+strat.des <- svydesign(
+  ids = ~1, 
+  strata = ~REGION, 
+  weights = ~weight, 
+  fpc = ~fpc, 
+  data = strat.samp)
+
+# proportion 
+(strat.r.2009 <- svymean(~INJURY, strat.des)) 
+
+# CI
+(strat.r.2009.CI <- confint(svymean(~INJURY, strat.des))) 
+
+# variance 
+svyvar(~INJURY, strat.des)
+```
+
+```{r}
+# for 2011
+set.seed(123456789)
+
+# proportion for sample_frac below
+prop11 <- 3065/nrow(pop_2011)
+
+# draw stratified sample with proportional allocation
+strat.samp2 <- pop_2011 %>% 
+  group_by(REGION) %>% 
+  sample_frac(prop11, replace = F)
+
+# tables below are used to create weight and fpc variables
+table(pop_2011$REGION)
+table(strat.samp2$REGION)
+
+# check sample size
+nrow(strat.samp2) 
+
+# set weight and fpc
+strat.samp2 <- strat.samp2 %>% mutate(
+  weight = case_when(REGION==1 ~ 15835/476,
+                     REGION==2 ~ 20988/631,
+                     REGION==3 ~ 36672/1103,
+                     REGION==4 ~ 28380/854
+                                            ),
+  fpc = case_when(REGION==1 ~ 15835,
+                  REGION==2 ~ 20988,
+                  REGION==3 ~ 36672,
+                  REGION==4 ~ 28380
+                                             )
+                                    )
+
+# survey design
+strat.des2 <- svydesign(
+  ids = ~1, 
+  strata = ~REGION, 
+  weights = ~weight, 
+  fpc = ~fpc, 
+  data = strat.samp2)
+
+# proportion
+(strat.r.2011 <- svymean(~INJURY, strat.des2)) 
+
+# CI
+(strat.r.2011.CI <- confint(svymean(~INJURY, strat.des2))) 
+
+# variance 
+svyvar(~INJURY, strat.des2)
+```
+
+#### Chi-Squared Test of Association
+
+```{r}
+prop.alloc.merge <- rbind(strat.samp,strat.samp2)
+
+prop.alloc.merge.des <- svydesign(
+  data = prop.alloc.merge, 
+  ids = ~1, 
+  weights = ~weight, 
+  strata = ~REGION, 
+  fpc = ~fpc)
+
+(cont.table4 <- svytable(
+  ~ INJURY+YEAR, 
+  design = prop.alloc.merge.des))
+
+summary(cont.table4, "Chisq")
+```
+
+### Optimal Allocation
+
+```{r}
+# for 2009
+set.seed(123456789)
+
+# for optimum allocation, we need the stratum-specific standard deviations
+sd_map_2009 <- aggregate(pop_2009$INJURY, list(pop_2009$REGION), FUN=sd)
+
+sd_map_2009 <- rename(sd_map_2009, REGION = Group.1)
+
+merge1 <- pop_2009 %>% group_by(REGION) %>% 
+  summarise(num_total = n())
+
+sd_map_2009 <- full_join(sd_map_2009, merge1)
+
+# create pi_h variable 
+pi_set <- sd_map_2009 %>% mutate(denom = crossprod(num_total,x))
+pi_set$pi_h <- (pi_set$num_total*pi_set$x)/pi_set$denom
+pi_set
+
+# draw sample
+sample_opt_alloc <- stratsample(pop_2009$REGION, c('1'=ceiling(pi_set$pi_h[pi_set$REGION==1]*3459),
+                                                   '2'=ceiling(pi_set$pi_h[pi_set$REGION==2]*3459),
+                                                   '3'=ceiling(pi_set$pi_h[pi_set$REGION==3]*3459),
+                                                   '4'=ceiling(pi_set$pi_h[pi_set$REGION==4]*3459)
+                                                   )
+                                )
+strat_data <- pop_2009[sample_opt_alloc, ]
+strat_data <- left_join(strat_data,pi_set)
+
+# tables to create the weight variable
+table(strat_data$REGION)
+table(pop_2009$REGION)
+
+# set weight
+strat_data <- strat_data %>% mutate(
+  weight = case_when(REGION==1 ~ 14458/561,
+                     REGION==2 ~ 18093/755,
+                     REGION==3 ~ 32308/1267,
+                     REGION==4 ~ 23587/878
+                                              )
+                                    )
+
+
+# survey design
+samp_des_opt <- svydesign(
+  ids = ~1, 
+  strata = ~REGION, 
+  fpc = ~num_total, 
+  weights = ~weight, 
+  data = strat_data)
+
+# proportion
+(strat.ro.2009 <- svymean(~INJURY, samp_des_opt)) 
+
+# CI 
+(strat.ro.2009.CI <- confint(svymean(~INJURY, samp_des_opt)))
+
+# variance 
+svyvar(~INJURY, samp_des_opt)
+```
+
+```{r}
+# for 2011
+set.seed(123456789)
+
+# for optimum allocation, we need the stratum-specific standard deviations
+sd_map_2011 <- aggregate(pop_2011$INJURY, list(pop_2011$REGION), FUN=sd)
+
+sd_map_2011 <- rename(sd_map_2011, REGION = Group.1)
+
+merge1 <- pop_2011 %>% group_by(REGION) %>% summarise(num_total = n())
+
+sd_map_2011 <- full_join(sd_map_2011, merge1)
+
+# create pi_h variable 
+pi_set2 <- sd_map_2011 %>% mutate(denom=crossprod(num_total,x))
+pi_set2$pi_h <- (pi_set2$num_total*pi_set2$x)/pi_set2$denom
+pi_set2
+
+# draw sample
+sample_opt_alloc2 <- stratsample(pop_2009$REGION, c('1'=ceiling(pi_set2$pi_h[pi_set2$REGION==1]*3065),
+                                                   '2'=ceiling(pi_set2$pi_h[pi_set2$REGION==2]*3065),
+                                                   '3'=ceiling(pi_set2$pi_h[pi_set2$REGION==3]*3065),
+                                                   '4'=ceiling(pi_set2$pi_h[pi_set2$REGION==4]*3065)
+                                                   )
+                                )
+strat_data2 <- pop_2011[sample_opt_alloc2, ]
+strat_data2 <- left_join(strat_data2,pi_set2)
+
+# tables to create the weight variable
+table(strat_data2$REGION)
+table(pop_2011$REGION)
+
+# set weight
+strat_data2 <- strat_data2 %>% mutate(
+  weight = case_when(REGION==1 ~ 15835/459,
+                     REGION==2 ~ 20988/641,
+                     REGION==3 ~ 36672/1072,
+                     REGION==4 ~ 28380/894
+                                             )
+                                    )
+
+
+# survey design
+samp_des_opt2 <- svydesign(
+  ids = ~1, 
+  strata = ~REGION, 
+  fpc = ~num_total, 
+  weights = ~weight, 
+  data = strat_data2)
+
+# proportion
+(strat.ro.2011 <- svymean(~INJURY, samp_des_opt2))
+
+# CI
+(strat.ro.2011.CI <- confint(svymean(~INJURY, samp_des_opt2)))
+
+# variance 
+svyvar(~INJURY, samp_des_opt2)
+```
+
+#### Chi-Squared Test of Association
+
+```{r}
+opt.alloc.merge <- rbind(strat_data,strat_data2)
+
+opt.alloc.merge.des <- svydesign(
+  data = opt.alloc.merge, 
+  ids = ~1, 
+  weights = ~weight, 
+  strata = ~REGION, 
+  fpc = ~num_total)
+
+(cont.table5 <- svytable(
+  ~ INJURY+YEAR, 
+  design = opt.alloc.merge.des))
+
+summary(cont.table5, "Chisq")
+```
+
+## Stratified Sampling by Quarter
+
+### Proportional Allocation
+
+```{r}
+# for 2009
+set.seed(123456789)
+
+# proportion for sample_frac below
+prop09 <- 3459/nrow(pop_2009)
+
+# draw stratified sample with proportional allocation
+strat.samp <- pop_2009 %>% group_by(QUARTER) %>% sample_frac(prop09, replace = F)
+
+# tables to create weight and fpc variables
+table(pop_2009$QUARTER)
+table(strat.samp$QUARTER)
+
+# check sample size
+nrow(strat.samp)
+
+# set weight and fpc
+strat.samp <- strat.samp %>% mutate(
+  weight = case_when(QUARTER==1 ~ 9443/387,
+                     QUARTER==2 ~ 23093/859,
+                     QUARTER==3 ~ 22375/890,
+                     QUARTER==4 ~ 33535/1323
+                                             ),
+  fpc = case_when(QUARTER==1 ~ 9443,
+                  QUARTER==2 ~ 23093,
+                  QUARTER==3 ~ 22375,
+                  QUARTER==4 ~ 33535
+                                       )
+                                    )
+
+# survey design
+strat.des <- svydesign(
+  ids = ~1, 
+  strata = ~QUARTER, 
+  weights = ~weight, fpc = ~fpc, 
+  data = strat.samp)
+
+# proportion
+(strat.q.2009 <- svymean(~INJURY, strat.des)) 
+
+# CI
+(strat.q.2009.CI <- confint(svymean(~INJURY, strat.des)))
+
+# variance 
+svyvar(~INJURY, strat.des)
+```
+
+```{r}
+# for 2011
+set.seed(123456789)
+
+# proportion for sample_frac below
+prop11 <- 3065/nrow(pop_2011)
+
+# draw stratified sample with proportional allocation
+strat.samp2 <- pop_2011 %>% 
+  group_by(QUARTER) %>% 
+  sample_frac(prop11, replace = F)
+
+# tables below to create weight and fpc variables
+table(pop_2011$QUARTER)
+table(strat.samp2$QUARTER)
+
+# check sample size
+nrow(strat.samp2) 
+
+# set weight and fpc
+strat.samp2 <- strat.samp2 %>% mutate(
+  weight = case_when(QUARTER==1 ~ 25032/756,
+                     QUARTER==2 ~ 26944/758,
+                     QUARTER==3 ~ 25325/785,
+                     QUARTER==4 ~ 24574/765
+                                            ),
+  fpc = case_when(QUARTER==1 ~ 25032,
+                  QUARTER==2 ~ 26944,
+                  QUARTER==3 ~ 25325,
+                  QUARTER==4 ~ 24574
+                                       )
+                                    )
+
+# survey design
+strat.des2 <- svydesign(
+  ids = ~1, 
+  strata = ~QUARTER, 
+  weights = ~weight, 
+  fpc = ~fpc, 
+  data = strat.samp2)
+
+# proportion 
+(strat.q.2011 <- svymean(~INJURY, strat.des2))  
+
+# CI 
+(strat.q.2011.CI <- confint(svymean(~INJURY, strat.des2)))
+
+# variance  
+svyvar(~INJURY, strat.des2)
+```
+
+#### Chi-Squared Test of Association
+
+```{r}
+prop.alloc.merge <- rbind(strat.samp,strat.samp2)
+
+prop.alloc.merge.des <- svydesign(
+  data = prop.alloc.merge, 
+  ids = ~1, 
+  weights = ~weight, 
+  strata = ~QUARTER, 
+  fpc = ~fpc)
+
+(cont.table6 <- svytable(
+  ~ INJURY+YEAR, 
+  design = prop.alloc.merge.des))
+
+summary(cont.table6, "Chisq")
+```
+
+# One-Stage Sample
+
+$$w_{h} = \frac{N_h}{n_h} , \ \text{where} \ h \  \text{is strata level}$$
+
+$$w_{q} = \frac{N_q}{n_q} , \ \\ \text{where} \ q \  \text{is quarter level (1,2,3,4)}$$
+
+```{r}
+set.seed(123456789)
+# one-stage sample - 2009
+
+# total pop size in 2009
+pop_2009 <- pop_2009 %>% 
+  mutate(N = n()) %>% 
+  ungroup()
+
+# get population REGION cluster size
+pop_2009 <- pop_2009 %>% 
+  group_by(REGION) %>% 
+  mutate(Mi = n()) %>% 
+  ungroup()
+
+# create very basic map of regions to sample from in first step (Mi = # of observational units in each region)
+region.map.2009 <- pop_2009 %>% 
+  group_by(REGION) %>% 
+  summarise(Mi = n())
+
+# create a larger map of household (NHISHID) to sample from in the second step (Hi = # of observational units in each household)
+house.map.2009 <- pop_2009 %>% 
+  group_by(REGION, NHISHID) %>% 
+  summarize(Hi = n()) 
+
+# merge selected REGION with full data set to get households in each selected region
+region.hh.2009 <- left_join(region.map.2009, pop_2009)
+
+# next we should merge region.2 with house.map to obtain the appropriate sample
+hh.map.2009 <- left_join(region.map.2009, house.map.2009)
+
+
+# proportion for sample_frac below
+# we should randomly select 3459/2.5 = 1384 households total for 2009 (2.5 is denominator even though median household number is 3 to ensure adequate final sample size)
+prop09 <- (3459/2.5)/nrow(hh.map.2009)
+
+# draw stratified sample with proportional allocation
+hh.samp.2009 <- hh.map.2009 %>% 
+  group_by(REGION) %>% 
+  sample_frac(prop09, replace = F)
+
+table(hh.samp.2009$REGION)
+
+# merge selected households with quarter.2.hh for the final sample
+mult.hh.samp.2009 <- left_join(hh.samp.2009, pop_2009)
+
+# need mi for weighting
+table(pop_2009$REGION)
+table(mult.hh.samp.2009$REGION)
+
+# set weight and fpc
+mult.hh.samp.2009 <- mult.hh.samp.2009 %>% mutate(
+  w2 = case_when(REGION==1 ~ 14458/586,
+                 REGION==2 ~ 18093/774,
+                 REGION==3 ~ 32308/1332,
+                 REGION==4 ~ 23587/1017
+                                        )
+                                    )
+
+# survey design
+mult.hh.des.2009 <- svydesign(
+  data = mult.hh.samp.2009, 
+  ids = ~NHISHID, 
+  weights = ~w2, 
+  fpc = ~Mi, 
+  nest = T)
+
+# pre-post-stratification estimate
+prop.est.2009 <- svymean(~INJURY, mult.hh.des.2009, deff = T)
+prop.est.2009
+confint(prop.est.2009)
+
+# make sampling weight for quarter (our post-strata) - 2009
+quarter_map_merge <- mult.hh.samp.2009 %>% 
+  group_by(YEAR, QUARTER) %>% 
+  summarize(sample = n())
+
+post_merge_2009 <- left_join(mult.hh.samp.2009, quarter_map_merge)
+
+post_strat_pop_2009 <- pop_2009 %>% 
+  group_by(QUARTER) %>% 
+  summarize(population = n())
+
+post_merge_2009 <- left_join(post_merge_2009, post_strat_pop_2009)
+post_merge_2009$inc_prob <- post_merge_2009$sample/post_merge_2009$population
+post_merge_2009$post_strat_weight <- 1/post_merge_2009$inc_prob
+
+# survey design pre-post-stratification
+post_strat_des_2009 <- svydesign(
+  ids = ~NHISHID, 
+  fpc = ~Mi, 
+  strata = ~REGION, 
+  weights = ~post_strat_weight+w2, 
+  data = post_merge_2009, 
+  nest = T)
+
+# create a table for the stratification variable
+table <- data.frame(QUARTER=c(1,2,3,4), freq=c(9443,23093,22375,33535))
+
+# post stratify 
+post_strata_2009 <- postStratify(
+  design = post_strat_des_2009, 
+  strata = ~QUARTER, 
+  population = table)
+
+# proportion 
+(post_est.2009 <- svymean(~INJURY, post_strata_2009, deff = T))
+
+# CI
+(post_est.2009.CI <- confint(post_est.2009))
+
+# variance 
+svyvar(~INJURY, post_strata_2009)
+```
+
+```{r}
+house.map.2009 %>% group_by(Hi) %>% unique() %>% count()
+#house.map.2009
+```
+
+```{r}
+set.seed(123456789)
+# single-stage sample - 2011
+
+# total pop size in 2011
+pop_2011 <- pop_2011 %>% 
+  mutate(N = n()) %>% 
+  ungroup()
+
+# get population REGION cluster size
+pop_2011 <- pop_2011 %>% 
+  group_by(REGION) %>% 
+  mutate(Mi = n()) %>% 
+  ungroup()
+
+# create very basic map of regions to sample from in first step (Mi = # of observational units in each region)
+region.map.2011 <- pop_2011 %>% 
+  group_by(REGION) %>% 
+  summarise(Mi = n())
+
+# create a larger map of household (NHISHID) to sample from in the second step (Hi = # of observational units in each household)
+house.map.2011 <- pop_2011 %>% 
+  group_by(REGION, NHISHID) %>% 
+  summarize(Hi = n()) 
+
+# merge selected REGION with full data set to get households in each selected region
+region.hh.2011 <- left_join(region.map.2011, pop_2011)
+
+# next we should merge region.2 with house.map to obtain the appropriate sample
+hh.map.2011 <- left_join(region.map.2011, house.map.2011)
+
+# proportion for sample_frac below
+# we should randomly select 3065/2.5 = 1384 households total for 2009 (2.5 is denominator even though median household number is 3 to ensure adequate final sample size)
+prop11 <- (3065/2.5)/nrow(hh.map.2011)
+
+# draw stratified sample with proportional allocation
+hh.samp.2011 <- hh.map.2011 %>% 
+  group_by(REGION) %>% 
+  sample_frac(prop11, replace = F)
+
+table(hh.samp.2011$REG)
+
+# merge selected households with quarter.2.hh for the final sample
+mult.hh.samp.2011 <- left_join(hh.samp.2011, pop_2011)
+
+# need mi for weighting
+table(pop_2011$REGION)
+table(mult.hh.samp.2011$REGION)
+
+# set weight and fpc
+mult.hh.samp.2011 <- mult.hh.samp.2011 %>% mutate(
+  w2 = case_when(REGION==1 ~ 15835/518,
+                 REGION==2 ~ 20988/668,
+                 REGION==3 ~ 36672/1101,
+                 REGION==4 ~ 28380/910
+                                        ), 
+                                    )
+
+# survey design
+mult.hh.des.2011 <- svydesign(
+  data = mult.hh.samp.2011, 
+  ids = ~NHISHID, 
+  weights = ~w2, 
+  fpc = ~Mi, 
+  nest = T)
+
+# might not need below
+prop.est.2011 <- svymean(~INJURY, mult.hh.des.2011, deff = T)
+prop.est.2011
+
+# make sampling weight for quarter (our post-strata) - 2009
+quarter_map_merge <- mult.hh.samp.2011 %>% 
+  group_by(YEAR, QUARTER) %>% 
+  summarize(sample = n())
+
+post_merge_2011 <- left_join(mult.hh.samp.2011, quarter_map_merge)
+post_strat_pop_2011 <- pop_2011 %>% group_by(QUARTER) %>% summarize(population = n())
+post_merge_2011 <- left_join(post_merge_2011, post_strat_pop_2011)
+post_merge_2011$inc_prob <- post_merge_2011$sample/post_merge_2011$population
+post_merge_2011$post_strat_weight <- 1/post_merge_2011$inc_prob
+
+# I think we might need to make a survey design too?
+post_strat_des_2011 <- svydesign(
+  ids = ~NHISHID, 
+  fpc = ~Mi, 
+  strata = ~REGION, 
+  weights = ~post_strat_weight+w2, 
+  data = post_merge_2011, 
+  nest = T)
+
+table(pop_2011$QUARTER)
+
+# create a table for the stratification variable
+table <- data.frame(QUARTER=c(1,2,3,4), freq=c(25032,26944,25325,24574))
+
+# post stratify 
+post_strata_2011 <- postStratify(
+  design = post_strat_des_2011, 
+  strata = ~QUARTER, 
+  population = table)
+
+# proportion
+(post_est.2011 <- svymean(~INJURY, post_strata_2011))
+
+# CI
+(post_est.2011.CI <- confint(post_est.2011))
+
+# variance 
+svyvar(~INJURY, post_strata_2011)
+```
+
+### Chi-Squared Test of Association
+
+```{r}
+mult.post.samp.merge <- rbind(post_merge_2009,post_merge_2011)
+
+mult.post.samp.merge <- mult.post.samp.merge %>% mutate(
+  strata_var = case_when(YEAR==2009 & QUARTER==1 ~ 1,
+                         YEAR==2009 & QUARTER==2 ~ 2,
+                         YEAR==2009 & QUARTER==3 ~ 3,
+                         YEAR==2009 & QUARTER==4 ~ 4,
+                         YEAR==2011 & QUARTER==1 ~ 5,
+                         YEAR==2011 & QUARTER==2 ~ 6,
+                         YEAR==2011 & QUARTER==3 ~ 7,
+                         YEAR==2011 & QUARTER==4 ~ 8))
+
+
+# survey design
+mult.post.des.merge <- svydesign(
+  data = mult.post.samp.merge, 
+  ids = ~NHISHID, 
+  strata= ~strata_var, 
+  weights = ~w2+post_strat_weight, 
+  fpc = ~Mi, 
+  nest = T)
+
+# table for stratified variable
+table <- data.frame(strata_var=c(1,2,3,4,5,6,7,8), freq=c(9443,23093,22375,33535,25032,26944,25325,24574))
+
+# post stratify
+mult.post.des.merge <- postStratify(
+  design = mult.post.des.merge, 
+  strata = ~strata_var, 
+  population = table)
+
+(cont.table8 <- svytable(
+  ~ INJURY+YEAR, 
+  design = mult.post.des.merge))
+
+summary(cont.table8, "Chisq")
+```
+
+### Bootstrap Variance Estimates
+
+```{r}
+# 2009
+set.seed(123456789)
+
+boot.2009 <- as.svrepdesign(
+  post_strat_des_2009, 
+  type = 'bootstrap', 
+  replicates = 1000)
+
+(boot.2009.est <- svymean(~INJURY, boot.2009))
+
+# 2011
+set.seed(123456789)
+
+boot.2011 <- as.svrepdesign(
+  post_strat_des_2011, 
+  type = 'bootstrap', 
+  replicates = 1000)
+
+(boot.2011.est <- svymean(~INJURY, boot.2011))
+```
+
+```{r}
+# 2009    
+library(surveybootstrap)
+library(boot)
+
+# survey design
+design <- svydesign(
+  id = ~1, 
+  strata = ~REGION, 
+  fpc = ~Mi, 
+  weights = ~post_strat_weight+w2, 
+  data = post_merge_2009)
+
+# number of bootstrap replicates
+n_replicates <- 1000
+
+# Function to compute the estimate
+estimate_func <- function(data, indices) {
+  design_boot <- data[indices, ]
+  svymean(~ INJURY, design_boot)
+}
+
+# Set the number of bootstrap replicates
+n_replicates <- 1000
+
+# Perform bootstrap resampling
+bootstrap_results09 <- boot::boot(data = design, 
+                          statistic = estimate_func, 
+                          R = n_replicates)
+
+# Extract the bootstrap estimates
+bootstrap_estimates <- bootstrap_results09$t
+(bootstrap_estimates_mean <- colMeans(bootstrap_results09$t))
+
+plot(bootstrap_results09, index=1)
+
+# Calculate 95% confidence interval
+boot.ci(bootstrap_results09, type = "basic")
+```
+
+```{r}
+# 95% CI for 2009
+set.seed(123456789)
+
+# Construct 95% CI using bootstrap resampling
+boot.est.mean <- function(c, data1){
+  bclus1_des <- svydesign(
+    id = ~NHISHID, 
+    weights = ~c, 
+    strata = ~REGION, 
+    data = data1, 
+    fpc = ~Mi)
+  boot.mean.est <- svymean(~INJURY, bclus1_des)
+  return(boot.mean.est)
+}
+
+boot.est.mean(mult.hh.samp.2009$w2, mult.hh.samp.2009)
+
+set.seed(123456789)
+
+M.unique <- mult.hh.samp.2009 %>% 
+  group_by(NHISHID) %>% 
+  summarise(M_i = n()) %>% 
+  ungroup()
+
+clust_size <- M.unique$M_i
+
+
+# one-stage cluster sample
+dclus1<-svydesign(
+  id = ~NHISHID, 
+  weights = ~w2, 
+  strata = ~REGION, 
+  data = mult.hh.samp.2009, 
+  fpc = ~Mi)
+
+## convert to bootstrap
+bclus1<-as.svrepdesign(dclus1,type="bootstrap", replicates=1000)
+b.weights_rep <- apply(bclus1$repweights$weights, 2, function(c){rep(c, clust_size)}) # get adjusted weight
+b.weights_rep <- b.weights_rep*bclus1$pweights
+b.weights_rep <- as.list(as.data.frame(b.weights_rep)) # convert a matrix to a list of 100 in length
+bclus1_des <- lapply(b.weights_rep, boot.est.mean, mult.hh.samp.2009)
+result1.SE.boot <- sapply(bclus1_des, function(l) SE(l))
+result1.mean.boot <- sapply(bclus1_des, function(l) mean(l))
+result1.boot.est.mean <- c(mean(result1.mean.boot), mean(result1.SE.boot),
+quantile(result1.mean.boot, probs = c(0.025, 0.975)))
+names(result1.boot.est.mean) = c("mean", "SE", "lb", "ub")
+result1.boot.est.mean
+result.boot.complete.2009 <- result1.boot.est.mean
+
+
+df1 <- data.frame(estimate = result1.mean.boot)
+
+# Create the bootstrap distribution plot
+ggplot(df1, aes(x = estimate)) +
+  geom_histogram(binwidth = 0.00025, fill = "lightblue", color = "black") +
+  labs(x = "Bootstrap Estimates", y = "Frequency") +
+  ggtitle("Bootstrap Distribution Plot (2009)") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r}
+# For 2011
+set.seed(123456789)
+M.unique <- mult.hh.samp.2011 %>% 
+  group_by(NHISHID) %>% 
+  summarise(M_i = n()) %>% 
+  ungroup()
+
+clust_size <- M.unique$M_i
+
+# one-stage cluster sample
+dclus1<-svydesign(
+  id = ~NHISHID, 
+  weights = ~w2, 
+  strata = ~REGION, 
+  data = mult.hh.samp.2011, 
+  fpc = ~Mi)
+
+## convert to bootstrap
+bclus1<-as.svrepdesign(dclus1,type="bootstrap", replicates=1000)
+b.weights_rep <- apply(bclus1$repweights$weights, 2, function(c){rep(c, clust_size)}) # get adjusted wei
+b.weights_rep <- b.weights_rep*bclus1$pweights
+b.weights_rep <- as.list(as.data.frame(b.weights_rep)) # convert a matrix to a list of 1000 in length
+bclus1_des <- lapply(b.weights_rep, boot.est.mean, mult.hh.samp.2011)
+result1.SE.boot <- sapply(bclus1_des, function(l) SE(l))
+result1.mean.boot <- sapply(bclus1_des, function(l) mean(l))
+result1.boot.est.mean <- c(mean(result1.mean.boot), mean(result1.SE.boot),
+quantile(result1.mean.boot, probs = c(0.025, 0.975)))
+names(result1.boot.est.mean) = c("mean", "SE", "lb", "ub")
+result1.boot.est.mean
+result.boot.complete.2011 <- result1.boot.est.mean
+
+
+df2 <- data.frame(estimate = result1.mean.boot)
+
+# Create the bootstrap distribution plot
+ggplot(df2, aes(x = estimate)) +
+  geom_histogram(binwidth = 0.00025, fill = "lightblue", color = "black") +
+  labs(x = "Bootstrap Estimates", y = "Frequency") +
+  ggtitle("Bootstrap Distribution Plot (2011)") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+### Intraclass Correlation (ICC) Within Households
+
+```{r}
+# 2009
+# Check out homogeneity in households as clusters
+anova.model <- glm(INJURY~as.factor(NHISHID), 
+                   data = mult.hh.samp.2009)
+aov1 <- aov(anova.model)
+
+summary(aov1)
+
+icc.samp <- ICCest(as.factor(NHISHID), 
+                   INJURY, 
+                   data = mult.hh.samp.2009, 
+                   CI.type = ("THD"))
+
+icc.samp
+
+data.frame(icc.samp$ICC, icc.samp$LowerCI, icc.samp$UpperCI)
+```
+
+```{r}
+#2011
+# Check out homogeneity in households as clusters
+anova.model <- glm(INJURY~as.factor(NHISHID), 
+                   data = mult.hh.samp.2011)
+
+aov1 <- aov(anova.model)
+
+summary(aov1)
+
+icc.samp <- ICCest(as.factor(NHISHID), 
+                   INJURY, 
+                   data = mult.hh.samp.2011, 
+                   CI.type = ("THD"))
+
+data.frame(icc.samp$ICC, icc.samp$LowerCI, icc.samp$UpperCI)
+```
+
+# Ratio Estimation
+
+## Simple Random Sample - Quarter
+
+**Assessing proportion of injuries per year by quarter**
+
+```{r}
+# function for CIs
+ci.function <- function(object) {
+  est = object$total
+  lb <- est - 1.96*object$se
+  ub <- est + 1.96*object$se
+  c(est,lb,ub)
+}
+```
+
+```{r}
+# 2009
+rat <- svyratio(~INJURY, 
+                ~as.numeric(QUARTER), 
+                design = srs.des.2009)
+
+# new data
+(quarter_mean <- data.frame(QUARTER = mean(as.numeric(pop_2009$QUARTER))))
+
+# proportion
+(rat_pred <- predict(rat, quarter_mean$QUARTER))
+# CI
+(rat.ci2009 <- ci.function(rat_pred))
+
+
+# 2011  
+rat11 <- svyratio(~INJURY, 
+                  ~as.numeric(QUARTER), 
+                  design = srs.des.2011)
+
+# new data
+(quarter_mean11 <- data.frame(QUARTER = mean(as.numeric(pop_2011$QUARTER))))
+
+# proportion
+(rat_pred11 <- predict(rat11, quarter_mean11$QUARTER))
+# CI
+(rat.ci2011 <- ci.function(rat_pred11))
+```
+
+## Simple Random Sample - Age
+
+**Assessing proportion of injuries per year by age**
+
+```{r}
+# 2009  
+age.ratio09 <- svyratio(~INJURY, 
+                        ~AGE, 
+                        design = srs.des.2009)
+# new data
+age.ratio_mean09 <- data.frame(AGE = mean(pop_2009$AGE))
+
+# proportion
+(age.ratio.pred09 <- predict(age.ratio09, age.ratio_mean09$AGE))
+# CI
+(age.rat.2009 <- ci.function(age.ratio.pred09))
+
+# 2011  
+age.rat11 <- svyratio(~INJURY, 
+                      ~AGE, 
+                      design = srs.des.2011)
+# new data
+age.rat_mean11 <- data.frame(AGE = mean(pop_2011$AGE))
+
+# proportion
+(age.rat_pred11 <- predict(age.rat11, age.rat_mean11$AGE))
+# CI
+(age.rat.2011 <- ci.function(age.rat_pred11))
+```
+
+## Simple Random Sample - Sex
+
+**Assessing proportion of injuries per year by sex**
+
+```{r}
+# 2009 
+sex.ratio09 <- svyratio(~INJURY, 
+                        ~SEX, 
+                        design = srs.des.2009) 
+# new data
+sex.ratio_mean09 <- data.frame(SEX = mean(pop_2009$SEX))
+
+# proportion
+(sex.ratio.pred09 <- predict(sex.ratio09, sex.ratio_mean09$SEX))
+# CI  
+(s.r09 <- ci.function(sex.ratio.pred09))
+
+# 2011
+sex.rat11 <- svyratio(~INJURY, 
+                      ~SEX, 
+                      design = srs.des.2011) 
+# new data
+sex.rat_mean11 <- data.frame(SEX = mean(pop_2011$SEX))
+
+# proportion
+(sex.rat_pred11 <- predict(sex.rat11, sex.rat_mean11$SEX))
+# CI
+(s.r11 <- ci.function(sex.rat_pred11))
+```
+
+## Simple Random Sample - Race
+
+**Assessing proportion of injuries per year by race**
+
+```{r}
+# 2009   
+race.ratio09 <- svyratio(~INJURY, 
+                         ~RACENEW, 
+                         design = srs.des.2009)
+# new data
+race.ratio_mean09 <- data.frame(RACENEW = mean(pop_2009$RACENEW))
+
+# proportion
+(race.ratio.pred09 <- predict(race.ratio09, race.ratio_mean09$RACENEW))
+# CI
+(r.r09 <- ci.function(race.ratio.pred09))
+
+
+# 2011   
+race.rat11 <- svyratio(~INJURY, 
+                       ~RACENEW, 
+                       design = srs.des.2011) 
+# new data
+race.rat_mean11 <- data.frame(RACENEW = mean(pop_2011$RACENEW))
+
+# proportion
+(race.rat_pred11 <- predict(race.rat11, race.rat_mean11$RACENEW))
+# CI 
+(r.r11 <- ci.function(race.rat_pred11))
+```
+
+## Simple Random Sample - Above/Below Poverty Line
+
+**Assessing proportion of injuries per year by status of being above or below the poverty line**
+
+```{r}
+# 2009   
+poverty.ratio09 <- svyratio(~INJURY, 
+                            ~POORYN, 
+                            design = srs.des.2009)
+# new data
+poverty.ratio_mean09 <- data.frame(POORYN = mean(pop_2009$POORYN))
+
+# proportion
+(poverty.ratio.pred09 <- predict(poverty.ratio09, poverty.ratio_mean09$POORYN))
+# CI
+(p.r09 <- ci.function(poverty.ratio.pred09))
+
+# 2011  
+poverty.rat11 <- svyratio(~INJURY, 
+                          ~POORYN, 
+                          design = srs.des.2011)
+# new data
+poverty.rat_mean11 <- data.frame(POORYN = mean(pop_2011$POORYN))
+
+# proportion
+(poverty.rat_pred11 <- predict(poverty.rat11, poverty.rat_mean11$POORYN))
+# CI 
+(p.r11 <- ci.function(poverty.rat_pred11))
+```
+
+## Simple Random Sample - Age + Sex + Race
+
+**Assessing proportion of injuries per year by age, sex and race**
+
+```{r}
+# 2009   
+asr.ratio09 <- svyratio(~INJURY, 
+                        ~AGE + 
+                        ~SEX + 
+                        ~RACENEW, 
+                        design = srs.des.2009)
+# new data
+asr.ratio_mean09 <- data.frame(AGE = mean(pop_2009$AGE), 
+                               SEX = mean(pop_2009$AGE), 
+                               RACENEW = mean(pop_2009$RACENEW))
+
+# proportion
+(asr.ratio.pred09 <- predict(asr.ratio09, asr.ratio_mean09))
+# CI 
+(asr.09 <- ci.function(asr.ratio.pred09))
+
+
+# 2011  
+asr.rat11 <- svyratio(~INJURY, 
+                      ~AGE + 
+                      ~SEX + 
+                      ~RACENEW, 
+                      design = srs.des.2011)
+# new data
+asr.rat_mean11 <- data.frame(AGE = mean(pop_2009$AGE), 
+                             SEX = mean(pop_2009$AGE), 
+                             RACENEW = mean(pop_2009$RACENEW))
+
+# proportion
+(asr.rat_pred11 <- predict(asr.rat11, asr.rat_mean11))
+# CI
+(asr.11 <- ci.function(asr.rat_pred11))
+```
+
+# Ratio Estimation
+
+## Main Sampling Design - Age
+
+**Post-stratify by age**
+
+```{r}
+# 2009
+age.ratio09 <- svyratio(~INJURY, 
+                        ~AGE, 
+                        design = post_strat_des_2009)
+# new data
+age.ratio_mean09 <- data.frame(AGE = mean(pop_2009$AGE))
+
+# proportion
+(age.ratio.pred09 <- predict(age.ratio09, age.ratio_mean09$AGE))
+# CI
+(age.rat.2009 <- ci.function(age.ratio.pred09))
+# variance 
+age.ratio09$var
+
+# 2011  
+age.rat11 <- svyratio(~INJURY, 
+                      ~AGE, 
+                      design = post_strat_des_2011)
+# new data
+age.rat_mean11 <- data.frame(AGE = mean(pop_2011$AGE))
+
+# proportion
+(age.rat_pred11 <- predict(age.rat11, age.rat_mean11$AGE))
+# CI
+(age.rat.2011 <- ci.function(age.rat_pred11))
+# variance 
+age.rat11$var
+```
+
+```{r}
+# test of proportion?
+x1 <- 0.02741572
+x2 <- 0.02222087
+n1 <- nrow(mult.hh.samp.2009)
+n2 <- nrow(mult.hh.samp.2011)
+
+prop.test(c(x1*n1,x2*n2), c(n1,n2))
+
+sqrt(1.6931)
+```
+
+## Main Sampling Design - Sex
+
+**Post-stratify by sex**
+
+```{r}
+# 2009 
+sex.ratio09 <- svyratio(~INJURY, 
+                        ~SEX, 
+                        design = post_strat_des_2009)
+# new data
+sex.ratio_mean09 <- data.frame(SEX = mean(pop_2009$SEX))
+
+# proportion
+(sex.ratio.pred09 <- predict(sex.ratio09, sex.ratio_mean09$SEX))
+# CI
+(sex.rat.2009 <- ci.function(sex.ratio.pred09))
+# variance 
+sex.ratio09$var
+
+# 2011
+sex.rat11 <- svyratio(~INJURY, 
+                      ~SEX, 
+                      design = post_strat_des_2009)
+# new data
+sex.rat_mean11 <- data.frame(SEX = mean(pop_2011$SEX))
+
+# proportion
+(sex.rat_pred11 <- predict(sex.rat11, sex.rat_mean11$SEX))
+# CI
+(sex.rat.2011 <- ci.function(sex.rat_pred11))
+# variance
+sex.rat11$var
+```
+
+## Main Sampling Design - Race
+
+**Post-stratify by race**
+
+```{r}
+# 2009   
+race.ratio09 <- svyratio(~INJURY, 
+                         ~RACENEW, 
+                         design = post_strat_des_2009)
+# new data 
+race.ratio_mean09 <- data.frame(RACENEW = mean(pop_2009$RACENEW))
+
+# proportion
+(race.ratio.pred09 <- predict(race.ratio09, race.ratio_mean09$RACENEW))
+# CI 
+(r.race09 <- ci.function(race.ratio.pred09))
+# variance 
+race.ratio09$var
+
+# 2011   
+race.rat11 <- svyratio(~INJURY, 
+                       ~RACENEW, 
+                       design = post_strat_des_2009)
+# new data
+race.rat_mean11 <- data.frame(RACENEW = mean(pop_2011$RACENEW))
+
+# proportion
+(race.rat_pred11 <- predict(race.rat11, race.rat_mean11$RACENEW))
+# CI 
+(r.race11 <- ci.function(race.rat_pred11))
+# variance 
+race.rat11$var
+```
+
+## Main Sampling Design - Above/Below Poverty Line
+
+\_Post-stratify by poverty status of being above or below the poverty line\_\_
+
+```{r}
+# 2009   
+poverty.ratio09 <- svyratio(~INJURY, 
+                            ~POORYN, 
+                            design = post_strat_des_2009)
+# new data
+poverty.ratio_mean09 <- data.frame(POORYN = mean(pop_2009$POORYN))
+
+# proportion
+(poverty.ratio.pred09 <- predict(poverty.ratio09, poverty.ratio_mean09$POORYN))
+# CI 
+(p.r09 <- ci.function(poverty.ratio.pred09))
+# variance 
+poverty.ratio09$var
+
+# 2011  
+poverty.rat11 <- svyratio(~INJURY, 
+                          ~POORYN, 
+                          design = post_strat_des_2011)
+# new data
+poverty.rat_mean11 <- data.frame(POORYN = mean(pop_2011$POORYN))
+
+# proportion
+(poverty.rat_pred11 <- predict(poverty.rat11, poverty.rat_mean11$POORYN))
+# CI 
+(p.r11 <- ci.function(poverty.rat_pred11))
+# variance 
+poverty.rat11$var
+```
+
+```{r}
+# test of proportion?
+x1 <- 0.02568653
+x2 <- 0.02664894
+n1 <- nrow(mult.hh.samp.2009)
+n2 <- nrow(mult.hh.samp.2011)
+
+prop.test(c(x1*n1,x2*n2), c(n1,n2))
+
+sqrt(0.030396)
+```
+
+## Main Sampling Design - Age + Sex + Race
+
+**Post-stratify by age, sex and race**
+
+```{r}
+# 2009   
+asr.ratio09 <- svyratio(~INJURY, 
+                        ~AGE + 
+                        ~SEX + 
+                        ~RACENEW, 
+                        design = srs.des.2009)
+# new data
+asr.ratio_mean09 <- data.frame(AGE = mean(pop_2009$AGE), 
+                               SEX = mean(pop_2009$AGE), 
+                               RACENEW = mean(pop_2009$RACENEW))
+
+# proportion
+(asr.ratio.pred09 <- predict(asr.ratio09, asr.ratio_mean09))
+# CI 
+(asr.r.09 <- ci.function(asr.ratio.pred09))
+# variance 
+asr.ratio09$var
+
+# 2011  
+asr.rat11 <- svyratio(~INJURY, 
+                      ~AGE + 
+                      ~SEX + 
+                      ~RACENEW, 
+                      design = srs.des.2011)
+# new data
+asr.rat_mean11 <- data.frame(AGE = mean(pop_2009$AGE), 
+                             SEX = mean(pop_2009$AGE), 
+                             RACENEW = mean(pop_2009$RACENEW))
+
+# proportion
+(asr.rat_pred11 <- predict(asr.rat11, asr.rat_mean11)) 
+# CI 
+(asr.r.11 <- ci.function(asr.rat_pred11))
+# variance 
+asr.rat11$var
+```
+
+# Regression Estimation
+
+## Simple Random Sample - Quarter
+
+**Model based population estimates by quarter**
+
+```{r}
+#### 2009   
+reg_inj <- svyglm(INJURY ~ as.numeric(QUARTER), 
+                  design = srs.des.2009, 
+                  family = "binomial")
+summary(reg_inj)
+
+# proportion
+(reg_pred <- predict(reg_inj, newdata = quarter_mean)) 
+
+### calculate odds ratios  
+exp(reg_inj$coefficients[2])
+exp(confint(reg_inj)[2,1:2])
+
+#### 2011  
+reg_inj11 <- svyglm(INJURY ~ as.numeric(QUARTER), 
+                    design = srs.des.2011, 
+                    family = "binomial")
+summary(reg_inj11)
+
+# proportion
+(reg_pred11 <- predict(reg_inj11, newdata = quarter_mean11))
+
+### calculate odds ratios   
+exp(reg_inj11$coefficients[2])
+exp(confint(reg_inj11)[2,1:2])
+```
+
+## Simple Random Sample - Age
+
+**Model based population estimates by age**
+
+```{r}
+#### 2009   
+age.reg_inj09 <- svyglm(INJURY ~ AGE, 
+                        design = srs.des.2009, 
+                        family = "binomial")
+summary(age.reg_inj09)
+
+# proportion
+(age.reg_pred09 <- predict(age.reg_inj09, newdata = age.ratio_mean09))
+
+### calculate odds ratios   
+exp(age.reg_inj09$coefficients[2])
+exp(confint(age.reg_inj09)[2,1:2])
+
+
+#### 2011  
+age.reg_inj11 <- svyglm(INJURY ~ AGE, 
+                        design = srs.des.2011, 
+                        family = "binomial")
+summary(age.reg_inj11)
+
+# proportion
+(age.reg_pred11 <- predict(age.reg_inj11, newdata = age.rat_mean11))
+
+### calculate odds ratios   
+exp(age.reg_inj11$coefficients[2])
+exp(confint(age.reg_inj11)[2,1:2])
+```
+
+## Simple Random Sample - Sex
+
+**Model based population estimates by sex**
+
+```{r}
+#### 2009   
+sex.reg_inj09 <- svyglm(INJURY ~ SEX, 
+                        design = srs.des.2009, 
+                        family = "binomial")
+
+# proportion
+(sex.reg_pred09 <- predict(sex.reg_inj09, newdata = sex.ratio_mean09)) 
+
+### calculate odds ratios   
+exp(sex.reg_inj09$coefficients[2])
+exp(confint(sex.reg_inj09)[2,1:2])
+
+
+#### 2011  
+sex.reg_inj11 <- svyglm(INJURY ~ SEX, 
+                        design = srs.des.2011, 
+                        family = "binomial")
+
+# proportion
+(sex.reg_pred11 <- predict(sex.reg_inj11, newdata = sex.rat_mean11))
+
+### calculate odds ratios   
+exp(sex.reg_inj11$coefficients[2])
+exp(confint(sex.reg_inj11)[2,1:2])
+```
+
+## Simple Random Sample - Race
+
+**Model based population estimates by race**
+
+```{r}
+#### 2009   
+race.reg_inj09 <- svyglm(INJURY ~ RACENEW, 
+                         design = srs.des.2009, 
+                         family = "binomial")
+
+# proportion
+(race.reg_pred09 <- predict(race.reg_inj09, newdata = race.ratio_mean09))
+  
+### calculate odds ratios   
+exp(race.reg_inj09$coefficients[2])
+exp(confint(race.reg_inj09)[2,1:2])
+
+
+#### 2011  
+(race.reg_inj11 <- svyglm(INJURY ~ RACENEW, 
+                          design = srs.des.2011, 
+                          family = "binomial"))
+
+# proportion
+(race.reg_pred11 <- predict(race.reg_inj11, newdata = race.rat_mean11)) 
+
+### calculate odds ratios   
+exp(race.reg_inj11$coefficients[2])
+exp(confint(race.reg_inj11)[2,1:2])
+```
+
+## Simple Random Sample - Above/Below Poverty
+
+**Model based population estimates by status of being above or below poverty line**
+
+```{r}
+#### 2009   
+poverty.reg_inj09 <- svyglm(INJURY ~ POORYN, 
+                            design = srs.des.2009, 
+                            family = "binomial")
+
+# proportion
+(poverty.reg_pred09 <- predict(poverty.reg_inj09, newdata = poverty.ratio_mean09))
+
+### calculate odds ratios   
+exp(poverty.reg_inj09$coefficients[2])
+exp(confint(poverty.reg_inj09)[2,1:2])
+
+
+#### 2011  
+(poverty.reg_inj11 <- svyglm(INJURY ~ POORYN, 
+                             design = srs.des.2011, 
+                             family = "binomial"))
+
+# proportion
+(poverty.reg_pred11 <- predict(poverty.reg_inj11, newdata = poverty.rat_mean11))
+
+### calculate odds ratios   
+exp(poverty.reg_inj11$coefficients[2])
+exp(confint(poverty.reg_inj11)[2,1:2])
+```
+
+# Regression Estimation
+
+## Main Sampling Design - Age
+
+**Model based population estimates on a post-stratified design, by age**
+
+```{r}
+#### 2009   
+age.reg_inj09 <- svyglm(INJURY ~ AGE, 
+                        design = post_strat_des_2009)
+summary(age.reg_inj09)
+
+
+age.reg_pred09 <- predict(age.reg_inj09, newdata = age.ratio_mean09) 
+# CI
+confint(age.reg_pred09)
+
+# CI
+age.reg.2009 <- data.frame(est=0.02633,lb=(0.02633-(1.96*0.0028)),ub=(0.02633+(1.96*0.0028)))
+
+#### 2011  
+age.reg_inj11 <- svyglm(INJURY ~ AGE, design = post_strat_des_2011)
+
+
+age.reg_pred11 <- predict(age.reg_inj11, newdata = age.rat_mean11)
+
+# CI 
+confint(age.reg_pred11)
+
+# CI 
+age.reg.2011 <- data.frame(est=0.021912,lb=(0.021912-(1.96*0.0026)),ub=(0.021912+(1.96*0.0026)))
+```
+
+```{r}
+# test of proportion?
+x1 <- 0.02633
+x2 <- 0.026762
+n1 <- nrow(mult.hh.samp.2009)
+n2 <- nrow(mult.hh.samp.2011)
+
+prop.test(c(x1*n1,x2*n2), c(n1,n2))
+
+sqrt(0.0013179)
+
+(tt <- svyglm(INJURY ~ as.factor(YEAR), design = mult.post.des.merge))
+
+(ttt <- svyglm(INJURY ~ as.factor(YEAR)+AGE, design = mult.post.des.merge))
+
+summary(ttt)
+```
+
+## Main Sampling Design - Sex
+
+**Model based population estimates on a post-stratified design, by sex**
+
+```{r}
+#### 2009   
+sex.reg_inj09 <- svyglm(INJURY ~ SEX, 
+                        design = post_strat_des_2009)
+
+sex.reg_pred09 <- predict(sex.reg_inj09, 
+                          newdata = sex.ratio_mean09)
+sex.reg_pred09 
+
+# CI
+confint(sex.reg_pred09)
+
+
+#### 2011  
+sex.reg_inj11 <- svyglm(INJURY ~ SEX, 
+                        design = post_strat_des_2011)
+
+sex.reg_pred11 <- predict(sex.reg_inj11, 
+                          newdata = sex.rat_mean11)
+sex.reg_pred11  
+
+# CI 
+confint(sex.reg_pred11)
+```
+
+## Main Sampling Design - Race
+
+**Model based population estimates on a post-stratified design, by race**
+
+```{r}
+#### 2009   
+race.reg_inj09 <- svyglm(INJURY ~ RACENEW, 
+                         design = post_strat_des_2009)
+
+race.reg_pred09 <- predict(race.reg_inj09, 
+                           newdata = race.ratio_mean09)
+race.reg_pred09  
+
+# CI 
+confint(race.reg_pred09)
+
+#### 2011  
+race.reg_inj11 <- svyglm(INJURY ~ RACENEW, 
+                         design = post_strat_des_2011)
+
+race.reg_pred11 <- predict(race.reg_inj11, 
+                           newdata = race.rat_mean11)
+race.reg_pred11
+
+# CI 
+confint(race.reg_pred11)
+```
+
+## Main Sampling Design - Above/Below Poverty
+
+**Model based population estimates on a post-stratified design, by the status of being above or below the poverty line**
+
+```{r}
+#### 2009   
+poverty.reg_inj09 <- svyglm(INJURY ~ POORYN, 
+                            design = post_strat_des_2009)
+
+summary(poverty.reg_inj09)
+
+poverty.reg_pred09 <- predict(poverty.reg_inj09, 
+                              newdata = poverty.ratio_mean09)
+poverty.reg_pred09
+
+# CI 
+pov.reg.2009 <- data.frame(est=0.026004,lb=(0.026004-(1.96*0.0027)),ub=(0.026004+(1.96*0.0027)))
+
+#### 2011  
+poverty.reg_inj11 <- svyglm(INJURY ~ POORYN, 
+                            design = post_strat_des_2011)
+
+poverty.reg_pred11 <- predict(poverty.reg_inj11, 
+                              newdata = poverty.rat_mean11)
+poverty.reg_pred11
+
+# CI
+pov.reg.2011 <- data.frame(est=0.021613,lb=(0.021613-(1.96*0.0026)),ub=(0.021613+(1.96*0.0026)))
+
+# I can't remember what this is for 
+nrow(mult.hh.samp.2009)+nrow(mult.hh.samp.2011)-2
+```
+
+# Imputation
+
+```{r}
+# check the completeness of injury data
+sum(is.na(pop_2009$INJURY))+sum(is.na(pop_2011$INJURY)) # no missing values in either data set
+
+# create new data frames of only injury variables
+prime.samp.2009 <- mult.hh.samp.2009 %>% select(NHISHID, INJURY, POORYN, QUARTER, REGION, AGE)
+prime.samp.2011 <- mult.hh.samp.2011  %>% select(NHISHID, INJURY, POORYN, QUARTER, REGION, AGE)
+
+# ampute
+amp.2009 <- ampute(data = prime.samp.2009, patterns = c(1,0,1,1,1,1))
+summary(amp.2009)
+
+# data frame with missing values
+amp.2009.extract <- amp.2009$amp
+
+# count missing INJURY values
+sum(is.na(amp.2009.extract$INJURY)) # 1848 missing values
+
+# apparently labelled data from haven causes issues with imputation, gotta take care of it
+amp.2009.extract$INJURY <- haven::as_factor(amp.2009.extract$INJURY)
+
+# try imputation
+imp.2009 <- mice(amp.2009.extract)
+
+# store the 5 completed lists in "list" format
+imp.2009.list <- complete(imp.2009, "all")
+
+# check out new object
+length(imp.2009.list)
+dim(imp.2009.list[[1]])
+
+# main sampling design on imputed data
+
+## first create post-stratification function so I can use it for multiple iterations
+post.strat <- function(data1, data2){
+  quarter_map_merge <- data1 %>% group_by(QUARTER) %>% summarize(sample = n())
+  post_merge_2009 <- left_join(data1, quarter_map_merge)
+  post_strat_pop_2009 <- data2 %>% group_by(QUARTER) %>% summarize(population = n())
+  post_merge_2009 <- left_join(post_merge_2009, post_strat_pop_2009)
+  post_merge_2009$inc_prob <- post_merge_2009$sample/post_merge_2009$population
+  post_merge_2009$post_strat_weight <- 1/post_merge_2009$inc_prob
+  return(post_merge_2009)
+}
+
+## next commandeer Thuan code so we can run estimate from each imputed dataset easily
+funky2009 <- function(data1){
+  data1 <- data1 %>% mutate(Mi = case_when(REGION==1 ~ length(pop_2009$REGION[pop_2009$REGION==1]),
+                                           REGION==2 ~ length(pop_2009$REGION[pop_2009$REGION==2]),
+                                           REGION==3 ~ length(pop_2009$REGION[pop_2009$REGION==3]),
+                                           REGION==4 ~ length(pop_2009$REGION[pop_2009$REGION==4])
+                                          )
+                           )
+  data1 <- data1 %>% group_by(REGION) %>% mutate(mi = n())
+  data1 <- data1 %>% mutate(w2 = case_when(REGION==1 ~ Mi/mi,
+                                           REGION==2 ~ Mi/mi,
+                                           REGION==3 ~ Mi/mi,
+                                           REGION==4 ~ Mi/mi
+                                          )
+                           )
+  imp.ps.year <- post.strat(data1, pop_2009)
+  prime.year.des <-svydesign(id=~NHISHID, data=imp.ps.year, strata = ~REGION, fpc=~Mi, weights = ~post_strat_weight+w2, nest = T)
+  (est.mean <- svymean(~INJURY, prime.year.des))
+}
+
+# test out the function 
+funky2009(imp.2009.list[[1]]) # works great!
+
+# store all results
+imp.result.2009 <- lapply(imp.2009.list, funky2009)
+
+# 
+imp.result.2009.se <- sapply(imp.result.2009, function(l) SE(l))
+imp.result.2009.mean <- sapply(imp.result.2009, function(l) mean(l[2]))
+
+# store mean of all imputed means and SEs
+result.imp.est.mean <- c(mean(imp.result.2009.mean), mean(imp.result.2009.se))
+names(result.imp.est.mean) = c("mean", "SE")
+
+# check it out
+result.imp.est.mean
+
+# 95% CI for forest plot?
+est <- result.imp.est.mean[1]
+lb <- est - 1.96*result.imp.est.mean[2]
+ub <- est + 1.96*result.imp.est.mean[2]
+imp.est.2009 <- c(est,lb,ub)
+```
+
+```{r}
+# For 2011
+
+# check the completeness of injury data
+sum(is.na(pop_2009$INJURY))+sum(is.na(pop_2011$INJURY)) # no missing values in either data set
+
+# create new data frames of only injury variables
+prime.samp.2009 <- mult.hh.samp.2009 %>% select(NHISHID, INJURY, POORYN, QUARTER, REGION, AGE)
+prime.samp.2011 <- mult.hh.samp.2011  %>% select(NHISHID, INJURY, POORYN, QUARTER, REGION, AGE)
+
+# ampute
+amp.2009 <- ampute(data = prime.samp.2009, patterns = c(1,0,1,1,1,1))
+summary(amp.2009)
+
+# data frame with missing values
+amp.2009.extract <- amp.2009$amp
+
+# count missing INJURY values
+sum(is.na(amp.2009.extract$INJURY)) # 1848 missing values
+
+# apparently labelled data from haven causes issues with imputation, gotta take care of it
+amp.2009.extract$INJURY <- haven::as_factor(amp.2009.extract$INJURY)
+
+# try imputation
+imp.2009 <- mice(amp.2009.extract)
+
+# store the 5 completed lists in "list" format
+imp.2009.list <- complete(imp.2009, "all")
+
+# check out new object
+length(imp.2009.list)
+dim(imp.2009.list[[1]])
+
+# primary sampling design on imputed data
+
+## first create post-stratification function so I can use it for multiple iterations
+post.strat <- function(data1, data2){
+  quarter_map_merge <- data1 %>% group_by(QUARTER) %>% summarize(sample = n())
+  post_merge_2009 <- left_join(data1, quarter_map_merge)
+  post_strat_pop_2009 <- data2 %>% group_by(QUARTER) %>% summarize(population = n())
+  post_merge_2009 <- left_join(post_merge_2009, post_strat_pop_2009)
+  post_merge_2009$inc_prob <- post_merge_2009$sample/post_merge_2009$population
+  post_merge_2009$post_strat_weight <- 1/post_merge_2009$inc_prob
+  return(post_merge_2009)
+}
+
+## next commandeer Thuan code so we can run estimate from each imputed dataset easily
+funky2009 <- function(data1){
+  data1 <- data1 %>% mutate(Mi = case_when(REGION==1 ~ length(pop_2009$REGION[pop_2009$REGION==1]),
+                                           REGION==2 ~ length(pop_2009$REGION[pop_2009$REGION==2]),
+                                           REGION==3 ~ length(pop_2009$REGION[pop_2009$REGION==3]),
+                                           REGION==4 ~ length(pop_2009$REGION[pop_2009$REGION==4])
+                                          )
+                           )
+  data1 <- data1 %>% group_by(REGION) %>% mutate(mi = n())
+  data1 <- data1 %>% mutate(w2 = case_when(REGION==1 ~ Mi/mi,
+                                           REGION==2 ~ Mi/mi,
+                                           REGION==3 ~ Mi/mi,
+                                           REGION==4 ~ Mi/mi
+                                          )
+                           )
+  imp.ps.year <- post.strat(data1, pop_2009)
+  prime.year.des <-svydesign(id=~NHISHID, data=imp.ps.year, strata = ~REGION, fpc=~Mi, weights = ~post_strat_weight+w2, nest = T)
+  (est.mean <- svymean(~INJURY, prime.year.des))
+}
+
+# test out the function 
+funky2009(imp.2009.list[[1]]) # works great!
+
+# store all results
+imp.result.2009 <- lapply(imp.2009.list, funky2009)
+
+# 
+imp.result.2009.se <- sapply(imp.result.2009, function(l) SE(l))
+imp.result.2009.mean <- sapply(imp.result.2009, function(l) mean(l[2]))
+
+# store mean of all imputed means and SEs
+result.imp.est.mean <- c(mean(imp.result.2009.mean), mean(imp.result.2009.se))
+names(result.imp.est.mean) = c("mean", "SE")
+
+# check it out
+result.imp.est.mean
+
+# 95% CI for forest plot?
+est <- result.imp.est.mean[1]
+lb <- est - 1.96*result.imp.est.mean[2]
+ub <- est + 1.96*result.imp.est.mean[2]
+imp.est.2009 <- c(est,lb,ub)
+```
+
+# Forest plot of estimates with CIs
+
+## 2009
+
+```{r eval=FALSE, include=FALSE}
+# FOREST PLOT FOR 2009 ESTIMATES
+
+# create data frame of estimates and CIs
+dat <- data.frame(
+  Index = c(1,2,3,4,5,6,7,8,9,10,11),
+  label = c('Main sampling design', 'Bootstrap on Main design', 'SRS', 'SRS - Post-stratified on Quarter', 'SRS - Post-stratified on Region', 'SRS - Stratified by Region - Proportional', 'SRS - Stratified by Region - Optimal', 'Ratio estimation - Age', 'Ratio estimation - Poverty', 'Regression estimation - Age', 'Regression estimation - Poverty'),
+  est = c(inj.prop.2009[1],
+          result.boot.complete.2009[1],
+          inj.prop.2009[1],
+          post_est2009[1],
+          post_est2009.R[1],
+          strat.r.2009[1],
+          strat.ro.2009[1],
+          age.rat.2009[1],
+          pov.rat.2009[1],
+          age.reg.2009$est,
+          pov.reg.2009$est),
+  LL = c(inj.prop.2009.CI[1],
+         result.boot.complete.2009[3],
+         inj.prop.2009.CI[1],
+         post_est2009.CI[1],
+         post_est2009.R.CI[1],
+         strat.r.2009.CI[1],
+         strat.ro.2009.CI[1],
+         age.rat.2009[2],
+         pov.rat.2009[2],
+         age.reg.2009$lb,
+         pov.reg.2009$lb),
+  UL = c(inj.prop.2009.CI[2],
+         result.boot.complete.2009[4],
+         inj.prop.2009.CI[2],
+         post_est2009.CI[2],
+         post_est2009.R.CI[2],
+         strat.r.2009.CI[2],
+         strat.ro.2009.CI[2],
+         age.rat.2009[3],
+         pov.rat.2009[3],
+         age.reg.2009$ub,
+         pov.reg.2009$ub),
+  CI = c('0.0257 (0.0211, 0.0324)', '0.0260 (0.0210, 0.0311)', '0.0257 (0.0210, 0.0309)', '0.0257 (0.0205, 0.0308)', '0.0258 (0.0205, 0.0308)', '0.0234 (0.0184, 0.0284)', '0.0242 (0.0192, 0.0293)', '0.0274 (0.0217, 0.0330)','0.0258 (0.0205, 0.0311)','0.0263 (0.0208, 0.0318)','0.0260 (0.0207, 0.0313)')
+)
+
+## Create the table-base pallete
+table_base <- ggplot(dat, aes(y=label)) +
+  ylab(NULL) + xlab("  ") + 
+  theme(plot.title = element_text(hjust = 0.5, size=12), 
+        axis.text.x = element_text(color="white", hjust = -3, size = 25), ## This is used to help with alignment
+        axis.line = element_blank(),
+        axis.text.y = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.title.y = element_blank(), 
+        legend.position = "none",
+        panel.background = element_blank(), 
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        plot.background = element_blank())
+
+# 95% CI table
+tab <- table_base +
+  geom_text(aes(y=rev(Index), x = 1, label = CI), size = 4) +
+  ggtitle("Estimate (95% CI)")
+
+dat
+
+# Forest plot
+plot1 <- ggplot(dat, aes(y= Index, x = est)) +
+  geom_point(shape=18, size=5) +
+  geom_errorbar(aes(xmin=LL, xmax=UL), height = 0.25) +
+  geom_vline(xintercept = 0.02373199, color = 'red', linetype = 'dashed', cex = 1, alpha = 0.5) +
+  scale_y_continuous(name = '', breaks = 1:11, labels = dat$label, trans = 'reverse') +
+  xlab('Estimated proportion (95% CI)') +
+  ylab(' ') +
+  theme_bw() + 
+  theme(panel.border = element_blank(),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = 'black'),
+        axis.text.y = element_text(size = 12, colour = 'black'),
+        axis.text.x.bottom = element_text(size = 12, colour = 'black'),
+        axis.title.x = element_text(size = 12, colour = 'black')) +
+  ggtitle("2009 Proportion Estimates") +
+  theme(plot.title = element_text(hjust = 0.3, size = 15, vjust = 0.5))
+plot1
+
+```
+
+```{r eval=FALSE, fig.height=5, fig.width=10, include=FALSE}
+# combined plot
+lay <- matrix(c(1,1,1,1,1,1,1,1,2,2), nrow = 1)
+gridExtra::grid.arrange(plot1, tab, layout_matrix = lay)
+```
+
+## 2011
+
+```{r eval=FALSE, include=FALSE}
+# FOREST PLOT FOR 2011 ESTIMATES
+
+# create data frame of estimates and CIs
+dat <- data.frame(
+  Index = c(1,2,3,4,5,6,7,8,9,10,11),
+  label = c('Main sampling design', 'Bootstrap on Main design', 'SRS', 'SRS - Post-stratified on Quarter', 'SRS - Post-stratified on Region', 'SRS - Stratified by Region - Proportional', 'SRS - Stratified by Region - Optimal', 'Ratio estimation - Age', 'Ratio estimation - Poverty', 'Regression estimation - Age', 'Regression estimation - Poverty'),
+  est = c(post_est.2011[1],
+          result.boot.complete.2011[1],
+          inj.prop.2011[1],
+          post_est2011[1],
+          post_est2011.R[1],
+          strat.r.2011[1],
+          strat.ro.2011[1],
+          age.rat.2011[1],
+          pov.rat.2011[1],
+          age.reg.2011$est,
+          pov.reg.2011$est),
+  LL = c(post_est.2011.CI[1],
+         result.boot.complete.2011[3],
+         inj.prop.2011.CI[1],
+         post_est2011.CI[1],
+         post_est2011.R.CI[1],
+         strat.r.2011.CI[1],
+         strat.ro.2011.CI[1],
+         age.rat.2011[2],
+         pov.rat.2011[2],
+         age.reg.2011$lb,
+         pov.reg.2011$lb),
+  UL = c(post_est.2011.CI[2],
+         result.boot.complete.2011[4],
+         inj.prop.2011.CI[2],
+         post_est2011.CI[2],
+         post_est2011.R.CI[2],
+         strat.r.2011.CI[2],
+         strat.ro.2011.CI[2],
+         age.rat.2011[3],
+         pov.rat.2011[3],
+         age.reg.2011$ub,
+         pov.reg.2011$ub),
+  CI = c('0.0218 (0.0167, 0.0269)', '0.0218 (0.0170, 0.0268)', '0.0267 (0.0211, 0.0324)', '0.0268 (0.0210, 0.0321)', '0.0267 (0.0210, 0.0321)', '0.0264 (0.0209, 0.0320)', '0.0250 (0.0196, 0.0305)', '0.0267 (0.0210, 0.0323)','0.0266 (0.0209, 0.0323)','0.0219 (0.0168, 0.0270)','0.0216 (0.0165, 0.0267)')
+)
+
+dat
+
+## Create the table-base pallete
+table_base <- ggplot(dat, aes(y=label)) +
+  ylab(NULL) + xlab("  ") + 
+  theme(plot.title = element_text(hjust = 0.5, size=12), 
+        axis.text.x = element_text(color="white", hjust = -3, size = 25), ## This is used to help with alignment
+        axis.line = element_blank(),
+        axis.text.y = element_blank(), 
+        axis.ticks = element_blank(),
+        axis.title.y = element_blank(), 
+        legend.position = "none",
+        panel.background = element_blank(), 
+        panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        plot.background = element_blank())
+
+# 95% CI table
+tab2 <- table_base +
+  geom_text(aes(y=rev(Index), x = 1, label = CI), size = 4) +
+  ggtitle("Estimate (95% CI)")
+
+
+# Forest plot
+plot2 <- ggplot(dat, aes(y= Index, x = est)) +
+  geom_point(shape=18, size=5) +
+  geom_errorbar(aes(xmin=LL, xmax=UL), height = 0.25) +
+  geom_vline(xintercept = 0.02559018, color = 'red', linetype = 'dashed', cex = 1, alpha = 0.5) +
+  scale_y_continuous(name = '', breaks = 1:11, labels = dat$label, trans = 'reverse') +
+  xlab('Estimated proportion (95% CI)') +
+  ylab(' ') +
+  theme_bw() + 
+  theme(panel.border = element_blank(),
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = 'black'),
+        axis.text.y = element_text(size = 12, colour = 'black'),
+        axis.text.x.bottom = element_text(size = 12, colour = 'black'),
+        axis.title.x = element_text(size = 12, colour = 'black')) +
+  ggtitle("2011 Proportion Estimates") +
+  theme(plot.title = element_text(hjust = 0.3, size = 15, vjust = 0.5))
+plot2
+
+```
+
+```{r eval=FALSE, fig.height=5, fig.width=10, include=FALSE}
+# combined plot
+lay <- matrix(c(1,1,1,1,1,1,1,1,2,2), nrow = 1)
+gridExtra::grid.arrange(plot2, tab2, layout_matrix = lay)
+```

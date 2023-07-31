@@ -6,7 +6,7 @@ categories: [news, code, analysis]
 image: "image.jpg"
 ---
 
-This is a post with executable code.
+This is one of the sample posts provided upon loading quarto... I'm keeping this so I don't need to remember the YAML structure.
 
 ```{r}
 1 + 1
