@@ -1,11 +1,15 @@
 ---
-title: "ClinVar"
+title: "FOXP1 Analysis"
 author: "Saffron"
 date: "2023-07-27"
 categories: [Analysis]
 ---
 
-(Work in progress) Just messing around with FOXP1 gene characteristics.
+Just messing around with interactive plots.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.height=5, fig.width=7, message = F, warning = F)
+```
 
 ```{r packages}
 library(pacman)
@@ -14,7 +18,7 @@ p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, infer, glue, gg
 
 ```{r}
 # load data
-# imported from dierctory
+# imported from directory
 # Helpful note to self: when loading csv files from "copy path" delete 'C:' and change all \ to /
 CVFP1 <- read_csv("/Users/mckjo/OneDrive/Desktop/GitBlog/posts/ClinVar/ShinyClinVar.csv")
 
@@ -29,5 +33,115 @@ CVFP1 <- CVFP1 %>%
   mutate_if(is.character, as.factor)
 
 # summary of dataset 
-summary(CVFP1) %>% kable() 
+summary(CVFP1)
+
+# removing the first two colummns   
+CVFP1 <- CVFP1[, -c(1, 2)] 
+
+# double checking the two columns were removed
+head(CVFP1)
+
+# list of column names 
+(column_names <- colnames(CVFP1))
+```
+
+## Static Data Visualizations
+
+### Bar Plots
+
+```{r}
+ggplot(CVFP1, aes(x = ClinicalSignificance)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(title = "Clinical Significance of Genetic Variant from FOXP1", 
+       subtitle = "n = 144",
+       x = "Level of Significance", 
+       y = "Number of Individuals") + 
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 25, hjust = 1))
+```
+
+## Interactive Data Visualizations
+
+### Bar Plots
+
+```{r}
+# install.packages("plotly")
+library(plotly)
+
+# Clinical Significance Bar Plot
+
+(df.bplot <- CVFP1 %>% group_by(ClinicalSignificance) %>% count())
+
+y.cs <- c(8, 5, 31, 20, 33, 2, 45)
+
+text.clin.sig <- c("8", "5", "31", "20", "33", "2", "45")
+
+## showing the counts of cases based on Clinical Significance 
+b.plot <- plotly::plot_ly(data = df.bplot, 
+                          x = ~ClinicalSignificance, 
+                          y = ~y.cs, 
+                          type = "bar", 
+                          text = text.clin.sig, 
+                          marker = list(color = "maroon")) 
+
+b.plot %>% layout(title = "FOXP1 Clinical Significance Counts (n = 144)", 
+                  xaxis = list(title = ""), 
+                  yaxis = list(title = ""))
+
+## showing the percentage of case based on Clinical Significance 
+
+### Benign  
+ben <- paste(round(8/144*100, digits = 2), "%", sep = "")
+
+### Benign/Likely Benign  
+ben.lben <- paste(round(5/144*100, digits = 2), "%", sep = "")
+
+### Likely Benign  
+lben <- paste(round(31/144*100, digits = 2), "%", sep = "")
+
+### Likely Pathogenic  
+lpat <- paste(round(20/144*100, digits = 2), "%", sep = "")
+
+### Pathogenic   
+pat <- paste(round(33/144*100, digits = 2), "%", sep = "")
+
+### Pathogenic/Likely Pathogenic  
+pat.lpat <- paste(round(2/144*100, digits = 2), "%", sep = "")
+
+### Uncertain/Conflicting 
+unc.con <- paste(round(45/144*100, digits = 2), "%", sep = "")
+
+
+text.per <- c(ben, ben.lben, lben, lpat, pat, pat.lpat, unc.con)
+
+# barplot with percentages 
+b.per.plot <- plotly::plot_ly(data = df.bplot, 
+                          x = ~ClinicalSignificance, 
+                          y = ~y.cs, 
+                          type = "bar", 
+                          text = text.per, 
+                          marker = list(color = "skyblue")) 
+
+b.per.plot %>% layout(title = "FOXP1 Clinical Significance Counts (n = 144)", 
+                  xaxis = list(title = ""), 
+                  yaxis = list(title = ""))
+
+
+# Consequence Bar Plot 
+
+(df.c.bplot <- CVFP1 %>% group_by(consequence) %>% count())
+
+# showing the counts 
+y.con <- c(1, 21, 71, 13, 17, 21)
+
+c.b.plot <- plotly::plot_ly(data = df.c.bplot,
+                          x = ~consequence,
+                          y = ~y.con, 
+                          type = "bar", 
+                          marker = list(color = "lavender", 
+                                        line = list(color = "darkgrey", 
+                                                    width = 1.5))) 
+
+c.b.plot %>% layout(title = "FOXP1 Clinical Significance Counts (n = 144)", 
+                  xaxis = list(title = ""), 
+                  yaxis = list(title = ""))
 ```
