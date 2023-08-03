@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Saffron">
+<meta name="dcterms.date" content="2023-07-27">
+
+<title>Saffron Evergreen - FOXP1 Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Saffron Evergreen</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">FOXP1 Analysis</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">analysis</div>
+                <div class="quarto-category">code</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Saffron </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 27, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Just messing around with interactive plots.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, ggplot2, forcats, epitools, dplyr, xfun, plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># imported from directory</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Helpful note to self: when loading csv files from "copy path" delete 'C:' and change all \ to /</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>CVFP1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"/Users/mckjo/OneDrive/Desktop/GitBlog/posts/FOXP1 Analysis/ShinyClinVar.csv"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># clean variable names</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>janitor<span class="sc">::</span><span class="fu">clean_names</span>(CVFP1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 144 × 14
+      x1 link         gene_symbol type  consequence clinical_significance review
+   &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;                 &lt;chr&gt; 
+ 1     1 "&lt;a href=\"… FOXP1       SNV   Stop gain   Pathogenic            Crite…
+ 2     2 "&lt;a href=\"… FOXP1       SNV   Missense    Benign/Likely benign  Crite…
+ 3     3 "&lt;a href=\"… FOXP1       SNV   Intronic    Benign                Crite…
+ 4     5 "&lt;a href=\"… FOXP1       SNV   Intronic    Benign                Crite…
+ 5     6 "&lt;a href=\"… FOXP1       SNV   Missense    Likely benign         Crite…
+ 6     7 "&lt;a href=\"… FOXP1       SNV   Intronic    Benign                Crite…
+ 7     8 "&lt;a href=\"… FOXP1       SNV   Missense    Benign/Likely benign  Crite…
+ 8    11 "&lt;a href=\"… FOXP1       SNV   Missense    Pathogenic            No as…
+ 9    12 "&lt;a href=\"… FOXP1       SNV   Missense    Likely benign         Crite…
+10    13 "&lt;a href=\"… FOXP1       SNV   Synonymous  Uncertain/conflicting Crite…
+# ℹ 134 more rows
+# ℹ 7 more variables: phenotype_list &lt;chr&gt;, name &lt;chr&gt;, ref_aa &lt;chr&gt;,
+#   alt_aa &lt;chr&gt;, pos_aa &lt;dbl&gt;, cadd_phred &lt;chr&gt;, gnom_ad_binary_char &lt;chr&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># number of rows (144)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(CVFP1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 144</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert character variables to factors</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>CVFP1 <span class="ot">&lt;-</span> CVFP1 <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.character, as.factor)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># summary of dataset </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(CVFP1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      ...1       
+ Min.   :  1.00  
+ 1st Qu.: 91.75  
+ Median :136.50  
+ Mean   :130.18  
+ 3rd Qu.:186.25  
+ Max.   :243.00  
+                 
+                                                                                           Link    
+ &lt;a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/1013484" target="_blank"&gt;1013484&lt;/a&gt;:  1  
+ &lt;a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/1018781" target="_blank"&gt;1018781&lt;/a&gt;:  1  
+ &lt;a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/1030051" target="_blank"&gt;1030051&lt;/a&gt;:  1  
+ &lt;a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/1030052" target="_blank"&gt;1030052&lt;/a&gt;:  1  
+ &lt;a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/1065605" target="_blank"&gt;1065605&lt;/a&gt;:  1  
+ &lt;a href="https://www.ncbi.nlm.nih.gov/clinvar/variation/1098603" target="_blank"&gt;1098603&lt;/a&gt;:  1  
+ (Other)                                                                                     :138  
+ GeneSymbol   Type         consequence                   ClinicalSignificance
+ FOXP1:144   SNV:144   3-UTR     : 1   Benign                      : 8       
+                       Intronic  :21   Benign/Likely benign        : 5       
+                       Missense  :71   Likely benign               :31       
+                       Splice-D/A:13   Likely pathogenic           :20       
+                       Stop gain :17   Pathogenic                  :33       
+                       Synonymous:21   Pathogenic/Likely pathogenic: 2       
+                                       Uncertain/conflicting       :45       
+                                                  review   
+ Criteria provided/ conflicting interpretations      :  6  
+ Criteria provided/ multiple submitters/ no conflicts: 16  
+ Criteria provided/ single submitter                 :113  
+ No assertion criteria provided                      :  9  
+                                                           
+                                                           
+                                                           
+                                                                                        PhenotypeList
+ Not provided/ not specified                                                                   :68   
+ Mental retardation with language impairment and with or without autistic features             :28   
+ History of neurodevelopmental disorder                                                        :10   
+ Intellectual disability                                                                       : 6   
+ Inborn genetic diseases                                                                       : 5   
+ Not provided/ not specified|History of neurodevelopmental disorder|Not provided/ not specified: 5   
+ (Other)                                                                                       :22   
+                                            Name         ref_aa       alt_aa  
+ NM_001244808.2(FOXP1):c.869+1G&gt;A             :  1   Arg    :16   Ter    :17  
+ NM_001244810.1(FOXP1):c.1348+2T&gt;C            :  1   Ala    :14   Thr    :13  
+ NM_001349338.3(FOXP1):c.1096A&gt;G (p.Met366Val):  1   Gln    : 9   Ala    : 9  
+ NM_001349338.3(FOXP1):c.119A&gt;T (p.Glu40Val)  :  1   Thr    : 9   Ser    : 9  
+ NM_001349338.3(FOXP1):c.1313G&gt;A (p.Arg438Gln):  1   Tyr    : 9   Gly    : 7  
+ NM_001349338.3(FOXP1):c.1319C&gt;G (p.Ser440Ter):  1   (Other):52   (Other):54  
+ (Other)                                      :138   NA's   :35   NA's   :35  
+     pos_aa         CADD_phred  gnomAD_binary_char
+ Min.   :  3.0   0.070793:  1   No :83            
+ 1st Qu.:192.0   0.204885:  1   Yes:61            
+ Median :443.0   0.287364:  1                     
+ Mean   :363.8   0.323585:  1                     
+ 3rd Qu.:514.0   0.325591:  1                     
+ Max.   :674.0   0.352630:  1                     
+ NA's   :35      (Other) :138                     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># removing the first two colummns   </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>CVFP1 <span class="ot">&lt;-</span> CVFP1[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)] </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># double checking the two columns were removed</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(CVFP1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 12
+  GeneSymbol Type  consequence ClinicalSignificance review   PhenotypeList Name 
+  &lt;fct&gt;      &lt;fct&gt; &lt;fct&gt;       &lt;fct&gt;                &lt;fct&gt;    &lt;fct&gt;         &lt;fct&gt;
+1 FOXP1      SNV   Stop gain   Pathogenic           Criteri… Mental retar… NM_0…
+2 FOXP1      SNV   Missense    Benign/Likely benign Criteri… Aortic valve… NM_0…
+3 FOXP1      SNV   Intronic    Benign               Criteri… Not provided… NM_0…
+4 FOXP1      SNV   Intronic    Benign               Criteri… Not provided… NM_0…
+5 FOXP1      SNV   Missense    Likely benign        Criteri… Not provided… NM_0…
+6 FOXP1      SNV   Intronic    Benign               Criteri… Not provided… NM_0…
+# ℹ 5 more variables: ref_aa &lt;fct&gt;, alt_aa &lt;fct&gt;, pos_aa &lt;dbl&gt;,
+#   CADD_phred &lt;fct&gt;, gnomAD_binary_char &lt;fct&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list of column names </span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>(column_names <span class="ot">&lt;-</span> <span class="fu">colnames</span>(CVFP1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "GeneSymbol"           "Type"                 "consequence"         
+ [4] "ClinicalSignificance" "review"               "PhenotypeList"       
+ [7] "Name"                 "ref_aa"               "alt_aa"              
+[10] "pos_aa"               "CADD_phred"           "gnomAD_binary_char"  </code></pre>
+</div>
+</div>
+<section id="static-data-visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="static-data-visualizations">Static Data Visualizations</h2>
+<section id="bar-plots" class="level3">
+<h3 class="anchored" data-anchor-id="bar-plots">Bar Plots</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(CVFP1, <span class="fu">aes</span>(<span class="at">x =</span> ClinicalSignificance)) <span class="sc">+</span> <span class="fu">geom_bar</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"lightgray"</span>) <span class="sc">+</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Clinical Significance of Genetic Variant from FOXP1"</span>, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"n = 144"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Level of Significance"</span>, </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of Individuals"</span>) <span class="sc">+</span> </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">25</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="interactive-data-visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-data-visualizations">Interactive Data Visualizations</h2>
+<section id="bar-plots-1" class="level3">
+<h3 class="anchored" data-anchor-id="bar-plots-1">Bar Plots</h3>
+<p><strong>Note</strong>: As of August 3rd, 2023, I am unable to render using ‘plotly’. The code chunk below has came to a halt – I’ve troubleshooted by restarting, clearing the console and environment, checking for package conflicts, making sure everything is updated, removed my previous code with <code>layout()</code> and am still having this error:</p>
+<p>Quitting from lines 68-138 [plotly] (index.qmd)<br>
+Error in <code>add_html_caption()</code>:<br>
+! unused argument (xfun::grep_sub(“<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>* &lt;[^&gt;]+aria-labelledby[ ]* =[ ] * &nbsp;”([^&nbsp;“]+)&nbsp;”.*$“,” \1”, x))<br>
+Backtrace:<br>
+1. global .main()<br>
+2. execute(…)<br>
+3. rmarkdown::render(…)<br>
+4. knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet)<br>
+5. knitr:::process_file(text, output)<br>
+…<br>
+14. sew(res, options)<br>
+15. knitr:::sew.list(x, options, …)<br>
+16. base::lapply(x, sew, options, …)<br>
+17. FUN(X[[i]], …)<br>
+18. knitr:::sew.knit_asis(x, options, …)<br>
+Execution halted</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clinical Significance Bar Plot</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>(df.bplot <span class="ot">&lt;-</span> CVFP1 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">group_by</span>(ClinicalSignificance) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">count</span>())</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>y.cs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">5</span>, <span class="dv">31</span>, <span class="dv">20</span>, <span class="dv">33</span>, <span class="dv">2</span>, <span class="dv">45</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>text.clin.sig <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"8"</span>, <span class="st">"5"</span>, <span class="st">"31"</span>, <span class="st">"20"</span>, <span class="st">"33"</span>, <span class="st">"2"</span>, <span class="st">"45"</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="do">## showing the counts of cases based on Clinical Significance </span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>b.plot <span class="ot">&lt;-</span> plotly<span class="sc">::</span><span class="fu">plot_ly</span>(<span class="at">data =</span> df.bplot, </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>                          <span class="at">x =</span> <span class="sc">~</span>ClinicalSignificance, </span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">y =</span> <span class="sc">~</span>y.cs, </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>                          <span class="at">type =</span> <span class="st">"bar"</span>, </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>                          <span class="at">text =</span> text.clin.sig, </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>                          <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="st">"maroon"</span>)) </span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>b.plot</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="do">## showing the percentage of case based on Clinical Significance </span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="do">### Benign  </span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>ben <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">8</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="do">### Benign/Likely Benign  </span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>ben.lben <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">5</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="do">### Likely Benign  </span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>lben <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">31</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="do">### Likely Pathogenic  </span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>lpat <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">20</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="do">### Pathogenic   </span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>pat <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">33</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="do">### Pathogenic/Likely Pathogenic  </span></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>pat.lpat <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">2</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="do">### Uncertain/Conflicting </span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>unc.con <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">45</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>text.per <span class="ot">&lt;-</span> <span class="fu">c</span>(ben, ben.lben, lben, lpat, pat, pat.lpat, unc.con)</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="co"># barplot with percentages </span></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>b.per.plot <span class="ot">&lt;-</span> plotly<span class="sc">::</span><span class="fu">plot_ly</span>(<span class="at">data =</span> df.bplot, </span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>                          <span class="at">x =</span> <span class="sc">~</span>ClinicalSignificance, </span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>                          <span class="at">y =</span> <span class="sc">~</span>y.cs, </span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>                          <span class="at">type =</span> <span class="st">"bar"</span>, </span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>                          <span class="at">text =</span> text.per, </span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>                          <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="st">"skyblue"</span>)) </span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>b.per.plot</span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Consequence Bar Plot </span></span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>(df.c.bplot <span class="ot">&lt;-</span> CVFP1 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">group_by</span>(consequence) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">count</span>())</span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a><span class="co"># showing the counts </span></span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>y.con <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">21</span>, <span class="dv">71</span>, <span class="dv">13</span>, <span class="dv">17</span>, <span class="dv">21</span>)</span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>c.b.plot <span class="ot">&lt;-</span> plotly<span class="sc">::</span><span class="fu">plot_ly</span>(<span class="at">data =</span> df.c.bplot,</span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>                          <span class="at">x =</span> <span class="sc">~</span>consequence,</span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>                          <span class="at">y =</span> <span class="sc">~</span>y.con, </span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>                          <span class="at">type =</span> <span class="st">"bar"</span>, </span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>                          <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="st">"lavender"</span>, </span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">line =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="st">"darkgrey"</span>, </span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">width =</span> <span class="fl">1.5</span>))) </span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a>c.b.plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>^&lt;<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

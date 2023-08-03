@@ -219,7 +219,7 @@ table1 <- df_swan %>% tbl_summary(
   ),
   include = c( 
     HBP, Sleep, Age, Race, Smoking, Education, Marital, BMI, Income, BPMed, QualLife, Caffeine)) %>% 
-  add_overall() %>% ## this didn't run for us
+  #add_overall() %>% ## this didn't run for us
   modify_header(label ~ "Characteristic") %>%
   modify_footnote(
     all_stat_cols() ~ "Median (IQR); Frequency (%)") %>%

@@ -13,14 +13,14 @@ knitr::opts_chunk$set(echo = TRUE, fig.height=5, fig.width=7, message = F, warni
 
 ```{r packages}
 library(pacman)
-p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, infer, glue, ggplot2, ggfortify, forcats, epiR, epiDisplay, epitools, dplyr, DescTools, describedata, datawizard, corrplot, caret, car, nlme)
+p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, ggplot2, forcats, epitools, dplyr, xfun, plotly)
 ```
 
 ```{r}
 # load data
 # imported from directory
 # Helpful note to self: when loading csv files from "copy path" delete 'C:' and change all \ to /
-CVFP1 <- read_csv("/Users/mckjo/OneDrive/Desktop/GitBlog/posts/ClinVar/ShinyClinVar.csv")
+CVFP1 <- read_csv("/Users/mckjo/OneDrive/Desktop/GitBlog/posts/FOXP1 Analysis/ShinyClinVar.csv")
 
 # clean variable names
 janitor::clean_names(CVFP1)
@@ -63,13 +63,31 @@ ggplot(CVFP1, aes(x = ClinicalSignificance)) + geom_bar(color = "black", fill = 
 
 ### Bar Plots
 
-```{r}
-# install.packages("plotly")
-library(plotly)
+**Note**: As of August 3rd, 2023, I am unable to render using 'plotly'. The code chunk below has came to a halt -- I've troubleshooted by restarting, clearing the console and environment, checking for package conflicts, making sure everything is updated, removed my previous code with `layout()` and am still having this error:
 
+Quitting from lines 68-138 \[plotly\] (index.qmd)\
+Error in `add_html_caption()`:\
+! unused argument (xfun::grep_sub("[^1]\* \<\[\^\>\]+aria-labelledby\[ \]\* =\[ \] \*  "(\[\^ "\]+) ".\*\$"," \\1", x))\
+Backtrace:\
+1. global .main()\
+2. execute(...)\
+3. rmarkdown::render(...)\
+4. knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet)\
+5. knitr:::process_file(text, output)\
+...\
+14. sew(res, options)\
+15. knitr:::sew.list(x, options, ...)\
+16. base::lapply(x, sew, options, ...)\
+17. FUN(X\[\[i\]\], ...)\
+18. knitr:::sew.knit_asis(x, options, ...)\
+Execution halted
+
+[^1]: \^\<
+
+```{r plotly, eval=FALSE, include=TRUE}
 # Clinical Significance Bar Plot
 
-(df.bplot <- CVFP1 %>% group_by(ClinicalSignificance) %>% count())
+(df.bplot <- CVFP1 %>% dplyr::group_by(ClinicalSignificance) %>% dplyr::count())
 
 y.cs <- c(8, 5, 31, 20, 33, 2, 45)
 
@@ -83,9 +101,7 @@ b.plot <- plotly::plot_ly(data = df.bplot,
                           text = text.clin.sig, 
                           marker = list(color = "maroon")) 
 
-b.plot %>% layout(title = "FOXP1 Clinical Significance Counts (n = 144)", 
-                  xaxis = list(title = ""), 
-                  yaxis = list(title = ""))
+b.plot
 
 ## showing the percentage of case based on Clinical Significance 
 
@@ -121,14 +137,11 @@ b.per.plot <- plotly::plot_ly(data = df.bplot,
                           text = text.per, 
                           marker = list(color = "skyblue")) 
 
-b.per.plot %>% layout(title = "FOXP1 Clinical Significance Counts (n = 144)", 
-                  xaxis = list(title = ""), 
-                  yaxis = list(title = ""))
-
+b.per.plot
 
 # Consequence Bar Plot 
 
-(df.c.bplot <- CVFP1 %>% group_by(consequence) %>% count())
+(df.c.bplot <- CVFP1 %>% dplyr::group_by(consequence) %>% dplyr::count())
 
 # showing the counts 
 y.con <- c(1, 21, 71, 13, 17, 21)
@@ -141,7 +154,5 @@ c.b.plot <- plotly::plot_ly(data = df.c.bplot,
                                         line = list(color = "darkgrey", 
                                                     width = 1.5))) 
 
-c.b.plot %>% layout(title = "FOXP1 Clinical Significance Counts (n = 144)", 
-                  xaxis = list(title = ""), 
-                  yaxis = list(title = ""))
+c.b.plot
 ```

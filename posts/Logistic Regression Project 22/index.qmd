@@ -3,7 +3,6 @@ title: "Logistic Regression Project Winter 2022"
 author: "Saffron"
 date: "2023-07-16"
 categories: [analysis, code]
-image: ""
 ---
 
 A fun little group project assessing CRP values and stress.
