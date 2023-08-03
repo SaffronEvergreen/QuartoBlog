@@ -2,7 +2,7 @@
 title: "FOXP1 Analysis"
 author: "Saffron"
 date: "2023-07-27"
-categories: [Analysis]
+categories: [analysis, code]
 ---
 
 Just messing around with interactive plots.

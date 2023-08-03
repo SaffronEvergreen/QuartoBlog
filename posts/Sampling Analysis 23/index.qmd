@@ -2,7 +2,7 @@
 title: "Survey and Sampling Analysis Project Spring 2023"
 author: "Saffron"
 date: "2023-07-16"
-categories: [news]
+categories: [analysis, code]
 ---
 
 A lovely light-hearted survey and sampling analysis that felt like absolute hell but was an important learning curve.
