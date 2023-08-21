@@ -2,7 +2,7 @@
 title: "FOXP1 Analysis"
 author: "Saffron"
 date: "2023-07-27"
-categories: [analysis, code]
+categories: [analysis, code, visualizations]
 ---
 
 Just messing around with interactive plots.
@@ -15,6 +15,8 @@ knitr::opts_chunk$set(echo = TRUE, fig.height=5, fig.width=7, message = F, warni
 library(pacman)
 p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, ggplot2, forcats, epitools, dplyr, xfun, plotly)
 ```
+
+The data used for this tinkering is found on the National Library of Medicine [ClinVar database](https://www.ncbi.nlm.nih.gov/clinvar/?term=FOXP1%5Bgene%5D&redir=gene).   
 
 ```{r}
 # load data
@@ -65,6 +67,9 @@ ggplot(CVFP1, aes(x = ClinicalSignificance)) + geom_bar(color = "black", fill = 
 
 **Note**: As of August 3rd, 2023, I am unable to render using 'plotly'. The code chunk below has came to a halt -- I've troubleshooted by restarting, clearing the console and environment, checking for package conflicts, making sure everything is updated, removed my previous code with `layout()` and am still having this error:
 
+* checked again on August 21st   
+
+
 Quitting from lines 68-138 \[plotly\] (index.qmd)\
 Error in `add_html_caption()`:\
 ! unused argument (xfun::grep_sub("[^1]\* \<\[\^\>\]+aria-labelledby\[ \]\* =\[ \] \*  "(\[\^ "\]+) ".\*\$"," \\1", x))\
@@ -84,7 +89,7 @@ Execution halted
 
 [^1]: \^\<
 
-```{r plotly, eval=FALSE, include=TRUE}
+```{r plotly}
 # Clinical Significance Bar Plot
 
 (df.bplot <- CVFP1 %>% dplyr::group_by(ClinicalSignificance) %>% dplyr::count())
@@ -94,14 +99,14 @@ y.cs <- c(8, 5, 31, 20, 33, 2, 45)
 text.clin.sig <- c("8", "5", "31", "20", "33", "2", "45")
 
 ## showing the counts of cases based on Clinical Significance 
-b.plot <- plotly::plot_ly(data = df.bplot, 
-                          x = ~ClinicalSignificance, 
-                          y = ~y.cs, 
-                          type = "bar", 
-                          text = text.clin.sig, 
-                          marker = list(color = "maroon")) 
+# b.plot <- plotly::plot_ly(data = df.bplot, 
+#                          x = ~ClinicalSignificance, 
+#                          y = ~y.cs, 
+#                          type = "bar", 
+#                          text = text.clin.sig, 
+#                          marker = list(color = "maroon")) 
 
-b.plot
+# b.plot
 
 ## showing the percentage of case based on Clinical Significance 
 
@@ -130,14 +135,14 @@ unc.con <- paste(round(45/144*100, digits = 2), "%", sep = "")
 text.per <- c(ben, ben.lben, lben, lpat, pat, pat.lpat, unc.con)
 
 # barplot with percentages 
-b.per.plot <- plotly::plot_ly(data = df.bplot, 
-                          x = ~ClinicalSignificance, 
-                          y = ~y.cs, 
-                          type = "bar", 
-                          text = text.per, 
-                          marker = list(color = "skyblue")) 
+# b.per.plot <- plotly::plot_ly(data = df.bplot, 
+#                          x = ~ClinicalSignificance, 
+#                          y = ~y.cs, 
+#                          type = "bar", 
+#                          text = text.per, 
+#                          marker = list(color = "skyblue")) 
 
-b.per.plot
+# b.per.plot
 
 # Consequence Bar Plot 
 
@@ -146,13 +151,101 @@ b.per.plot
 # showing the counts 
 y.con <- c(1, 21, 71, 13, 17, 21)
 
-c.b.plot <- plotly::plot_ly(data = df.c.bplot,
-                          x = ~consequence,
-                          y = ~y.con, 
-                          type = "bar", 
-                          marker = list(color = "lavender", 
-                                        line = list(color = "darkgrey", 
-                                                    width = 1.5))) 
+# c.b.plot <- plotly::plot_ly(data = df.c.bplot,
+#                          x = ~consequence,
+#                          y = ~y.con, 
+#                          type = "bar", 
+#                          marker = list(color = "lavender", 
+#                                        line = list(color = "darkgrey", 
+#                                                    width = 1.5))) 
 
-c.b.plot
+# c.b.plot
 ```
+
+## Interactive Plots Using 'highcharter'    
+
+**Note**: As of August 5th, `plotly` is still not running correctly so I'm going to try out this package `highcharter`    
+
+My ideas and inspiration came from this (site)[https://www.datanovia.com/en/lessons/highchart-interactive-bar-plot-in-r/]    
+
+* August 21st: same code warning with "highcharter" as it is with "plotly" - I figure at this point it's good to show my flops as well as my successes, so enjoy this little flop   
+
+```{r highcharter}
+# install.packages("highcharter")   
+library(highcharter) 
+
+# setting highcharter options 
+options(highcharter.theme = hc_theme_smpl(tooltip = list(valueDecimals = 2)))
+```
+
+```{r basic barplots}
+# basic <- df.c.bplot %>% 
+#  highcharter::hchart("column", 
+#         hcaes(
+#           x = consequence, 
+#           y = y.con
+#         ), 
+#         color = "lavender", 
+#         borderColor = "black", 
+#         pointWidth = 90)
+# basic
+```
+
+## Interactive Plots Using `gganimate`    
+
+My ideas and inspiration came from this (site)[https://towardsdatascience.com/create-animated-bar-charts-using-r-31d09e5841da] 
+
+
+```{r gganimate}
+# install.packages("gganimate")  
+library(gganimate)
+```
+
+
+```{r}
+cvfp1_formatted <- CVFP1 %>%
+  group_by(consequence) %>%
+  # The * 1 makes it possible to have non-integer ranks while sliding
+  mutate(C.S.Pathogenic = (ClinicalSignificance=="Pathogenic")) 
+```
+
+```{r staticplot}
+staticplot <- ggplot(CVFP1, aes(x = ClinicalSignificance)) + geom_bar(color = "black", fill = "lightgray") + 
+  labs(title = "Clinical Significance of Genetic Variant from FOXP1", 
+       subtitle = "n = 144",
+       x = "Level of Significance", 
+       y = "Number of Individuals") + 
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 25, hjust = 1))
+```
+
+### Coding a Plot.gif   
+
+```{r animation}
+aniplot <- staticplot + 
+  transition_states(ClinicalSignificance)
+
+### Note to self: 
+
+# do not print/view 'aniplot' at this stage
+    # every static plot gets its own .png file (101 pngs here)
+
+# install.packages("gifski")
+library(gifski)
+
+animate(aniplot, 200, fps = 20, width = 1200, height = 1000, 
+        renderer = gifski_renderer("gganim.gif"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

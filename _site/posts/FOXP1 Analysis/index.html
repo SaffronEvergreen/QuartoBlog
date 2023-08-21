@@ -145,6 +145,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
                                 <div class="quarto-categories">
                 <div class="quarto-category">analysis</div>
                 <div class="quarto-category">code</div>
+                <div class="quarto-category">visualizations</div>
               </div>
                   </div>
   </div>
@@ -185,6 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, ggplot2, forcats, epitools, dplyr, xfun, plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The data used for this tinkering is found on the National Library of Medicine <a href="https://www.ncbi.nlm.nih.gov/clinvar/?term=FOXP1%5Bgene%5D&amp;redir=gene">ClinVar database</a>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># imported from directory</span></span>
@@ -330,6 +332,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="bar-plots-1" class="level3">
 <h3 class="anchored" data-anchor-id="bar-plots-1">Bar Plots</h3>
 <p><strong>Note</strong>: As of August 3rd, 2023, I am unable to render using ‘plotly’. The code chunk below has came to a halt – I’ve troubleshooted by restarting, clearing the console and environment, checking for package conflicts, making sure everything is updated, removed my previous code with <code>layout()</code> and am still having this error:</p>
+<ul>
+<li>checked again on August 21st</li>
+</ul>
 <p>Quitting from lines 68-138 [plotly] (index.qmd)<br>
 Error in <code>add_html_caption()</code>:<br>
 ! unused argument (xfun::grep_sub(“<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>* &lt;[^&gt;]+aria-labelledby[ ]* =[ ] * &nbsp;”([^&nbsp;“]+)&nbsp;”.*$“,” \1”, x))<br>
@@ -349,74 +354,168 @@ Execution halted</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clinical Significance Bar Plot</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>(df.bplot <span class="ot">&lt;-</span> CVFP1 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">group_by</span>(ClinicalSignificance) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">count</span>())</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>y.cs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">5</span>, <span class="dv">31</span>, <span class="dv">20</span>, <span class="dv">33</span>, <span class="dv">2</span>, <span class="dv">45</span>)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>text.clin.sig <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"8"</span>, <span class="st">"5"</span>, <span class="st">"31"</span>, <span class="st">"20"</span>, <span class="st">"33"</span>, <span class="st">"2"</span>, <span class="st">"45"</span>)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="do">## showing the counts of cases based on Clinical Significance </span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>b.plot <span class="ot">&lt;-</span> plotly<span class="sc">::</span><span class="fu">plot_ly</span>(<span class="at">data =</span> df.bplot, </span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>                          <span class="at">x =</span> <span class="sc">~</span>ClinicalSignificance, </span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                          <span class="at">y =</span> <span class="sc">~</span>y.cs, </span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>                          <span class="at">type =</span> <span class="st">"bar"</span>, </span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>                          <span class="at">text =</span> text.clin.sig, </span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>                          <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="st">"maroon"</span>)) </span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>b.plot</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="do">## showing the percentage of case based on Clinical Significance </span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="do">### Benign  </span></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>ben <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">8</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="do">### Benign/Likely Benign  </span></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>ben.lben <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">5</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="do">### Likely Benign  </span></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>lben <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">31</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="do">### Likely Pathogenic  </span></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>lpat <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">20</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="do">### Pathogenic   </span></span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>pat <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">33</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a><span class="do">### Pathogenic/Likely Pathogenic  </span></span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>pat.lpat <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">2</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="do">### Uncertain/Conflicting </span></span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>unc.con <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">45</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>text.per <span class="ot">&lt;-</span> <span class="fu">c</span>(ben, ben.lben, lben, lpat, pat, pat.lpat, unc.con)</span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="co"># barplot with percentages </span></span>
-<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>b.per.plot <span class="ot">&lt;-</span> plotly<span class="sc">::</span><span class="fu">plot_ly</span>(<span class="at">data =</span> df.bplot, </span>
-<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>                          <span class="at">x =</span> <span class="sc">~</span>ClinicalSignificance, </span>
-<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>                          <span class="at">y =</span> <span class="sc">~</span>y.cs, </span>
-<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>                          <span class="at">type =</span> <span class="st">"bar"</span>, </span>
-<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>                          <span class="at">text =</span> text.per, </span>
-<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>                          <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="st">"skyblue"</span>)) </span>
-<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>b.per.plot</span>
-<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Consequence Bar Plot </span></span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>(df.c.bplot <span class="ot">&lt;-</span> CVFP1 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">group_by</span>(consequence) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">count</span>())</span>
-<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a><span class="co"># showing the counts </span></span>
-<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>y.con <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">21</span>, <span class="dv">71</span>, <span class="dv">13</span>, <span class="dv">17</span>, <span class="dv">21</span>)</span>
-<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>c.b.plot <span class="ot">&lt;-</span> plotly<span class="sc">::</span><span class="fu">plot_ly</span>(<span class="at">data =</span> df.c.bplot,</span>
-<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>                          <span class="at">x =</span> <span class="sc">~</span>consequence,</span>
-<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>                          <span class="at">y =</span> <span class="sc">~</span>y.con, </span>
-<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>                          <span class="at">type =</span> <span class="st">"bar"</span>, </span>
-<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>                          <span class="at">marker =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="st">"lavender"</span>, </span>
-<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">line =</span> <span class="fu">list</span>(<span class="at">color =</span> <span class="st">"darkgrey"</span>, </span>
-<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">width =</span> <span class="fl">1.5</span>))) </span>
-<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a>c.b.plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>(df.bplot <span class="ot">&lt;-</span> CVFP1 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">group_by</span>(ClinicalSignificance) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">count</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 2
+# Groups:   ClinicalSignificance [7]
+  ClinicalSignificance             n
+  &lt;fct&gt;                        &lt;int&gt;
+1 Benign                           8
+2 Benign/Likely benign             5
+3 Likely benign                   31
+4 Likely pathogenic               20
+5 Pathogenic                      33
+6 Pathogenic/Likely pathogenic     2
+7 Uncertain/conflicting           45</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>y.cs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">5</span>, <span class="dv">31</span>, <span class="dv">20</span>, <span class="dv">33</span>, <span class="dv">2</span>, <span class="dv">45</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>text.clin.sig <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"8"</span>, <span class="st">"5"</span>, <span class="st">"31"</span>, <span class="st">"20"</span>, <span class="st">"33"</span>, <span class="st">"2"</span>, <span class="st">"45"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="do">## showing the counts of cases based on Clinical Significance </span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># b.plot &lt;- plotly::plot_ly(data = df.bplot, </span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                          x = ~ClinicalSignificance, </span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                          y = ~y.cs, </span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                          type = "bar", </span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#                          text = text.clin.sig, </span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#                          marker = list(color = "maroon")) </span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co"># b.plot</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="do">## showing the percentage of case based on Clinical Significance </span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="do">### Benign  </span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>ben <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">8</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="do">### Benign/Likely Benign  </span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>ben.lben <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">5</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="do">### Likely Benign  </span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>lben <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">31</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="do">### Likely Pathogenic  </span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>lpat <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">20</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="do">### Pathogenic   </span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>pat <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">33</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="do">### Pathogenic/Likely Pathogenic  </span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>pat.lpat <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">2</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="do">### Uncertain/Conflicting </span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>unc.con <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">round</span>(<span class="dv">45</span><span class="sc">/</span><span class="dv">144</span><span class="sc">*</span><span class="dv">100</span>, <span class="at">digits =</span> <span class="dv">2</span>), <span class="st">"%"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>text.per <span class="ot">&lt;-</span> <span class="fu">c</span>(ben, ben.lben, lben, lpat, pat, pat.lpat, unc.con)</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="co"># barplot with percentages </span></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a><span class="co"># b.per.plot &lt;- plotly::plot_ly(data = df.bplot, </span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a><span class="co">#                          x = ~ClinicalSignificance, </span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a><span class="co">#                          y = ~y.cs, </span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="co">#                          type = "bar", </span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a><span class="co">#                          text = text.per, </span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a><span class="co">#                          marker = list(color = "skyblue")) </span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a><span class="co"># b.per.plot</span></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Consequence Bar Plot </span></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>(df.c.bplot <span class="ot">&lt;-</span> CVFP1 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">group_by</span>(consequence) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">count</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+# Groups:   consequence [6]
+  consequence     n
+  &lt;fct&gt;       &lt;int&gt;
+1 3-UTR           1
+2 Intronic       21
+3 Missense       71
+4 Splice-D/A     13
+5 Stop gain      17
+6 Synonymous     21</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># showing the counts </span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>y.con <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">21</span>, <span class="dv">71</span>, <span class="dv">13</span>, <span class="dv">17</span>, <span class="dv">21</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># c.b.plot &lt;- plotly::plot_ly(data = df.c.bplot,</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                          x = ~consequence,</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                          y = ~y.con, </span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                          type = "bar", </span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                          marker = list(color = "lavender", </span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                                        line = list(color = "darkgrey", </span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#                                                    width = 1.5))) </span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co"># c.b.plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="interactive-plots-using-highcharter" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-plots-using-highcharter">Interactive Plots Using ‘highcharter’</h2>
+<p><strong>Note</strong>: As of August 5th, <code>plotly</code> is still not running correctly so I’m going to try out this package <code>highcharter</code></p>
+<p>My ideas and inspiration came from this (site)[https://www.datanovia.com/en/lessons/highchart-interactive-bar-plot-in-r/]</p>
+<ul>
+<li>August 21st: same code warning with “highcharter” as it is with “plotly” - I figure at this point it’s good to show my flops as well as my successes, so enjoy this little flop</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("highcharter")   </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(highcharter) </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># setting highcharter options </span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">highcharter.theme =</span> <span class="fu">hc_theme_smpl</span>(<span class="at">tooltip =</span> <span class="fu">list</span>(<span class="at">valueDecimals =</span> <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># basic &lt;- df.c.bplot %&gt;% </span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#  highcharter::hchart("column", </span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#         hcaes(</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#           x = consequence, </span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#           y = y.con</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#         ), </span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#         color = "lavender", </span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#         borderColor = "black", </span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#         pointWidth = 90)</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co"># basic</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="interactive-plots-using-gganimate" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-plots-using-gganimate">Interactive Plots Using <code>gganimate</code></h2>
+<p>My ideas and inspiration came from this (site)[https://towardsdatascience.com/create-animated-bar-charts-using-r-31d09e5841da]</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("gganimate")  </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>cvfp1_formatted <span class="ot">&lt;-</span> CVFP1 <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(consequence) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The * 1 makes it possible to have non-integer ranks while sliding</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">C.S.Pathogenic =</span> (ClinicalSignificance<span class="sc">==</span><span class="st">"Pathogenic"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>staticplot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(CVFP1, <span class="fu">aes</span>(<span class="at">x =</span> ClinicalSignificance)) <span class="sc">+</span> <span class="fu">geom_bar</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"lightgray"</span>) <span class="sc">+</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Clinical Significance of Genetic Variant from FOXP1"</span>, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"n = 144"</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Level of Significance"</span>, </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of Individuals"</span>) <span class="sc">+</span> </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">25</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="coding-a-plot.gif" class="level3">
+<h3 class="anchored" data-anchor-id="coding-a-plot.gif">Coding a Plot.gif</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>aniplot <span class="ot">&lt;-</span> staticplot <span class="sc">+</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_states</span>(ClinicalSignificance)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="do">### Note to self: </span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># do not print/view 'aniplot' at this stage</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># every static plot gets its own .png file (101 pngs here)</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("gifski")</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gifski)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">animate</span>(aniplot, <span class="dv">200</span>, <span class="at">fps =</span> <span class="dv">20</span>, <span class="at">width =</span> <span class="dv">1200</span>, <span class="at">height =</span> <span class="dv">1000</span>, </span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">renderer =</span> <span class="fu">gifski_renderer</span>(<span class="st">"gganim.gif"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/animation-1.gif" class="img-fluid"></p>
+</div>
 </div>
 
 
