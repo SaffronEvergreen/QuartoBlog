@@ -1,0 +1,318 @@
+---
+title: "Machine Learning Walk-Through"
+author: "Saffron Evergreen"
+date: "2023-08-24"
+categories: [code, visualizations, machine learning]
+---
+
+
+I will be following the process found on this [site](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/) by Jason Brownlee.   
+
+_An ode to template creation_    
+
+So this author is using the iris flowers dataset, which I will use too. However, if time allows, I'll create a mirror project with another dataset. The researcher behind the iris flowers research was a eugenist [post source here; his name Edgar Anderson].
+
+
+# 1. Define Problem     
+
+## Characteristics for Data   
+
+1. Numeric columns   
+2. Classification problems (i.e., inputs of characteristics to determine the iris)     
+3. Few columns and 100-200 observations    
+4. All columns are in the same unit and scale; otherwise scaling and transformations would need to occur   
+
+# 2. Prepare Data       
+
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE, fig.height=5, fig.width=7, message = F, warning = F)
+```
+
+```{r packages}
+library(pacman)
+p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, dplyr, caret, 
+       lattice, # for caret
+       kernlab, # caret
+       randomForest) # caret
+```   
+
+```{r load data}
+data("iris") 
+dataset <- iris  
+```
+
+```{r visualization dataset}
+set.seed(12345)
+
+# 80% to train models, 20% validation dataset  
+
+# split the data into two sets
+validation_index <- caret::createDataPartition(
+  dataset$Species, 
+  p = 0.80, 
+  list = FALSE
+)
+
+# 20% used for validation  
+validation <- dataset[-validation_index, ]
+
+# 80% used for training and testing  
+dataset <- dataset[validation_index, ]
+```
+
+
+## Summarize the Dataset     
+
+### Dimensions    
+
+```{r dim}
+dim(dataset)
+```
+
+### Types of Columns    
+
+```{r}
+sapply(dataset, class)
+```
+
+### Data Peek    
+
+```{r}
+head(dataset)
+```
+
+
+### Levels of the Species Column     
+
+```{r}
+# using base
+levels(dataset$Species)
+# 3+ categories in a column : multinomial 
+# 2 categories in a column: binomial/binary
+```
+
+#### Breakdown of Species Column   
+
+```{r prop of species}
+# using base
+percentage <- prop.table(table(dataset$Species)) * 100 
+
+cbind(freq = table(
+  dataset$Species), 
+  percentage = percentage)
+```
+
+### Summary of all Columns    
+
+```{r}
+summary(dataset)
+```
+
+## Visualizations    
+
+### Univariate    
+
+```{r split x and y}
+x <- dataset[, 1:4]
+y <- dataset[,5]
+```
+
+```{r boxplots}
+# 2x2 layout for boxplots
+par(mfrow = c(1,4))
+
+# loop through each column of 'x' to create a boxplot
+for(i in 1:4){
+  boxplot(x[ ,i], main = names(iris)[i])}
+```
+
+### Multivariate   
+
+```{r scatterplot matrix}
+# visually assessing interactions between the variables, 3 colors to represent species types
+
+# caret::featurePlot(
+#  x = x, 
+#  y = y, 
+#  plot = "ellipse"
+#)
+
+### Error message:
+# Error in grid.Call.graphics(C_downviewport, name$name, strict) :
+# Viewport 'plot_01.panel.1.1.off.vp' was not founda
+
+# "pairs" without "ellipse" is most similar
+caret::featurePlot(x = x, 
+                   y = y, 
+                   plot = "pairs")
+
+### another attempt with a different package 
+
+library(GGally)
+ggpairs(dataset, columns = 1:4, 
+        ggplot2::aes(color = y))
+```
+
+```{r box and whisper plots}
+caret::featurePlot(x = x, 
+                   y = y, 
+                   plot = "box")
+```
+
+```{r density plots}
+# density plot for each category of species 
+
+scales <- list(
+  x = list(
+    relation = "free"), 
+  y = list(
+    relation = "free"
+))
+
+caret::featurePlot(x = x, 
+                   y = y, 
+                   plot = "density", 
+                   scales = scales)
+```
+
+# 3. Evaluate Algorithms    
+
+## Test harness: 10-fold cross validation   
+_This method estimates accuracy_   
+* Splits data into 10 parts   
+* Trains 9 parts, tests 1 part   
+* Releases all combinations of train-test splits    
+* Repeat 3 times for each algorithm for more accurate estimate    
+
+
+```{r test harness}
+# run algorithms using 10-fold cross validation   
+
+control <- caret::trainControl(method = "cv", 
+                               number = 10)  
+
+metric <- "Accuracy"
+```
+
+_Formula for accuracy_   
+
+$$
+\text{accuracy} = \frac{\text{correctly predicted instances}}{\text{total number of instances}} ~\cdot~ 100
+$$  
+
+## Build 5 different models for prediction    
+
+__Evaluate 5 different algorithms__   
+
+_simple linear method_   
+1. Linear Discriminant Analysis (LDA)   
+_nonlinear method_   
+2. Classification and Regression Trees (CART)    
+3. k-Nearest Neighbors (kNN)    
+_complex nonlinear method_   
+4. Support Vector Machines (SVM) with a linear kernel   
+5. Random Forest (RF)
+
+```{r build models}
+### set seed before each run 
+
+# simple linear
+### LDA  
+set.seed(7)
+
+fit.lda <- caret::train(Species~., 
+                        data = dataset, 
+                        method = "lda", 
+                        metric = metric, 
+                        trControl = control)
+
+
+# nonlinear
+### CART  
+set.seed(7) 
+
+fit.cart <- caret::train(Species~., 
+                        data = dataset, 
+                        method = "rpart", 
+                        metric = metric, 
+                        trControl = control)
+
+### kNN  
+set.seed(7)   
+
+fit.knn <- caret::train(Species~., 
+                        data = dataset, 
+                        method = "knn", 
+                        metric = metric, 
+                        trControl = control)
+
+# complex nonlinear
+### SVM  
+set.seed(7)   
+
+fit.svm <- caret::train(Species~., 
+                        data = dataset, 
+                        method = "svmRadial", 
+                        metric = metric, 
+                        trControl = control)
+
+### RF  
+set.seed(7)  
+
+fit.rf <- caret::train(Species~., 
+                        data = dataset, 
+                        method = "rf", 
+                        metric = metric, 
+                        trControl = control)
+
+### Note from website: 
+  # caret can configure and tune the configuration of each model but that isn't covered in the tutorial I'm going off of
+```
+
+## Select the best model     
+
+```{r model accuracy}
+# summarize accuracy of models  
+results <- caret::resamples(
+  list(
+    lda = fit.lda, 
+    cart = fit.cart, 
+    knn = fit.knn, 
+    svm = fit.svm, 
+    rf = fit.rf
+  )
+)
+
+summary(results)
+```
+### Plot model evaluation results   
+
+```{r}
+lattice::dotplot(results)
+# the most accurate model is the LDA
+```
+
+```{r}
+print(fit.lda)
+# standard deviation of "accuracy" and "kappa" were shown in the tutorial   
+
+### haven't figured it out yet... TBC...
+```
+
+# 4. Predictions + Conclusion    
+
+__Assessing the accuracy of the best fit model 'fit.lda' on the validation set__   
+* It's ideal to have a validation set in case the model is overfit   
+
+```{r lda on validation}
+predictions <- stats::predict(fit.lda, validation)
+
+confusionMatrix(predictions, validation$Species)
+```
+__Explanation__:    
+Accuracy is 100%. The validation dataset is small (20%) but is within our expected margin of error $97\% ~\pm~4\%$. Concluding that we _might_ have an accurate and a reliably accurate model.    
+
+
+
+_End notes: That was fun as heck. Shout out to Jason_   
