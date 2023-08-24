@@ -11,7 +11,7 @@
     "href": "index.html",
     "title": "Collections",
     "section": "",
-    "text": "Machine Learning Walk-Through\n\n\n\n\n\n\n\ncode\n\n\nvisualizations\n\n\nmachine learning\n\n\n\n\n\n\n\n\n\n\n\nAug 24, 2023\n\n\nSaffron Evergreen\n\n\n\n\n\n\n  \n\n\n\n\nFOXP1 Analysis\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\nvisualizations\n\n\n\n\n\n\n\n\n\n\n\nJul 27, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nAssociations\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 26, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nLogistic Regression Project Spring 2023\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 17, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nLogistic Regression Project Winter 2022\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nSurvey and Sampling Analysis Project Spring 2023\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nFirst Post\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\nNo matching items"
+    "text": "Machine Learning Walk-Through\n\n\n\n\n\n\n\ncode\n\n\nvisualizations\n\n\nmachine learning\n\n\n\n\n\n\n\n\n\n\n\nAug 24, 2023\n\n\nSaffron Evergreen\n\n\n\n\n\n\n  \n\n\n\n\nMachine Learning Template\n\n\n\n\n\n\n\ncode\n\n\nmachine learning\n\n\ntemplates\n\n\n\n\n\n\n\n\n\n\n\nAug 24, 2023\n\n\nSaffron Evergreen\n\n\n\n\n\n\n  \n\n\n\n\nFOXP1 Analysis\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\nvisualizations\n\n\n\n\n\n\n\n\n\n\n\nJul 27, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nAssociations\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 26, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nLogistic Regression Project Spring 2023\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 17, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nLogistic Regression Project Winter 2022\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nSurvey and Sampling Analysis Project Spring 2023\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nFirst Post\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/Associations/index.html",
@@ -586,5 +586,75 @@
     "title": "Machine Learning Walk-Through",
     "section": "Select the best model",
     "text": "Select the best model\n\n# summarize accuracy of models  \nresults &lt;- caret::resamples(\n  list(\n    lda = fit.lda, \n    cart = fit.cart, \n    knn = fit.knn, \n    svm = fit.svm, \n    rf = fit.rf\n  )\n)\n\nsummary(results)\n\n\nCall:\nsummary.resamples(object = results)\n\nModels: lda, cart, knn, svm, rf \nNumber of resamples: 10 \n\nAccuracy \n          Min.   1st Qu.    Median      Mean 3rd Qu. Max. NA's\nlda  0.9166667 0.9375000 1.0000000 0.9750000       1    1    0\ncart 0.8333333 0.9166667 1.0000000 0.9583333       1    1    0\nknn  0.8333333 0.9166667 1.0000000 0.9583333       1    1    0\nsvm  0.9166667 0.9166667 0.9583333 0.9583333       1    1    0\nrf   0.8333333 0.9166667 0.9583333 0.9416667       1    1    0\n\nKappa \n      Min. 1st Qu. Median   Mean 3rd Qu. Max. NA's\nlda  0.875 0.90625 1.0000 0.9625       1    1    0\ncart 0.750 0.87500 1.0000 0.9375       1    1    0\nknn  0.750 0.87500 1.0000 0.9375       1    1    0\nsvm  0.875 0.87500 0.9375 0.9375       1    1    0\nrf   0.750 0.87500 0.9375 0.9125       1    1    0\n\n\n\nPlot model evaluation results\n\nlattice::dotplot(results)\n\n\n\n# the most accurate model is the LDA\n\n\nprint(fit.lda)\n\nLinear Discriminant Analysis \n\n120 samples\n  4 predictor\n  3 classes: 'setosa', 'versicolor', 'virginica' \n\nNo pre-processing\nResampling: Cross-Validated (10 fold) \nSummary of sample sizes: 108, 108, 108, 108, 108, 108, ... \nResampling results:\n\n  Accuracy  Kappa \n  0.975     0.9625\n\n# standard deviation of \"accuracy\" and \"kappa\" were shown in the tutorial   \n\n### haven't figured it out yet... TBC..."
+  },
+  {
+    "objectID": "posts/ML Template/index.html",
+    "href": "posts/ML Template/index.html",
+    "title": "Machine Learning Template",
+    "section": "",
+    "text": "Inspired by ‘Machine Learning Walk-Through’; it reignited my undying love for template creation.\nThe brains behind this template goes to Jason Brownlee."
+  },
+  {
+    "objectID": "posts/ML Template/index.html#summary-of-dataset",
+    "href": "posts/ML Template/index.html#summary-of-dataset",
+    "title": "Machine Learning Template",
+    "section": "Summary of dataset",
+    "text": "Summary of dataset\n\ndim(dataset) # make sure columns were retained \n\nhead(dataset)\n\nsummary(dataset)\n\nglimpse(dataset)"
+  },
+  {
+    "objectID": "posts/ML Template/index.html#types-of-columnsvariables",
+    "href": "posts/ML Template/index.html#types-of-columnsvariables",
+    "title": "Machine Learning Template",
+    "section": "Types of columns/variables",
+    "text": "Types of columns/variables\n\nsapply(dataset, class)"
+  },
+  {
+    "objectID": "posts/ML Template/index.html#transform-variable-types-as-needed",
+    "href": "posts/ML Template/index.html#transform-variable-types-as-needed",
+    "title": "Machine Learning Template",
+    "section": "Transform variable types as needed",
+    "text": "Transform variable types as needed\n\nAs used in the ‘iris’ dataset, it is simpler to have explanatory variables be numeric and the outcome/predictor variable be a factor."
+  },
+  {
+    "objectID": "posts/ML Template/index.html#assess-factored-levels-in-outcome-variable",
+    "href": "posts/ML Template/index.html#assess-factored-levels-in-outcome-variable",
+    "title": "Machine Learning Template",
+    "section": "Assess factored levels in outcome variable",
+    "text": "Assess factored levels in outcome variable\nUsing Base R\n\n# using base\nlevels(dataset$OUTCOMEVARIABLE)\n# 3+ categories in a column : multinomial \n# 2 categories in a column: binomial/binary\n\nUsing Forcats"
+  },
+  {
+    "objectID": "posts/ML Template/index.html#univariate",
+    "href": "posts/ML Template/index.html#univariate",
+    "title": "Machine Learning Template",
+    "section": "Univariate",
+    "text": "Univariate\n\nthis will show an individual plot for each explanatory variable by the outcome variable in side-by-side format\n\n\nx &lt;- dataset[, 1:4] # example 1:4 cols 1:4 are explanatory/numeric variables\ny &lt;- dataset[,5] # example col 5 is the predictor/outcome/factored variable\n\n\n# 2x2 layout for boxplots\npar(mfrow = c(1,4)) # 1 row, 4 columns\n\n# loop through each column of 'x' to create a boxplot\nfor(i in 1:4){\n  boxplot(x[ ,i], main = names(RAWDATASET)[i])} # shows all combined species by the 4 explanatory variables"
+  },
+  {
+    "objectID": "posts/ML Template/index.html#multivariate",
+    "href": "posts/ML Template/index.html#multivariate",
+    "title": "Machine Learning Template",
+    "section": "Multivariate",
+    "text": "Multivariate\n\n# visually assessing interactions between the variables, colored by factor levels\n\n caret::featurePlot(\n  x = x, \n  y = y, \n  plot = \"ellipse\"\n)\n\n# \"pairs\" without \"ellipse\" is similar\ncaret::featurePlot(x = x, \n                   y = y, \n                   plot = \"pairs\")\n\n### an alternative version using GGally\n\nGGally::ggpairs(dataset, \n                columns = 1:4, # select explanatory variables\n        ggplot2::aes(color = y)) # color by factor levels of outcome\n\n\ncaret::featurePlot(x = x, \n                   y = y, \n                   plot = \"box\")\n\n\n# density plot for each level in the outcome variable \n\nscales &lt;- list(\n  x = list(\n    relation = \"free\"), \n  y = list(\n    relation = \"free\"\n))\n\ncaret::featurePlot(x = x, \n                   y = y, \n                   plot = \"density\", \n                   scales = scales)"
+  },
+  {
+    "objectID": "posts/ML Template/index.html#test-harness-10-fold-cross-validation",
+    "href": "posts/ML Template/index.html#test-harness-10-fold-cross-validation",
+    "title": "Machine Learning Template",
+    "section": "Test harness: 10-fold cross validation",
+    "text": "Test harness: 10-fold cross validation\nThis method estimates accuracy\n* Splits data into 10 parts\n* Trains 9 parts, tests 1 part\n* Releases all combinations of train-test splits\n* Repeat 3 times for each algorithm for more accurate estimate\n\n# run algorithms using 10-fold cross validation   \n\ncontrol &lt;- caret::trainControl(method = \"cv\", \n                               number = 10)  \n\nmetric &lt;- \"Accuracy\"\n\nFormula for accuracy\n\\[\n\\text{accuracy} = \\frac{\\text{correctly predicted instances}}{\\text{total number of instances}} ~\\cdot~ 100\n\\]"
+  },
+  {
+    "objectID": "posts/ML Template/index.html#build-5-different-models-for-prediction",
+    "href": "posts/ML Template/index.html#build-5-different-models-for-prediction",
+    "title": "Machine Learning Template",
+    "section": "Build 5 different models for prediction",
+    "text": "Build 5 different models for prediction\nEvaluate 5 different algorithms\nsimple linear method\n1. Linear Discriminant Analysis (LDA)\nnonlinear method\n2. Classification and Regression Trees (CART)\n3. k-Nearest Neighbors (kNN)\ncomplex nonlinear method\n4. Support Vector Machines (SVM) with a linear kernel\n5. Random Forest (RF)\n\n### set seed before each run \n\n# simple linear\n### LDA  \nset.seed(7)\n\nfit.lda &lt;- caret::train(OUTCOMEVARIABLE~., \n                        data = dataset, \n                        method = \"lda\", \n                        metric = metric, \n                        trControl = control)\n\n\n# nonlinear\n### CART  \nset.seed(7) \n\nfit.cart &lt;- caret::train(OUTCOMEVARIABLE~., \n                        data = dataset, \n                        method = \"rpart\", \n                        metric = metric, \n                        trControl = control)\n\n### kNN  \nset.seed(7)   \n\nfit.knn &lt;- caret::train(OUTCOMEVARIABLE~., \n                        data = dataset, \n                        method = \"knn\", \n                        metric = metric, \n                        trControl = control)\n\n# complex nonlinear\n### SVM  \nset.seed(7)   \n\nfit.svm &lt;- caret::train(OUTCOMEVARIABLE~., \n                        data = dataset, \n                        method = \"svmRadial\", \n                        metric = metric, \n                        trControl = control)\n\n### RF  \nset.seed(7)  \n\nfit.rf &lt;- caret::train(OUTCOMEVARIABLE~., \n                        data = dataset, \n                        method = \"rf\", \n                        metric = metric, \n                        trControl = control)\n\n### Note from website: \n  # caret can configure and tune the configuration of each model but that isn't done here (at least not yet)"
+  },
+  {
+    "objectID": "posts/ML Template/index.html#select-the-best-model",
+    "href": "posts/ML Template/index.html#select-the-best-model",
+    "title": "Machine Learning Template",
+    "section": "Select the best model",
+    "text": "Select the best model\n\n# summarize accuracy of models  \nresults &lt;- caret::resamples(\n  list(\n    lda = fit.lda, \n    cart = fit.cart, \n    knn = fit.knn, \n    svm = fit.svm, \n    rf = fit.rf\n  )\n)\n\nsummary(results)\n\n\nPlot model evaluation results\n\nlattice::dotplot(results)\n# visualize the accuracy of each model\n\n\nprint(CHOSENMODEL)\n# standard deviation of \"accuracy\" and \"kappa\" were shown in the tutorial   \n\n### haven't figured it out yet... TBC..."
   }
 ]

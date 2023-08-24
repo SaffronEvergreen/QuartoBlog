@@ -1,157 +1,156 @@
 ---
-title: "Machine Learning Walk-Through"
+title: "Machine Learning Template"
 author: "Saffron Evergreen"
 date: "2023-08-24"
-categories: [code, visualizations, machine learning]
----
+categories: [code, machine learning, templates]
+---   
 
 
-I will be following the process found on this [site](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/) by Jason Brownlee.   
+Inspired by 'Machine Learning Walk-Through'; it reignited my undying love for template creation.   
 
-_An ode to template creation_    
-
-So this author is using the iris flowers dataset, which I will use too. However, if time allows, I'll create a mirror project with another dataset. The researcher behind the iris flowers research was a eugenist [post source here; his name Edgar Anderson].
+The brains behind this template goes to [Jason Brownlee](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/).   
 
 
-# 1. Define Problem     
 
-## Characteristics for Data   
-
-1. Numeric columns   
-2. Classification problems (i.e., inputs of characteristics to determine the iris)     
-3. Few columns and 100-200 observations    
-4. All columns are in the same unit and scale; otherwise scaling and transformations would need to occur   
-
-# 2. Prepare Data       
+# Set-up and Libraries   
 
 
 ```{r setup, include=TRUE}
-knitr::opts_chunk$set(echo = TRUE, fig.height=5, fig.width=7, message = F, warning = F)
+knitr::opts_chunk$set(eval = FALSE, fig.height=5, fig.width=7, message = F, warning = F)
+# eval = FALSE : show code, will not run code 
+
+### change eval = FALSE to 
+
+    ## echo = TRUE 
 ```
+
 
 ```{r packages}
 library(pacman)
-p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, dplyr, caret, 
-       lattice, # for caret
-       kernlab, # caret
-       randomForest) # caret
+p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, dplyr, 
+       GGally, # ggpairs
+       forcats, # factor manipulation
+       caret, 
+  ### below are for caret ### 
+       lattice, 
+       kernlab, 
+       ellipse, 
+       randomForest)
 ```   
 
+# Load data  
+
+
 ```{r load data}
-data("iris") 
-dataset <- iris  
+# if in CRAN repository
+data("[dataset here]") 
+
+# 'dataset' for ease
 ```
 
-```{r visualization dataset}
-set.seed(12345)
+# 1. Clean and Wrangle Data
 
-# 80% to train models, 20% validation dataset  
+```{r split dataset}
+set.seed(123456789)
+
+# []% to train models, []% validation dataset  
 
 # split the data into two sets
 validation_index <- caret::createDataPartition(
-  dataset$Species, 
-  p = 0.80, 
+  dataset$OUTCOMEVARIABLE, # Outcome variable/factored
+  p = 0.80, # percentage of dataset used for training
   list = FALSE
 )
 
-# 20% used for validation  
+# [20]% used for validation  
 validation <- dataset[-validation_index, ]
 
-# 80% used for training and testing  
+# [80]% used for training and testing  
 dataset <- dataset[validation_index, ]
 ```
 
-
-## Summarize the Dataset     
-
-### Dimensions    
+## Summary of dataset   
 
 ```{r dim}
-dim(dataset)
+dim(dataset) # make sure columns were retained 
+
+head(dataset)
+
+summary(dataset)
+
+glimpse(dataset)
 ```
 
-### Types of Columns    
+## Types of columns/variables   
 
 ```{r}
 sapply(dataset, class)
 ```
 
-### Data Peek    
+## Transform variable types as needed   
 
-```{r}
-head(dataset)
-```
+* As used in the 'iris' dataset, it is simpler to have explanatory variables be numeric and the outcome/predictor variable be a factor.   
 
+## Assess factored levels in outcome variable   
 
-### Levels of the Species Column     
+**Using Base R**   
 
 ```{r}
 # using base
-levels(dataset$Species)
+levels(dataset$OUTCOMEVARIABLE)
 # 3+ categories in a column : multinomial 
 # 2 categories in a column: binomial/binary
-```
+``` 
 
-#### Breakdown of Species Column   
 
-```{r prop of species}
-# using base
-percentage <- prop.table(table(dataset$Species)) * 100 
-
-cbind(freq = table(
-  dataset$Species), 
-  percentage = percentage)
-```
-
-### Summary of all Columns    
+**Using Forcats**   
 
 ```{r}
-summary(dataset)
+
 ```
 
-## Visualizations    
 
-### Univariate    
+# 2. Visualizations   
+
+## Univariate   
+
+* this will show an individual plot for each explanatory variable by the outcome variable in side-by-side format
 
 ```{r split x and y}
-x <- dataset[, 1:4]
-y <- dataset[,5]
+x <- dataset[, 1:4] # example 1:4 cols 1:4 are explanatory/numeric variables
+y <- dataset[,5] # example col 5 is the predictor/outcome/factored variable
 ```
 
 ```{r boxplots}
 # 2x2 layout for boxplots
-par(mfrow = c(1,4))
+par(mfrow = c(1,4)) # 1 row, 4 columns
 
 # loop through each column of 'x' to create a boxplot
 for(i in 1:4){
-  boxplot(x[ ,i], main = names(iris)[i])}
+  boxplot(x[ ,i], main = names(RAWDATASET)[i])} # shows all combined species by the 4 explanatory variables
 ```
 
-### Multivariate   
+## Multivariate   
 
 ```{r scatterplot matrix}
-# visually assessing interactions between the variables, 3 colors to represent species types
+# visually assessing interactions between the variables, colored by factor levels
 
-# caret::featurePlot(
-#  x = x, 
-#  y = y, 
-#  plot = "ellipse"
-#)
+ caret::featurePlot(
+  x = x, 
+  y = y, 
+  plot = "ellipse"
+)
 
-### Error message:
-# Error in grid.Call.graphics(C_downviewport, name$name, strict) :
-# Viewport 'plot_01.panel.1.1.off.vp' was not founda
-
-# "pairs" without "ellipse" is most similar
+# "pairs" without "ellipse" is similar
 caret::featurePlot(x = x, 
                    y = y, 
                    plot = "pairs")
 
-### another attempt with a different package 
+### an alternative version using GGally
 
-library(GGally)
-ggpairs(dataset, columns = 1:4, 
-        ggplot2::aes(color = y))
+GGally::ggpairs(dataset, 
+                columns = 1:4, # select explanatory variables
+        ggplot2::aes(color = y)) # color by factor levels of outcome
 ```
 
 ```{r box and whisper plots}
@@ -160,8 +159,9 @@ caret::featurePlot(x = x,
                    plot = "box")
 ```
 
+
 ```{r density plots}
-# density plot for each category of species 
+# density plot for each level in the outcome variable 
 
 scales <- list(
   x = list(
@@ -176,7 +176,8 @@ caret::featurePlot(x = x,
                    scales = scales)
 ```
 
-# 3. Evaluate Algorithms    
+
+# 3. Evaluate Algorithms for Accurate Estimates      
 
 ## Test harness: 10-fold cross validation   
 _This method estimates accuracy_   
@@ -201,6 +202,7 @@ $$
 \text{accuracy} = \frac{\text{correctly predicted instances}}{\text{total number of instances}} ~\cdot~ 100
 $$  
 
+
 ## Build 5 different models for prediction    
 
 __Evaluate 5 different algorithms__   
@@ -212,7 +214,7 @@ _nonlinear method_
 3. k-Nearest Neighbors (kNN)    
 _complex nonlinear method_   
 4. Support Vector Machines (SVM) with a linear kernel   
-5. Random Forest (RF)
+5. Random Forest (RF)  
 
 ```{r build models}
 ### set seed before each run 
@@ -221,7 +223,7 @@ _complex nonlinear method_
 ### LDA  
 set.seed(7)
 
-fit.lda <- caret::train(Species~., 
+fit.lda <- caret::train(OUTCOMEVARIABLE~., 
                         data = dataset, 
                         method = "lda", 
                         metric = metric, 
@@ -232,7 +234,7 @@ fit.lda <- caret::train(Species~.,
 ### CART  
 set.seed(7) 
 
-fit.cart <- caret::train(Species~., 
+fit.cart <- caret::train(OUTCOMEVARIABLE~., 
                         data = dataset, 
                         method = "rpart", 
                         metric = metric, 
@@ -241,7 +243,7 @@ fit.cart <- caret::train(Species~.,
 ### kNN  
 set.seed(7)   
 
-fit.knn <- caret::train(Species~., 
+fit.knn <- caret::train(OUTCOMEVARIABLE~., 
                         data = dataset, 
                         method = "knn", 
                         metric = metric, 
@@ -251,7 +253,7 @@ fit.knn <- caret::train(Species~.,
 ### SVM  
 set.seed(7)   
 
-fit.svm <- caret::train(Species~., 
+fit.svm <- caret::train(OUTCOMEVARIABLE~., 
                         data = dataset, 
                         method = "svmRadial", 
                         metric = metric, 
@@ -260,14 +262,14 @@ fit.svm <- caret::train(Species~.,
 ### RF  
 set.seed(7)  
 
-fit.rf <- caret::train(Species~., 
+fit.rf <- caret::train(OUTCOMEVARIABLE~., 
                         data = dataset, 
                         method = "rf", 
                         metric = metric, 
                         trControl = control)
 
 ### Note from website: 
-  # caret can configure and tune the configuration of each model but that isn't covered in the tutorial I'm going off of
+  # caret can configure and tune the configuration of each model but that isn't done here (at least not yet)
 ```
 
 ## Select the best model     
@@ -286,15 +288,16 @@ results <- caret::resamples(
 
 summary(results)
 ```
+
 ### Plot model evaluation results   
 
 ```{r}
 lattice::dotplot(results)
-# the most accurate model is the LDA
+# visualize the accuracy of each model
 ```
 
 ```{r}
-print(fit.lda)
+print(CHOSENMODEL)
 # standard deviation of "accuracy" and "kappa" were shown in the tutorial   
 
 ### haven't figured it out yet... TBC...
@@ -302,17 +305,25 @@ print(fit.lda)
 
 # 4. Predictions + Conclusion    
 
-__Assessing the accuracy of the best fit model 'fit.lda' on the validation set__   
-* It's ideal to have a validation set in case the model is overfit   
+__Assessing the accuracy of the best fit model on the validation set__   
+* It's ideal to have a validation set in case the model is over fit   
 
 ```{r lda on validation}
-predictions <- stats::predict(fit.lda, validation)
+predictions <- stats::predict(CHOSENMODEL, validation)
 
-confusionMatrix(predictions, validation$Species)
+caret::confusionMatrix(predictions, validation$OUTCOMEVARIABLE)
 ```
+
 __Explanation__:    
-Accuracy is 100%. The validation dataset is small (20%) but is within our expected margin of $97\% ~\pm~4\%$. Concluding that we _might_ have an accurate and a reliably accurate model.    
+Accuracy is []%. 
+
+The validation dataset is [20]% but [is within our expected margin $97\% ~\pm~4\%$]. 
+
+Concluding that we _might_ have an [accurate and a reliably accurate] model.    
+
+_Note to self_: I need to refresh my brain on determining the margin; I thought the standard was plus or minus 3% but I don't know if the technical reasons of why really matter right now. (They matter)   
 
 
 
-_End notes: That was fun as heck. Shout out to Jason_   
+
+
