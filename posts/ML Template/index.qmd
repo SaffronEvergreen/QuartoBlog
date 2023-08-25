@@ -3,17 +3,13 @@ title: "Machine Learning Template"
 author: "Saffron Evergreen"
 date: "2023-08-24"
 categories: [code, machine learning, templates]
----   
+---
 
+Inspired by 'Machine Learning Walk-Through'; it reignited my undying love for template creation.
 
-Inspired by 'Machine Learning Walk-Through'; it reignited my undying love for template creation.   
+The brains behind this template goes to [Jason Brownlee](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/).
 
-The brains behind this template goes to [Jason Brownlee](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/).   
-
-
-
-# Set-up and Libraries   
-
+# Set-up and Libraries
 
 ```{r setup, include=TRUE}
 knitr::opts_chunk$set(eval = FALSE, fig.height=5, fig.width=7, message = F, warning = F)
@@ -23,7 +19,6 @@ knitr::opts_chunk$set(eval = FALSE, fig.height=5, fig.width=7, message = F, warn
 
     ## echo = TRUE 
 ```
-
 
 ```{r packages}
 library(pacman)
@@ -36,10 +31,9 @@ p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, dplyr,
        kernlab, 
        ellipse, 
        randomForest)
-```   
+```
 
-# Load data  
-
+# Load data
 
 ```{r load data}
 # if in CRAN repository
@@ -69,7 +63,7 @@ validation <- dataset[-validation_index, ]
 dataset <- dataset[validation_index, ]
 ```
 
-## Summary of dataset   
+## Summary of dataset
 
 ```{r dim}
 dim(dataset) # make sure columns were retained 
@@ -81,40 +75,38 @@ summary(dataset)
 glimpse(dataset)
 ```
 
-## Types of columns/variables   
+## Types of columns/variables
 
 ```{r}
 sapply(dataset, class)
 ```
 
-## Transform variable types as needed   
+## Transform variable types as needed
 
-* As used in the 'iris' dataset, it is simpler to have explanatory variables be numeric and the outcome/predictor variable be a factor.   
+-   As used in the 'iris' dataset, it is simpler to have explanatory variables be numeric and the outcome/predictor variable be a factor.
 
-## Assess factored levels in outcome variable   
+## Assess factored levels in outcome variable
 
-**Using Base R**   
+**Using Base R**
 
 ```{r}
 # using base
 levels(dataset$OUTCOMEVARIABLE)
 # 3+ categories in a column : multinomial 
 # 2 categories in a column: binomial/binary
-``` 
+```
 
-
-**Using Forcats**   
+**Using Forcats**
 
 ```{r}
 
 ```
 
+# 2. Visualizations
 
-# 2. Visualizations   
+## Univariate
 
-## Univariate   
-
-* this will show an individual plot for each explanatory variable by the outcome variable in side-by-side format
+-   this will show an individual plot for each explanatory variable by the outcome variable in side-by-side format
 
 ```{r split x and y}
 x <- dataset[, 1:4] # example 1:4 cols 1:4 are explanatory/numeric variables
@@ -130,7 +122,7 @@ for(i in 1:4){
   boxplot(x[ ,i], main = names(RAWDATASET)[i])} # shows all combined species by the 4 explanatory variables
 ```
 
-## Multivariate   
+## Multivariate
 
 ```{r scatterplot matrix}
 # visually assessing interactions between the variables, colored by factor levels
@@ -159,7 +151,6 @@ caret::featurePlot(x = x,
                    plot = "box")
 ```
 
-
 ```{r density plots}
 # density plot for each level in the outcome variable 
 
@@ -176,16 +167,15 @@ caret::featurePlot(x = x,
                    scales = scales)
 ```
 
+# 3. Evaluate Algorithms for Accurate Estimates
 
-# 3. Evaluate Algorithms for Accurate Estimates      
+## Test harness: 10-fold cross validation
 
-## Test harness: 10-fold cross validation   
-_This method estimates accuracy_   
-* Splits data into 10 parts   
-* Trains 9 parts, tests 1 part   
-* Releases all combinations of train-test splits    
-* Repeat 3 times for each algorithm for more accurate estimate    
-
+*This method estimates accuracy*\
+\* Splits data into 10 parts\
+\* Trains 9 parts, tests 1 part\
+\* Releases all combinations of train-test splits\
+\* Repeat 3 times for each algorithm for more accurate estimate
 
 ```{r test harness}
 # run algorithms using 10-fold cross validation   
@@ -196,25 +186,24 @@ control <- caret::trainControl(method = "cv",
 metric <- "Accuracy"
 ```
 
-_Formula for accuracy_   
+*Formula for accuracy*
 
 $$
 \text{accuracy} = \frac{\text{correctly predicted instances}}{\text{total number of instances}} ~\cdot~ 100
-$$  
+$$
 
+## Build 5 different models for prediction
 
-## Build 5 different models for prediction    
+**Evaluate 5 different algorithms**
 
-__Evaluate 5 different algorithms__   
-
-_simple linear method_   
-1. Linear Discriminant Analysis (LDA)   
-_nonlinear method_   
-2. Classification and Regression Trees (CART)    
-3. k-Nearest Neighbors (kNN)    
-_complex nonlinear method_   
-4. Support Vector Machines (SVM) with a linear kernel   
-5. Random Forest (RF)  
+*simple linear method*\
+1. Linear Discriminant Analysis (LDA)\
+*nonlinear method*\
+2. Classification and Regression Trees (CART)\
+3. k-Nearest Neighbors (kNN)\
+*complex nonlinear method*\
+4. Support Vector Machines (SVM) with a linear kernel\
+5. Random Forest (RF)
 
 ```{r build models}
 ### set seed before each run 
@@ -272,7 +261,7 @@ fit.rf <- caret::train(OUTCOMEVARIABLE~.,
   # caret can configure and tune the configuration of each model but that isn't done here (at least not yet)
 ```
 
-## Select the best model     
+## Select the best model
 
 ```{r model accuracy}
 # summarize accuracy of models  
@@ -289,7 +278,7 @@ results <- caret::resamples(
 summary(results)
 ```
 
-### Plot model evaluation results   
+### Plot model evaluation results
 
 ```{r}
 lattice::dotplot(results)
@@ -303,10 +292,10 @@ print(CHOSENMODEL)
 ### haven't figured it out yet... TBC...
 ```
 
-# 4. Predictions + Conclusion    
+# 4. Predictions + Conclusion
 
-__Assessing the accuracy of the best fit model on the validation set__   
-* It's ideal to have a validation set in case the model is over fit   
+**Assessing the accuracy of the best fit model on the validation set**\
+\* It's ideal to have a validation set in case the model is over fit
 
 ```{r lda on validation}
 predictions <- stats::predict(CHOSENMODEL, validation)
@@ -314,16 +303,11 @@ predictions <- stats::predict(CHOSENMODEL, validation)
 caret::confusionMatrix(predictions, validation$OUTCOMEVARIABLE)
 ```
 
-__Explanation__:    
-Accuracy is []%. 
+**Explanation**:\
+Accuracy is \[\]%.
 
-The validation dataset is [20]% but [is within our expected margin $97\% ~\pm~4\%$]. 
+The validation dataset is \[20\]% but \[is within our expected margin $97\% ~\pm~4\%$\].
 
-Concluding that we _might_ have an [accurate and a reliably accurate] model.    
+Concluding that we *might* have an \[accurate and a reliably accurate\] model.
 
-_Note to self_: I need to refresh my brain on determining the margin; I thought the standard was plus or minus 3% but I don't know if the technical reasons of why really matter right now. (They matter)   
-
-
-
-
-
+*Note to self*: I need to refresh my brain on determining the margin; I thought the standard was plus or minus 3% but I don't know if the technical reasons of why really matter right now. (They matter)

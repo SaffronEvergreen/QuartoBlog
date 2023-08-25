@@ -11,7 +11,7 @@
     "href": "index.html",
     "title": "Collections",
     "section": "",
-    "text": "Machine Learning Walk-Through\n\n\n\n\n\n\n\ncode\n\n\nvisualizations\n\n\nmachine learning\n\n\n\n\n\n\n\n\n\n\n\nAug 24, 2023\n\n\nSaffron Evergreen\n\n\n\n\n\n\n  \n\n\n\n\nMachine Learning Template\n\n\n\n\n\n\n\ncode\n\n\nmachine learning\n\n\ntemplates\n\n\n\n\n\n\n\n\n\n\n\nAug 24, 2023\n\n\nSaffron Evergreen\n\n\n\n\n\n\n  \n\n\n\n\nFOXP1 Analysis\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\nvisualizations\n\n\n\n\n\n\n\n\n\n\n\nJul 27, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nAssociations\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 26, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nLogistic Regression Project Spring 2023\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 17, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nLogistic Regression Project Winter 2022\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nSurvey and Sampling Analysis Project Spring 2023\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nFirst Post\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\nNo matching items"
+    "text": "Algorithms Template\n\n\n\n\n\n\n\ncode\n\n\nmachine learning\n\n\ntemplates\n\n\n\n\n\n\n\n\n\n\n\nAug 25, 2023\n\n\nSaffron Evergreen\n\n\n\n\n\n\n  \n\n\n\n\nMachine Learning Walk-Through\n\n\n\n\n\n\n\ncode\n\n\nvisualizations\n\n\nmachine learning\n\n\n\n\n\n\n\n\n\n\n\nAug 24, 2023\n\n\nSaffron Evergreen\n\n\n\n\n\n\n  \n\n\n\n\nMachine Learning Template\n\n\n\n\n\n\n\ncode\n\n\nmachine learning\n\n\ntemplates\n\n\n\n\n\n\n\n\n\n\n\nAug 24, 2023\n\n\nSaffron Evergreen\n\n\n\n\n\n\n  \n\n\n\n\nFOXP1 Analysis\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\nvisualizations\n\n\n\n\n\n\n\n\n\n\n\nJul 27, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nAssociations\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 26, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nLogistic Regression Project Spring 2023\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 17, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nLogistic Regression Project Winter 2022\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nSurvey and Sampling Analysis Project Spring 2023\n\n\n\n\n\n\n\nanalysis\n\n\ncode\n\n\n\n\n\n\n\n\n\n\n\nJul 16, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nFirst Post\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nSaffron\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nJul 13, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/Associations/index.html",
@@ -656,5 +656,124 @@
     "title": "Machine Learning Template",
     "section": "Select the best model",
     "text": "Select the best model\n\n# summarize accuracy of models  \nresults &lt;- caret::resamples(\n  list(\n    lda = fit.lda, \n    cart = fit.cart, \n    knn = fit.knn, \n    svm = fit.svm, \n    rf = fit.rf\n  )\n)\n\nsummary(results)\n\n\nPlot model evaluation results\n\nlattice::dotplot(results)\n# visualize the accuracy of each model\n\n\nprint(CHOSENMODEL)\n# standard deviation of \"accuracy\" and \"kappa\" were shown in the tutorial   \n\n### haven't figured it out yet... TBC..."
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html",
+    "href": "posts/Algorithms Template/index.html",
+    "title": "Algorithms Template",
+    "section": "",
+    "text": "The brains behind this template goes to Jason Brownlee."
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#supervised-learning",
+    "href": "posts/Algorithms Template/index.html#supervised-learning",
+    "title": "Algorithms Template",
+    "section": "Supervised Learning",
+    "text": "Supervised Learning\nExample problems:\n* Classification\n* Regression\nExample algorithms:\n* Logistic regression\n* Back Propagation Neural Network"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#unsupervised-learning",
+    "href": "posts/Algorithms Template/index.html#unsupervised-learning",
+    "title": "Algorithms Template",
+    "section": "Unsupervised Learning",
+    "text": "Unsupervised Learning\nExample problems:\n* Clustering\n* Dimensionality reduction\n* Association rule learning\nExample algorithms:\n* Apriori algorithm\n* K-Means"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#semi-supervised-learning",
+    "href": "posts/Algorithms Template/index.html#semi-supervised-learning",
+    "title": "Algorithms Template",
+    "section": "Semi-Supervised Learning",
+    "text": "Semi-Supervised Learning\nExample problems:\n* Classification\n* Regression\nExample algorithms:\n* flexible methods that make assumptions about how to model unlabeled data"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#regression-algorithms",
+    "href": "posts/Algorithms Template/index.html#regression-algorithms",
+    "title": "Algorithms Template",
+    "section": "Regression Algorithms",
+    "text": "Regression Algorithms\n\nmodeling the relationship between variables, iteratively refined using a measure of error in the predictions made by the model [1]\n\n\nOrdinary Least Squares Regression (OLSR)\n\npredicting y based on x [*]\n\ngoal is to minimize the sum of squared residuals, which means finding the line that best fits the data by minimizing the vertical distance between the data points and the line [*]\n\nbroader concept than linear regression; estimates the coefficients (the intercept and slope) in a linear regression model… linear regression encompasses the entire process of modelling the relationship between variables [*]\n\n\n### Generate example data\nset.seed(123)\nx &lt;- rnorm(100)\ny &lt;- 2 * x + rnorm(100)\n\n# Create a data frame from the data\ndata &lt;- data.frame(x = x, y = y)\n\n\n### Use existing data\n# Fit the OLS regression model   \n\n### linear relationship\nmodel &lt;- lm(y ~ x, data = data)  \n\n### nonlinear relationships\nmodel &lt;- glm(y ~ x, \n             family = \"\", \n             data = \"\")\n\n# Print model summary\nsummary(model)\n\n\n\nLinear Regression\n\npredicting y based on x [*]\n\ngoal is to minimize the values of \\(\\beta_0\\) and \\(\\beta_1\\) that minimize the sum of squared residuals, which is the differences between the observed and predicted values [*]\n\n\\[\ny = \\beta_0 ~+~ \\beta_1x ~+~ \\epsilon\n\\]\n\n### Generate example data where mean = 0 and sd = 1\nset.seed(123)\nx &lt;- seq(1, 10, by = 0.1)\ny &lt;- 2 * x + 3 + rnorm(length(x), mean = 0, sd = 1)\n\n# Create a data frame from the data\ndata &lt;- data.frame(x = x, y = y)\n\n### Use existing data\n# Fit the linear regression model\nmodel &lt;- lm(y ~ x, data = data)\n\n# Print model summary\nsummary(model)\n\n# Make predictions using the model\nnew_data &lt;- data.frame(x = c(11, 12, 13))\npredictions &lt;- predict(model, newdata = new_data)\n\n\n\nLogistic Regression\n\nfor binary/binomial outcome variable (0 or 1)\n\npredicts 0 or 1 for y based off of several x’s\n\n\n### Generate example data\nset.seed(123)\nn &lt;- 100\nx &lt;- rnorm(n)\ny &lt;- as.factor(ifelse(2 * x + rnorm(n) &gt; 0, 1, 0))\n\n# Create a data frame from the data\ndata &lt;- data.frame(x = x, y = y)\n\n### Use existing data\n# Fit the logistic regression model\nmodel &lt;- glm(y ~ x, \n             data = data, \n             family = \"binomial\")\n\n# Print model summary\nsummary(model)\n\n# Make predictions using the model\nnew_data &lt;- data.frame(x = c(0.5, 1.0, 1.5))\n\npredicted_probs &lt;- predict(model, \n                           newdata = new_data, \n                           type = \"response\") # p-values/probabilities\n\n# Print predicted probabilities\ncat(\"Predicted Probabilities:\", predicted_probs, \"\\n\")\n\n\n\nStepwise Regression\n\na process where predictor variables are added or removed from a regression model based on statistical criteria [*]\n\ncan be sensitive to the order of predictor variables [*]\n\nhas some drawbacks, should look more into this…\n\n\n### Generate example data\nset.seed(123)\nn &lt;- 100\nx1 &lt;- rnorm(n)\nx2 &lt;- rnorm(n)\ny &lt;- 2 * x1 + 3 * x2 + rnorm(n)\n\n# Create a data frame from the data\ndata &lt;- data.frame(x1 = x1, x2 = x2, y = y)\n\n### Use existing data \n# Fit the initial full model\nfull_model &lt;- lm(y ~ ., data = data)\n\n# Perform stepwise regression\nstepwise_model &lt;- step(full_model, \n                       direction = \"both\") # can add or remove predictor variables\n\n# Print the summary of the stepwise model\nsummary(stepwise_model)\n\n\n\nMultivariate Adaptive Regression Splines (MARS)\n\na flexible and powerful technique for capturing complex relationships between variables [*]\n\ncan be useful for capturing nonlinear relationships in your data [*]\n\nlook more into intrepretation and validation…\n\n\n# Install and load the necessary package\ninstall.packages(\"earth\")\nlibrary(earth)\n\n### Generate example data\nset.seed(123)\nn &lt;- 100\nx1 &lt;- rnorm(n)\nx2 &lt;- rnorm(n)\ny &lt;- 2 * x1 + 3 * x2 + rnorm(n)\n\n# Create a data frame from the data\ndata &lt;- data.frame(x1 = x1, x2 = x2, y = y)\n\n### Use existing data\n# Fit the MARS model\nmars_model &lt;- earth(y ~ x1 + x2, \n                    data = data)\n\n# Print the summary of the MARS model\nsummary(mars_model)\n\n\n\nLocally Estimated Scatterplot Smoothing (LOESS)\n\nnon-parametric tecnique used for fitting smooth curves to scatterplots [*]\n\nthe span parameter in the loess function controls the amount of smoothing; smaller span values result in more smoothing, larger span values result in less smoothing [*]\n\nLOESS can be influenced by the span parameter and is more computationally intensive than some other regression techniques [*]\n\nmore ideal for smaller datasets and when assessing EDA and visualization\n\n\n### Generate example data\nset.seed(123)\nx &lt;- seq(0, 2 * pi, length.out = 100)\ny &lt;- sin(x) + rnorm(100, mean = 0, sd = 0.2)\n\n### Use existing data \n# Fit the LOESS model\nloess_model &lt;- loess(y ~ x) # default: span = 0.75\n\n# Generate predicted values using the LOESS model\npredicted_values &lt;- predict(loess_model, \n                            data.frame(x = x))\n\n# Plot the original data and the LOESS curve\nplot(x, y, \n     main = \"LOESS Smoothing\")\n\nlines(x, \n      predicted_values, \n      col = \"red\", \n      lwd = 2)"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#instance-based-algorithms",
+    "href": "posts/Algorithms Template/index.html#instance-based-algorithms",
+    "title": "Algorithms Template",
+    "section": "Instance-based Algorithms",
+    "text": "Instance-based Algorithms\n\ninstances like building up a database of example data and compare new data to the example database [1]\n\nuses a similarity measure in order to find the best match and make a prediction [1]\n\nalso called memory-based learning [1]\n\nfocuses on the representation of stored instances and similarity measures used between instances [1]\n\n\n\nk-Nearest Neighbor (kNN)\n\nclass labels are determined based on a linear relationship between the predictor variables (x1 and x2) [*]\n\nusing the ‘class’ package, you can use kNN regression using the ‘knn.reg’ function [*]\n\na simple method\n\nnon-parametric\n\ncan handle numerical and categorical data; can capture non-linear relationships [*]\n\ncan be effective for detecting outliers and anomalies; also sensitive to outliers and scaling [*]\n\nnot ideal for large datasets\n\nlook more into finding the optimal k value…\n\n\n# Install and load the necessary package\ninstall.packages(\"class\")\nlibrary(class)\n\n### Generate example data\nset.seed(123)\nn &lt;- 100\nx1 &lt;- rnorm(n)\nx2 &lt;- rnorm(n)\nclass_labels &lt;- factor(ifelse(2 * x1 + x2 + rnorm(n) &gt; 0, \"A\", \"B\"))\n\n# Create a data frame from the data\ndata &lt;- data.frame(x1 = x1, x2 = x2, class = class_labels)\n\n### Use existing data   \n# Split data into training and test sets\ntrain_indices &lt;- sample(n, n * 0.7)\ntrain_data &lt;- data[train_indices, ]\ntest_data &lt;- data[-train_indices, ]\n\n# Fit the kNN classifier\nk &lt;- 3  # Set the number of neighbors\nknn_model &lt;- knn(train_data[, c(\"x1\", \"x2\")], test_data[, c(\"x1\", \"x2\")], train_data$class, k)\n\n# Print the predicted class labels\ncat(\"Predicted Class Labels:\", knn_model, \"\\n\")\n\n# Calculate accuracy\naccuracy &lt;- sum(knn_model == test_data$class) / nrow(test_data)\ncat(\"Accuracy:\", accuracy, \"\\n\")\n\n\n\nLearning Vector Quantization (LVQ)\n\n\nSelf-Organizing Map (SOM)\n\n\nLocally Weighted Learning (LWL)\n\n\nSupport Vector Machines (SVM)"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#regularization-algorithms",
+    "href": "posts/Algorithms Template/index.html#regularization-algorithms",
+    "title": "Algorithms Template",
+    "section": "Regularization Algorithms",
+    "text": "Regularization Algorithms\n\nan extension to another method (i.e., regression methods) [1]\n\npenalizes models based on complexity; favors simpler models that are more generalizable [1]\n\n\nRidge Regression\n\n\nLeast Absolute Shrinkage and Selection Operator (LASSO)\n\n\nElastic Net\n\n\nLeast-Angle Regression (LARS)"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#decision-tree-algorithms",
+    "href": "posts/Algorithms Template/index.html#decision-tree-algorithms",
+    "title": "Algorithms Template",
+    "section": "Decision Tree Algorithms",
+    "text": "Decision Tree Algorithms\n\ntypically for classification and regression problems [1]\n\noften fast, accurate and tres popular\nconstruct a model of decisions made based on actual values in the data [1]\n\ncreate tree structures until a prediction decision is made for a given record [1]\n\n\nClassification and Regression Tree (CART)\n\n\nIterative Dichotomiser 3 (ID3)\n\n\nC4.5 and C5.0\n\n\nChi-squared Automatic Interaction Detection (CHAID)\n\n\nDecision Stump\n\n\nM5\n\n\nConditional Decision Trees"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#bayesian-algorithms",
+    "href": "posts/Algorithms Template/index.html#bayesian-algorithms",
+    "title": "Algorithms Template",
+    "section": "Bayesian Algorithms",
+    "text": "Bayesian Algorithms\n\nexplictly apply Bayes’ Theorem for classification and regression probems [1]\n\n\nNaive Bayes\n\n\nGaussian Naive Bayes\n\n\nMultinomial Naive Bayes\n\n\nAveraged One-Dependence Estimators (AODE)\n\n\nBayesian Belief Network (BBN)\n\n\nBayesian Network (BN)"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#clustering-algorithms",
+    "href": "posts/Algorithms Template/index.html#clustering-algorithms",
+    "title": "Algorithms Template",
+    "section": "Clustering Algorithms",
+    "text": "Clustering Algorithms\n\ndescribes the class of problem and class of methods [1]\n\norganized by modeling approaches such as ‘centroid-based’ and ‘hierarchal’ [1]\n\nall methods use structures in the data to best organize the data into groups of maximum commonality [1]\n\n\nk-Means\n\n\nk-Medians\n\n\nExpectation Maximization (EM)\n\n\nHierarchical Clustering"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#association-rule-learning-algorithms",
+    "href": "posts/Algorithms Template/index.html#association-rule-learning-algorithms",
+    "title": "Algorithms Template",
+    "section": "Association Rule Learning Algorithms",
+    "text": "Association Rule Learning Algorithms\n\nextract rules that best explain observed relationshipns between variables in the dataset [1]\n\ncan discover useful associations in multidimensional datasets [1]\n\n\nApriori algorithm\n\n\nEclat algorithm"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#artifical-neural-network-algorithms",
+    "href": "posts/Algorithms Template/index.html#artifical-neural-network-algorithms",
+    "title": "Algorithms Template",
+    "section": "Artifical Neural Network Algorithms",
+    "text": "Artifical Neural Network Algorithms\n\ninspired by the structure and/or function of biological neural networks [1]\n\nclass of pattern matching used in regression and classification problems [1]\n\nsubfield of hundreds of algorithms and variations for types of problems [1]\n\n\nPerceptron\n\n\nMultilayer Perceptrons (MLP)\n\n\nBack-Propagation\n\n\nStochastic Gradient Descent\n\n\nHopfield Network\n\n\nRadial Basis Function Network (RBFN)"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#deep-learning-algorithms",
+    "href": "posts/Algorithms Template/index.html#deep-learning-algorithms",
+    "title": "Algorithms Template",
+    "section": "Deep Learning Algorithms",
+    "text": "Deep Learning Algorithms\n\na modern update to ‘Artificial Neural Networks’ that exploit abundant cheap computation [1]\n\nmuch larger and more complex neural networks [1]\n\nuse very large datasets of labelled analog data such as image, text, audio and video [1]\n\n\nConvolutional Neural Network (CNN)\n\n\nRecurrent Neural Networks (RNNs)\n\n\nLong Short-Term Memory Networks (LSTMs)\n\n\nStacked Auto-Encoders\n\n\nDeep Boltzmann Machine (DBM)\n\n\nDeep Belief Networks (DBN)"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#dimensionality-reduction-algorithms",
+    "href": "posts/Algorithms Template/index.html#dimensionality-reduction-algorithms",
+    "title": "Algorithms Template",
+    "section": "Dimensionality Reduction Algorithms",
+    "text": "Dimensionality Reduction Algorithms\n\nsimilar to clustering methods; this seeks and exploits the structure in the data - can be unsupervised or order to summarize or describe data using less information [1]\n\ncan be used to visualize dimensional data or simplify data that can be used in a supervised learning method [1]\n\ncan be used in classification and regression problems [1]\n\n\nPrincipal Component Analysis (PCA)\n\n\nPrincipal Component Regression (PCR)\n\n\nPartial Least Squares Regression (PLSR)\n\n\nSammon Mapping\n\n\nMultidimensional Scaling (MDS)\n\n\nProjection Pursuit\n\n\nLinear Discriminant Analysis (LDA)\n\n\nMixture Discriminant Analysis (MDA)\n\n\nQuadratic Discriminant Analysis (QDA)\n\n\nFlexible Discriminant Analysis (FDA)"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#ensemble-algorithms",
+    "href": "posts/Algorithms Template/index.html#ensemble-algorithms",
+    "title": "Algorithms Template",
+    "section": "Ensemble Algorithms",
+    "text": "Ensemble Algorithms\n\nmodels composed of several weaker models that are independently trained and whose predictions are combined to make an overall prediction [1]\n\npowerful and popular\n\n\nBoosting\n\n\nBootstrapped Aggregation (Bagging)\n\n\nAdaBoost\n\n\nWeighted Average (Blending)\n\n\nStacked Generalization (stacking)\n\n\nGradient Boosting Machines (GBM)\n\n\nGradient Boosted Regression Trees (GBRT)\n\n\nRandom Forest"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#other-machine-learning-algorithms",
+    "href": "posts/Algorithms Template/index.html#other-machine-learning-algorithms",
+    "title": "Algorithms Template",
+    "section": "Other Machine Learning Algorithms",
+    "text": "Other Machine Learning Algorithms\n\nFeature selection algorithms\n\n\nAlgorithm accuracy evaluation\n\n\nPerformance measures\n\n\nOptimization algorithms"
+  },
+  {
+    "objectID": "posts/Algorithms Template/index.html#other-algorithms-for-specialty-subfields",
+    "href": "posts/Algorithms Template/index.html#other-algorithms-for-specialty-subfields",
+    "title": "Algorithms Template",
+    "section": "Other Algorithms for Specialty Subfields",
+    "text": "Other Algorithms for Specialty Subfields\n\nComputational intelligence (evolutionary algorithms)\n\n\nComputer Vision (CV)\n\n\nNatural Language Processing (NLP)\n\n\nRecommender Systems\n\n\nReinforcement Learning\n\n\nGraphical Models"
   }
 ]

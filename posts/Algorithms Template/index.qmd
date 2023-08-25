@@ -1,0 +1,554 @@
+---
+title: "Algorithms Template"
+author: "Saffron Evergreen"
+date: "2023-08-25"
+categories: [code, machine learning, templates]
+---
+
+The brains behind this template goes to [Jason Brownlee](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/).    
+
+# Set-up and Libraries
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(eval = FALSE, fig.height=5, fig.width=7, message = F, warning = F)
+# eval = FALSE : show code, will not run code 
+
+### change eval = FALSE to 
+
+    ## echo = TRUE 
+```
+
+```{r packages}
+library(pacman)
+p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, dplyr, 
+       GGally, # ggpairs
+       forcats, # factor manipulation
+       caret, 
+  ### below are for caret ### 
+       lattice, 
+       kernlab, 
+       ellipse, 
+       randomForest)
+```
+
+# Categorizing Algorithms by Learning Style   
+
+Can be grouped by learning style or similarity [1]. 
+
+Terms and definitions from [1].   
+R Code from [*].   
+
+## Supervised Learning     
+Example problems:   
+  * Classification   
+  * Regression    
+  
+Example algorithms:   
+  * Logistic regression   
+  * Back Propagation Neural Network    
+
+## Unsupervised Learning    
+Example problems:   
+  * Clustering   
+  * Dimensionality reduction    
+  * Association rule learning    
+  
+Example algorithms:   
+  * Apriori algorithm   
+  * K-Means    
+
+## Semi-Supervised Learning     
+Example problems:   
+  * Classification   
+  * Regression   
+  
+Example algorithms:   
+  * flexible methods that make assumptions about how to model unlabeled data
+
+# Categorizing Algorithms by Similarity   
+
+Terms and definitions from [1].   
+Chat GPT code [*]
+
+## Regression Algorithms    
+
+* modeling the relationship between variables, iteratively refined using a measure of error in the predictions made by the model [1]    
+
+
+### Ordinary Least Squares Regression (OLSR)     
+
+* predicting y based on x [*]   
+* goal is to minimize the sum of squared residuals, which means finding the line that best fits the data by minimizing the vertical distance between the data points and the line [*]   
+* broader concept than linear regression; estimates the coefficients (the intercept and slope) in a linear regression model... linear regression encompasses the entire process of modelling the relationship between variables [*]   
+
+```{r OLSR}
+### Generate example data
+set.seed(123)
+x <- rnorm(100)
+y <- 2 * x + rnorm(100)
+
+# Create a data frame from the data
+data <- data.frame(x = x, y = y)
+
+
+### Use existing data
+# Fit the OLS regression model   
+
+### linear relationship
+model <- lm(y ~ x, data = data)  
+
+### nonlinear relationships
+model <- glm(y ~ x, 
+             family = "", 
+             data = "")
+
+# Print model summary
+summary(model)
+```
+
+
+### Linear Regression    
+
+* predicting y based on x [*]     
+* goal is to minimize the values of $\beta_0$ and $\beta_1$ that minimize the sum of squared residuals, which is the differences between the observed and predicted values [*]
+
+$$
+y = \beta_0 ~+~ \beta_1x ~+~ \epsilon
+$$   
+
+```{r}
+### Generate example data where mean = 0 and sd = 1
+set.seed(123)
+x <- seq(1, 10, by = 0.1)
+y <- 2 * x + 3 + rnorm(length(x), mean = 0, sd = 1)
+
+# Create a data frame from the data
+data <- data.frame(x = x, y = y)
+
+### Use existing data
+# Fit the linear regression model
+model <- lm(y ~ x, data = data)
+
+# Print model summary
+summary(model)
+
+# Make predictions using the model
+new_data <- data.frame(x = c(11, 12, 13))
+predictions <- predict(model, newdata = new_data)
+```
+
+
+### Logistic Regression    
+* for binary/binomial outcome variable (0 or 1)   
+* predicts 0 or 1 for y based off of several x's    
+
+```{r}
+### Generate example data
+set.seed(123)
+n <- 100
+x <- rnorm(n)
+y <- as.factor(ifelse(2 * x + rnorm(n) > 0, 1, 0))
+
+# Create a data frame from the data
+data <- data.frame(x = x, y = y)
+
+### Use existing data
+# Fit the logistic regression model
+model <- glm(y ~ x, 
+             data = data, 
+             family = "binomial")
+
+# Print model summary
+summary(model)
+
+# Make predictions using the model
+new_data <- data.frame(x = c(0.5, 1.0, 1.5))
+
+predicted_probs <- predict(model, 
+                           newdata = new_data, 
+                           type = "response") # p-values/probabilities
+
+# Print predicted probabilities
+cat("Predicted Probabilities:", predicted_probs, "\n")
+```
+
+
+### Stepwise Regression   
+* a process where predictor variables are added or removed from a regression model based on statistical criteria [*]   
+* can be sensitive to the order of predictor variables [*]   
+* has some drawbacks, should look more into this...   
+
+```{r}
+### Generate example data
+set.seed(123)
+n <- 100
+x1 <- rnorm(n)
+x2 <- rnorm(n)
+y <- 2 * x1 + 3 * x2 + rnorm(n)
+
+# Create a data frame from the data
+data <- data.frame(x1 = x1, x2 = x2, y = y)
+
+### Use existing data 
+# Fit the initial full model
+full_model <- lm(y ~ ., data = data)
+
+# Perform stepwise regression
+stepwise_model <- step(full_model, 
+                       direction = "both") # can add or remove predictor variables
+
+# Print the summary of the stepwise model
+summary(stepwise_model)
+```
+
+
+### Multivariate Adaptive Regression Splines (MARS)    
+* a flexible and powerful technique for capturing complex relationships between variables [*]   
+* can be useful for capturing nonlinear relationships in your data [*]   
+* look more into intrepretation and validation...   
+
+```{r}
+# Install and load the necessary package
+install.packages("earth")
+library(earth)
+
+### Generate example data
+set.seed(123)
+n <- 100
+x1 <- rnorm(n)
+x2 <- rnorm(n)
+y <- 2 * x1 + 3 * x2 + rnorm(n)
+
+# Create a data frame from the data
+data <- data.frame(x1 = x1, x2 = x2, y = y)
+
+### Use existing data
+# Fit the MARS model
+mars_model <- earth(y ~ x1 + x2, 
+                    data = data)
+
+# Print the summary of the MARS model
+summary(mars_model)
+
+```
+
+
+
+### Locally Estimated Scatterplot Smoothing (LOESS)   
+* non-parametric tecnique used for fitting smooth curves to scatterplots [*]    
+* the span parameter in the loess function controls the amount of smoothing; smaller span values result in more smoothing, larger span values result in less smoothing [*]   
+* LOESS can be influenced by the span parameter and is more computationally intensive than some other regression techniques [*]   
+* more ideal for smaller datasets and when assessing EDA and visualization   
+
+```{r}
+### Generate example data
+set.seed(123)
+x <- seq(0, 2 * pi, length.out = 100)
+y <- sin(x) + rnorm(100, mean = 0, sd = 0.2)
+
+### Use existing data 
+# Fit the LOESS model
+loess_model <- loess(y ~ x) # default: span = 0.75
+
+# Generate predicted values using the LOESS model
+predicted_values <- predict(loess_model, 
+                            data.frame(x = x))
+
+# Plot the original data and the LOESS curve
+plot(x, y, 
+     main = "LOESS Smoothing")
+
+lines(x, 
+      predicted_values, 
+      col = "red", 
+      lwd = 2) 
+```
+
+
+
+
+## Instance-based Algorithms     
+
+* instances like building up a database of example data and compare new data to the example database [1]   
+  * uses a similarity measure in order to find the best match and make a prediction [1]    
+  * also called memory-based learning [1]   
+  * focuses on the representation of stored instances and similarity measures used between instances [1]    
+
+
+### k-Nearest Neighbor (kNN)     
+* class labels are determined based on a linear relationship between the predictor variables (x1 and x2) [*]    
+* using the 'class' package, you can use kNN regression using the 'knn.reg' function [*]   
+* a simple method   
+* non-parametric   
+* can handle numerical and categorical data; can capture non-linear relationships [*]    
+* can be effective for detecting outliers and anomalies; also sensitive to outliers and scaling [*]   
+* not ideal for large datasets    
+* look more into finding the optimal k value...   
+
+```{r}
+# Install and load the necessary package
+install.packages("class")
+library(class)
+
+### Generate example data
+set.seed(123)
+n <- 100
+x1 <- rnorm(n)
+x2 <- rnorm(n)
+class_labels <- factor(ifelse(2 * x1 + x2 + rnorm(n) > 0, "A", "B"))
+
+# Create a data frame from the data
+data <- data.frame(x1 = x1, x2 = x2, class = class_labels)
+
+### Use existing data   
+# Split data into training and test sets
+train_indices <- sample(n, n * 0.7)
+train_data <- data[train_indices, ]
+test_data <- data[-train_indices, ]
+
+# Fit the kNN classifier
+k <- 3  # Set the number of neighbors
+knn_model <- knn(train_data[, c("x1", "x2")], test_data[, c("x1", "x2")], train_data$class, k)
+
+# Print the predicted class labels
+cat("Predicted Class Labels:", knn_model, "\n")
+
+# Calculate accuracy
+accuracy <- sum(knn_model == test_data$class) / nrow(test_data)
+cat("Accuracy:", accuracy, "\n")
+
+```
+
+
+### Learning Vector Quantization (LVQ)   
+
+### Self-Organizing Map (SOM)   
+
+### Locally Weighted Learning (LWL)   
+
+### Support Vector Machines (SVM)   
+
+
+
+
+## Regularization Algorithms    
+* an extension to another method (i.e., regression methods) [1]   
+* penalizes models based on complexity; favors simpler models that are more generalizable [1] 
+
+
+### Ridge Regression   
+
+### Least Absolute Shrinkage and Selection Operator (LASSO)   
+
+### Elastic Net    
+
+### Least-Angle Regression (LARS)   
+
+
+
+
+## Decision Tree Algorithms   
+* typically for classification and regression problems [1]   
+* often fast, accurate and tres popular
+* construct a model of decisions made based on actual values in the data [1]   
+* create tree structures until a prediction decision is made for a given record [1]   
+
+
+### Classification and Regression Tree (CART)   
+
+### Iterative Dichotomiser 3 (ID3)   
+
+### C4.5 and C5.0   
+
+### Chi-squared Automatic Interaction Detection (CHAID)   
+
+### Decision Stump    
+
+### M5   
+
+### Conditional Decision Trees   
+
+
+
+
+## Bayesian Algorithms    
+* explictly apply Bayes' Theorem for classification and regression probems [1]   
+
+
+### Naive Bayes   
+
+### Gaussian Naive Bayes   
+
+### Multinomial Naive Bayes   
+
+### Averaged One-Dependence Estimators (AODE)   
+
+### Bayesian Belief Network (BBN)   
+
+### Bayesian Network (BN)    
+
+
+
+
+## Clustering Algorithms     
+* describes the class of problem and class of methods [1]   
+* organized by modeling approaches such as 'centroid-based' and 'hierarchal' [1]   
+* all methods use structures in the data to best organize the data into groups of maximum commonality [1]   
+
+
+### k-Means   
+
+### k-Medians   
+
+### Expectation Maximization (EM)   
+
+### Hierarchical Clustering   
+
+
+
+
+## Association Rule Learning Algorithms    
+* extract rules that best explain observed relationshipns between variables in the dataset [1]   
+* can discover useful associations in multidimensional datasets [1]   
+
+### Apriori algorithm   
+
+### Eclat algorithm   
+
+
+
+
+## Artifical Neural Network Algorithms    
+* inspired by the structure and/or function of biological neural networks [1]   
+* class of pattern matching used in regression and classification problems [1]   
+* subfield of hundreds of algorithms and variations for types of problems [1]
+
+### Perceptron    
+
+### Multilayer Perceptrons (MLP)    
+
+### Back-Propagation    
+
+### Stochastic Gradient Descent   
+
+### Hopfield Network   
+
+### Radial Basis Function Network (RBFN)   
+
+
+
+
+## Deep Learning Algorithms   
+* a modern update to 'Artificial Neural Networks' that exploit abundant cheap computation [1]    
+* much larger and more complex neural networks [1]   
+* use very large datasets of labelled analog data such as image, text, audio and video [1]    
+
+
+### Convolutional Neural Network (CNN)   
+
+### Recurrent Neural Networks (RNNs)   
+
+### Long Short-Term Memory Networks (LSTMs)   
+
+### Stacked Auto-Encoders    
+
+### Deep Boltzmann Machine (DBM)   
+
+### Deep Belief Networks (DBN)   
+
+
+
+
+## Dimensionality Reduction Algorithms   
+* similar to clustering methods; this seeks and exploits the structure in the data - can be unsupervised or order to summarize or describe data using less information [1]   
+* can be used to visualize dimensional data or simplify data that can be used in a supervised learning method [1]   
+* can be used in classification and regression problems [1]   
+
+
+### Principal Component Analysis (PCA)   
+
+### Principal Component Regression (PCR)   
+
+### Partial Least Squares Regression (PLSR)   
+
+### Sammon Mapping   
+
+### Multidimensional Scaling (MDS)   
+
+### Projection Pursuit    
+
+### Linear Discriminant Analysis (LDA)   
+
+### Mixture Discriminant Analysis (MDA)   
+
+### Quadratic Discriminant Analysis (QDA)    
+
+### Flexible Discriminant Analysis (FDA)   
+
+
+
+
+## Ensemble Algorithms   
+* models composed of several weaker models that are independently trained and whose predictions are combined to make an overall prediction [1]   
+* powerful and popular
+
+
+### Boosting    
+
+### Bootstrapped Aggregation (Bagging)   
+
+### AdaBoost   
+
+### Weighted Average (Blending)   
+
+### Stacked Generalization (stacking)   
+
+### Gradient Boosting Machines (GBM)   
+
+### Gradient Boosted Regression Trees (GBRT)   
+
+### Random Forest    
+
+
+
+
+
+## Other Machine Learning Algorithms    
+
+
+### Feature selection algorithms    
+
+### Algorithm accuracy evaluation    
+
+### Performance measures    
+
+### Optimization algorithms     
+
+
+
+
+
+## Other Algorithms for Specialty Subfields    
+
+
+### Computational intelligence (evolutionary algorithms)    
+
+### Computer Vision (CV)   
+
+### Natural Language Processing (NLP)    
+
+### Recommender Systems    
+
+### Reinforcement Learning    
+
+### Graphical Models    
+
+
+
+
+
+
+
+
+# Sources   
+[1] https://machinelearningmastery.com/a-tour-of-machine-learning-algorithms/
