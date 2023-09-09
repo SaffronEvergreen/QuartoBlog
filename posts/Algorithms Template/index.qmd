@@ -6,7 +6,7 @@ categories: [code, machine learning, templates]
 ---
 
 The brains behind this template goes to [Jason Brownlee](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/). 
-Everything you find below is _most definitely not_ my work; it is either Jason's brains or ChatGPT. I'm keeping this as a rough outline for coding and deciphering which algorithms to use in the future, which as I pick away at these, I can add my own code and thoughts but until then... _nothing below is mine and I take 0 credit except for asking ChatGPT what's up.    
+Everything you find below is _most definitely not_ my work; it is either Jason's brains or ChatGPT. I'm keeping this as a rough outline for coding and deciphering which algorithms to use in the future, which as I pick away at these, I can add my own code and thoughts but until then... _nothing below is mine and I take 0 credit except for asking ChatGPT what's up.      
 
 # Set-up and Libraries
 
