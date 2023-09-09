@@ -5,7 +5,8 @@ date: "2023-08-25"
 categories: [code, machine learning, templates]
 ---
 
-The brains behind this template goes to [Jason Brownlee](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/).    
+The brains behind this template goes to [Jason Brownlee](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/). 
+Everything you find below is _most definitely not_ my work; it is either Jason's brains or ChatGPT. I'm keeping this as a rough outline for coding and deciphering which algorithms to use in the future, which as I pick away at these, I can add my own code and thoughts but until then... _nothing below is mine and I take 0 credit except for asking ChatGPT what's up.    
 
 # Set-up and Libraries
 
@@ -285,6 +286,9 @@ lines(x,
 * not ideal for large datasets    
 * look more into finding the optimal k value...   
 
+
+__One method: rando data, not from a dataset [*]__   
+
 ```{r}
 # Install and load the necessary package
 install.packages("class")
@@ -316,17 +320,228 @@ cat("Predicted Class Labels:", knn_model, "\n")
 # Calculate accuracy
 accuracy <- sum(knn_model == test_data$class) / nrow(test_data)
 cat("Accuracy:", accuracy, "\n")
-
 ```
+
+
+__Another method: from a dataset [*]__   
+
+```{r}
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Split the dataset into training and testing sets
+# You can use any method you prefer for data splitting
+# Here's a simple random split into 80% training and 20% testing
+
+set.seed(123)  # for reproducibility
+
+sample_indices <- sample(nrow(data), size = 0.8 * nrow(data))
+
+train_data <- data[sample_indices, ]
+
+test_data <- data[-sample_indices, ]
+
+# Define the number of neighbors (k) for KNN
+k <- 3  # You can choose an appropriate value for your problem
+
+# Train the KNN model
+knn_model <- knn(train = 
+                   train_data[, -target_column],  # Exclude target variable
+                 test = 
+                   test_data[, -target_column],    # Exclude target variable
+                 cl = 
+                   train_data$target_column,        # Target variable
+                 k = k)
+
+# Evaluate the model
+# Here, you can use metrics like accuracy, precision, recall, etc., depending on your problem
+# For simplicity, we'll use accuracy as an example
+
+accuracy <- sum(knn_model == 
+                  test_data$target_column) / 
+                  length(test_data$target_column)
+cat("Accuracy:", accuracy, "\n")
+```
+
 
 
 ### Learning Vector Quantization (LVQ)   
 
-### Self-Organizing Map (SOM)   
+* supervised ML algorithm used for classification    
+* purpose: classify input data into __predefined categories__ or classes by adjusting a set of prototype vectors (reference points for each class)  
+  * the algorithm learns to adjust them during training to make accurate predictions   
+  
+  
+```{r}
+library(lvq)
 
-### Locally Weighted Learning (LWL)   
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Split the dataset into training and testing sets
+# You can use any method you prefer for data splitting
+# Here's a simple random split into 80% training and 20% testing
+
+set.seed(123)  # for reproducibility
+
+sample_indices <- sample(nrow(data), size = 0.8 * nrow(data))
+
+train_data <- data[sample_indices, ]
+
+test_data <- data[-sample_indices, ]
+
+# Define the number of prototypes per class and other hyperparameters
+num_prototypes <- 2  # Number of prototypes per class
+learning_rate <- 0.1  # Learning rate
+epochs <- 100  # Number of training epochs
+
+# Extract the features (independent variables) and labels (target variable)
+train_features <- train_data[, -target_column]  # Exclude target variable
+train_labels <- train_data$target_column  # Target variable
+
+# Train the LVQ model
+lvq_model <- lvq.train(train_features, 
+                       train_labels, 
+                       num_prototypes = num_prototypes, 
+                       learning.rate = learning_rate, 
+                       epochs = epochs)
+
+# Make predictions on the test data
+test_features <- test_data[, -target_column]  # Exclude target variable
+predictions <- lvq.predict(lvq_model, test_features)
+
+# Evaluate the model
+# You can use metrics like accuracy, precision, recall, etc., depending on your problem
+# For simplicity, we'll use accuracy as an example
+accuracy <- sum(predictions == test_data$target_column)/ 
+                length(test_data$target_column)
+cat("Accuracy:", accuracy, "\n")
+```
+
+
+
+
+### Self-Organizing Map (SOM)     
+* unsupervised ML algorithm used for dimensionality reduction and visualization of high-dimensional data   
+  * purpose: map complex, high-dimensional data onto a lower-dimensional grid in such a way that it preserves the topological properties and relationships of the original data   
+  * often used for clustering, visualization, and data exploration    
+
+
+```{r}
+library(kohonen)
+
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Normalize your data (if needed)
+# SOMs are sensitive to data scaling, so it's often a good idea to normalize your data
+# You can use functions like scale() or min-max normalization
+
+# Create a SOM grid
+# You need to specify the grid dimensions (e.g., grid rows and columns)
+# and other parameters like the learning rate and neighborhood function type
+grid_rows <- 5
+grid_cols <- 5
+som_grid <- somgrid(grid_rows, grid_cols, "hexagonal")
+
+# Train the SOM
+som_model <- som(data, grid = som_grid, rlen = 100, alpha = c(0.05, 0.01))
+
+# Plot the SOM
+# This step helps visualize the resulting SOM and cluster assignments
+plot(som_model)
+
+# You can also identify cluster assignments for your data points
+cluster_assignments <- predict(som_model, newdata = data)
+
+# Explore and analyze the results further based on your problem's objectives
+```
+
+
+### Locally Weighted Learning (LWL)     
+
+* gives more weight to nearby data points and less weight to those farther away   
+  * purpose: provide flexible and adaptive modeling, where the prediction for a new data point is based on the contributions of its neighboring data points    
+  
+```{r}
+library(locfit)
+
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Split the dataset into training and testing sets
+# You can use any method you prefer for data splitting
+# Here's a simple random split into 80% training and 20% testing
+
+set.seed(123)  # for reproducibility
+
+sample_indices <- sample(nrow(data), size = 0.8 * nrow(data))
+
+train_data <- data[sample_indices, ]
+
+test_data <- data[-sample_indices, ]
+
+# Define the bandwidth parameter for LWL
+bandwidth <- 0.2  # You can choose an appropriate value for your problem
+
+# Train the LWL model
+lwl_model <- locfit::locfit(target_variable ~ predictors, 
+                            data = train_data, 
+                            alpha = bandwidth)
+
+# Make predictions on the test data
+predictions <- predict(lwl_model, 
+                       newdata = data.frame(predictors = 
+                                              test_data$predictors))
+
+# Evaluate the model
+# You can use appropriate evaluation metrics based on your problem
+# For regression, you might use mean squared error, and for classification, you might use accuracy.
+```
+
 
 ### Support Vector Machines (SVM)   
+
+* supervised ML algorithm used for classification and regression   
+  * purpose: to find a hyperplane (or decision boundary) that best separates different classes in a dataset    
+    * goal is to maximize the margin between the data points of different classes while minimizing classification errors   
+    * useful for high-dimensional data; is effective in handling complex classification problems    
+    
+```{r}
+library(e1071)  # for SVM
+
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Split the dataset into training and testing sets
+# You can use any method you prefer for data splitting
+# Here's a simple random split into 80% training and 20% testing
+
+set.seed(123)  # for reproducibility
+
+sample_indices <- sample(nrow(data), size = 0.8 * nrow(data))
+
+train_data <- data[sample_indices, ]
+
+test_data <- data[-sample_indices, ]
+
+# Define the SVM model
+# Here, we'll use a linear kernel for simplicity
+svm_model <- svm(target_column ~ ., 
+                 data = train_data, 
+                 kernel = "linear")
+
+# Make predictions on the test data
+predictions <- predict(svm_model, 
+                       newdata = 
+                         test_data[, -target_column])
+
+# Evaluate the model
+# Here, you can use metrics like accuracy, precision, recall, etc., depending on your problem
+# For simplicity, we'll use accuracy as an example
+accuracy <- sum(predictions == test_data$target_column) / length(test_data$target_column)
+cat("Accuracy:", accuracy, "\n")
+```
 
 
 
@@ -336,13 +551,188 @@ cat("Accuracy:", accuracy, "\n")
 * penalizes models based on complexity; favors simpler models that are more generalizable [1] 
 
 
-### Ridge Regression   
+### Ridge Regression     
 
-### Least Absolute Shrinkage and Selection Operator (LASSO)   
+* used in linear regression to prevent overfitting and improve the models generalization by adding a "penalty term" to the regression equation   
+  * purpose: to skrink the coefficients of the features towards zero while still maintaining all the geatures in the model   
+    * helps reduce multicollinearity   
+    * leads to more stable and reliable predictions   
+* for datasets where features are highly correlated    
 
-### Elastic Net    
+```{r}
+library(glmnet)
 
-### Least-Angle Regression (LARS)   
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Split the dataset into training and testing sets
+# You can use any method you prefer for data splitting
+# Here's a simple random split into 80% training and 20% testing
+
+set.seed(123)  # for reproducibility
+
+sample_indices <- sample(nrow(data), size = 0.8 * nrow(data))
+
+train_data <- data[sample_indices, ]
+
+test_data <- data[-sample_indices, ]
+
+# Separate the target variable and predictors
+y_train <- train_data$target_column
+X_train <- train_data[, -target_column]
+
+# Fit a ridge regression model using glmnet
+# You can specify the lambda (penalty) parameter to control the strength of regularization
+# Smaller values of lambda result in stronger regularization
+# cv.glmnet performs cross-validation to select an optimal lambda value
+ridge_model <- cv.glmnet(x = as.matrix(X_train), 
+                         y = y_train, 
+                         alpha = 0, 
+                         nfolds = 10)
+
+# Print the optimal lambda value selected by cross-validation
+best_lambda <- ridge_model$lambda.min
+cat("Optimal Lambda:", best_lambda, "\n")
+
+# Fit the final ridge regression model with the optimal lambda
+final_ridge_model <- glmnet(x = as.matrix(X_train), 
+                            y = y_train, 
+                            alpha = 0, 
+                            lambda = best_lambda)
+
+# Make predictions on the test set
+X_test <- test_data[, -target_column]
+predictions <- predict(final_ridge_model, 
+                       newx = as.matrix(X_test))
+
+# Evaluate the model's performance
+# You can use appropriate regression metrics like RMSE, R-squared, etc., depending on your problem
+# For simplicity, we'll use Mean Squared Error (MSE) as an example
+mse <- mean((predictions - test_data$target_column)^2)
+cat("Mean Squared Error:", mse, "\n")
+```
+
+
+### Least Absolute Shrinkage and Selection Operator (LASSO)      
+
+* used to prevent overfitting and perform feature selection by adding a penalty term to the linear regression cost function   
+* encourages sparse models by pushing some of the coefficient values to exactly 0, which effectively removes those features from the model   
+  * it balances a trade-off between model complexity and goodness-of-fit   
+  
+```{r}
+library(glmnet)
+
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Split the dataset into predictors (X) and target variable (y)
+X <- data[, -target_column]  # Exclude the target variable
+y <- data$target_column      # Target variable
+
+# Standardize predictors (recommended for LASSO)
+X <- scale(X)
+
+# Set up the lambda values (penalty parameter)
+# You can use cross-validation to determine the optimal lambda value
+lambda_values <- 10^seq(10, -2, length = 100)
+
+# Fit LASSO regression model
+lasso_model <- glmnet(X, 
+                      y, 
+                      alpha = 1, 
+                      lambda = lambda_values)
+
+# Plot the LASSO coefficient paths (optional)
+plot(lasso_model)
+
+# Select the best lambda value using cross-validation (optional)
+cv_model <- cv.glmnet(X, 
+                      y, 
+                      alpha = 1)
+best_lambda <- cv_model$lambda.min
+cat("Best Lambda:", best_lambda, "\n")
+
+# Fit the LASSO model with the best lambda
+lasso_model_best_lambda <- glmnet(X, 
+                                  y, 
+                                  alpha = 1, 
+                                  lambda = best_lambda)
+
+# Print the coefficients of the LASSO model
+coef(lasso_model_best_lambda)
+```
+
+
+
+### Elastic Net     
+
+* combines L1 (LASSO) and L2 (ridge regression) methods   
+  * purpose: to overcome some of the limitations of each of those two methods by adding a regularization term that is a linear combination of L1 and L2 regularization penalties    
+  
+* there are two hyperparameters, alpha and lambda, that control the balance   
+  * when alpha is 0, it's equal to ridge regression and when alpha is 1, it's equal to LASSO   
+
+```{r}
+library(glmnet)
+
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Split the dataset into predictors (X) and the target variable (Y)
+X <- data[, -target_column]  # Exclude target variable
+Y <- data$target_column
+
+# Define the alpha and lambda values
+alpha <- 0.5  # You can choose a value between 0 (Ridge) and 1 (Lasso)
+lambda <- 0.01  # Regularization strength parameter
+
+# Create an Elastic Net model
+elastic_net_model <- glmnet(X, 
+                            Y, 
+                            alpha = alpha, 
+                            lambda = lambda)
+
+# Make predictions using the model
+# You can replace 'new_data' with your test data if needed
+predicted_values <- predict(elastic_net_model, 
+                            new_data, 
+                            s = lambda)
+
+# Optionally, you can also plot the regularization path
+plot(elastic_net_model)
+```
+
+
+
+### Least-Angle Regression (LARS)    
+
+* used in linear regression   
+* purpose: to produce a sparse model by gradually adding predictors (X's) to the model while controlling the size of the coefficients    
+  * ideal for high-dimensional data where you want to identify the most relevant features while avoiding overfitting   
+  
+```{r}
+library(lars)
+
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Separate predictors (features) and the target variable
+X <- data[, -target_column]  # Exclude the target variable
+y <- data$target_column      # Target variable
+
+# Fit the LARS model
+lars_model <- lars(X, 
+                   y, 
+                   type = "lasso")  # LARS with L1 (Lasso) regularization
+
+# Print the model summary
+print(summary(lars_model))
+
+# Get the selected features (variables)
+selected_features <- names(X)[which(lars_model$active != 0)]
+cat("Selected Features:", selected_features, "\n")
+```
+
 
 
 
@@ -354,13 +744,201 @@ cat("Accuracy:", accuracy, "\n")
 * create tree structures until a prediction decision is made for a given record [1]   
 
 
-### Classification and Regression Tree (CART)   
+### Classification and Regression Tree (CART)    
 
-### Iterative Dichotomiser 3 (ID3)   
+* used both classification and regression   
+* purpose: to create a tree-like model that can make predictions by recursively splitting the data into subsets based on the values of input features   
+* commonly used for predicting categories (classification) or predicting numeric values (regression) based on input features    
 
-### C4.5 and C5.0   
+```{r}
+library(rpart)  # for CART algorithm
 
-### Chi-squared Automatic Interaction Detection (CHAID)   
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Split the dataset into training and testing sets
+# You can use any method you prefer for data splitting
+# Here's a simple random split into 80% training and 20% testing
+
+set.seed(123)  # for reproducibility
+
+sample_indices <- sample(nrow(data), size = 0.8 * nrow(data))
+
+train_data <- data[sample_indices, ]
+
+test_data <- data[-sample_indices, ]
+
+# Define the CART model
+# For classification tasks, specify the target variable as a factor
+# For regression tasks, specify the target variable as numeric
+# Replace 'target_column' with the actual name of your target variable
+cart_model <- rpart(target_column ~ ., data = train_data, method = "class")
+
+# Make predictions using the CART model
+# For classification tasks, replace 'new_data' with your test data and specify 'type = "class"'
+# For regression tasks, replace 'new_data' with your test data and specify 'type = "vector"'
+predictions <- predict(cart_model, newdata = test_data, type = "class")
+
+# Evaluate the model
+# Here, you can use metrics like accuracy (for classification) or RMSE (for regression), depending on your problem
+# For simplicity, we'll use accuracy as an example for classification
+accuracy <- sum(predictions == test_data$target_column) / length(test_data$target_column)
+cat("Accuracy:", accuracy, "\n")
+```
+
+
+### Iterative Dichotomiser 3 (ID3)     
+
+* used for building decision trees and data mining   
+* purpose: to classify or predict a target variable based on a set of input features  
+  * recursively selects the best attribute to split the data into subsets that are as pure as possible in terms of the target variable    
+* an old algorithm, doesn't exist in R's core libraries    
+* can create an algorithm similar to ID3 using recursive functions in R    
+
+```{r}
+library(dplyr)
+
+# Define a recursive function to build the ID3 decision tree
+id3 <- function(data, target_attr, attributes) {
+  # Create a new node for the decision tree
+  node <- list()
+  
+  # If all instances have the same class label, return that label as a leaf node
+  if (length(unique(data[[target_attr]])) == 1) {
+    node$leaf <- TRUE
+    node$class <- unique(data[[target_attr]])[1]
+    return(node)
+  }
+  
+  # If there are no more attributes to split on, return the majority class as a leaf node
+  if (length(attributes) == 0) {
+    node$leaf <- TRUE
+    node$class <- names(sort(table(data[[target_attr]]), decreasing = TRUE))[1]
+    return(node)
+  }
+  
+  # Select the best attribute to split on based on information gain or entropy
+  best_attr <- select_best_attribute(data, target_attr, attributes)
+  
+  # Set the current node's attribute to the best attribute
+  node$attribute <- best_attr
+  
+  # Create child nodes for each value of the best attribute
+  node$children <- list()
+  for (value in unique(data[[best_attr]])) {
+    # Create a subset of the data where the best attribute has the specified value
+    subset_data <- data %>%
+      filter(data[[best_attr]] == value)
+    
+    # Recursively build the tree for the subset
+    child <- id3(subset_data, target_attr, setdiff(attributes, best_attr))
+    
+    # Add the child node to the current node
+    node$children[[as.character(value)]] <- child
+  }
+  
+  return(node)
+}
+
+# Define a function to select the best attribute based on information gain or entropy
+select_best_attribute <- function(data, target_attr, attributes) {
+  # Implement your method for attribute selection here (e.g., using information gain or entropy)
+  # This function should return the name of the best attribute to split on
+  # You can replace this with your specific attribute selection logic
+  # Example:
+  # return(attributes[1])
+}
+
+# Example usage
+# Replace 'your_dataset.csv' with the actual file path or URL to your dataset
+# Replace 'target_attribute' with the name of your target attribute
+data <- read.csv("your_dataset.csv")
+target_attribute <- "target_attribute"
+
+# Get a list of all attributes except the target attribute
+all_attributes <- setdiff(names(data), target_attribute)
+
+# Build the ID3 decision tree
+decision_tree <- id3(data, target_attribute, all_attributes)
+
+# Print the decision tree or use it for predictions
+print(decision_tree)
+```
+
+
+
+### Iterative C4.5 and C5.0     
+
+* iterative enhancements which are used in ML and data classification   
+* purpose: to improve the decision tree's accuracy and generalization by iteratively refining the tree through processes like pruning and re-splitting nodes    
+
+```{r}
+library(C50)  # for C5.0 algorithm
+
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Split the dataset into training and testing sets
+# You can use any method you prefer for data splitting
+# Here's a simple random split into 80% training and 20% testing
+set.seed(123)  # for reproducibility
+sample_indices <- sample(nrow(data), size = 0.8 * nrow(data))
+train_data <- data[sample_indices, ]
+test_data <- data[-sample_indices, ]
+
+# Train the C5.0 model
+c50_model <- C5.0(train_data[, -target_column], train_data$target_column)
+
+# Predict using the trained model
+predictions <- predict(c50_model, test_data)
+
+# Evaluate the model
+# You can use various metrics like accuracy, precision, recall, etc., depending on your problem
+# For simplicity, we'll use accuracy as an example
+accuracy <- sum(predictions == test_data$target_column) / length(test_data$target_column)
+cat("Accuracy:", accuracy, "\n")
+```
+
+
+
+### Chi-squared Automatic Interaction Detection (CHAID)      
+
+* iterative decision tree for predictive modeling and classification    
+* purpose: create a decision tree that recursively splits the data into homogenous groups based on the most significant categorical predictor variables (X's)   
+  * useful for analyzing categorical data   
+  * identifies relationships between categorical predictor variables and a categorical target variable by performing chi-squared tests for independence to find the most influential predictors    
+  
+```{r}
+library(partykit)
+
+# Load your dataset
+data <- read.csv("your_dataset.csv")
+
+# Define your target variable and predictor variables
+# Replace 'target_column' and 'predictor_columns' with the actual column names
+target_column <- "target_variable"
+predictor_columns <- c("predictor_1", "predictor_2", "predictor_3")
+
+# Create a formula for the CHAID model
+formula <- as.formula(paste(target_column, "~", paste(predictor_columns, collapse = "+")))
+
+# Build the CHAID decision tree model
+chaide_tree <- chaid(formula, data = data)
+
+# Visualize the CHAID decision tree
+plot(chaide_tree)
+
+# Summary of the tree
+print(chaide_tree)
+
+# Predict using the CHAID decision tree model
+# Replace 'new_data' with the data you want to make predictions on
+new_data <- data.frame(predictor_1 = c(...), predictor_2 = c(...), predictor_3 = c(...))
+predictions <- predict(chaide_tree, newdata = new_data)
+
+# Evaluate the model and make further analyses as needed
+```
+
 
 ### Decision Stump    
 
