@@ -5,25 +5,22 @@ date: "2023-08-24"
 categories: [code, visualizations, machine learning]
 ---
 
+I will be following the process found on this [site](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/) by Jason Brownlee.
 
-I will be following the process found on this [site](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/) by Jason Brownlee.   
+*An ode to template creation*
 
-_An ode to template creation_    
+So this author is using the iris flowers dataset, which I will use too. However, if time allows, I'll create a mirror project with another dataset. The researcher behind the iris flowers research was a eugenist \[post source here; his name Edgar Anderson\].
 
-So this author is using the iris flowers dataset, which I will use too. However, if time allows, I'll create a mirror project with another dataset. The researcher behind the iris flowers research was a eugenist [post source here; his name Edgar Anderson].
+# 1. Define Problem
 
+## Characteristics for Data
 
-# 1. Define Problem     
+1.  Numeric columns\
+2.  Classification problems (i.e., inputs of characteristics to determine the iris)\
+3.  Few columns and 100-200 observations\
+4.  All columns are in the same unit and scale; otherwise scaling and transformations would need to occur
 
-## Characteristics for Data   
-
-1. Numeric columns   
-2. Classification problems (i.e., inputs of characteristics to determine the iris)     
-3. Few columns and 100-200 observations    
-4. All columns are in the same unit and scale; otherwise scaling and transformations would need to occur   
-
-# 2. Prepare Data       
-
+# 2. Prepare Data
 
 ```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE, fig.height=5, fig.width=7, message = F, warning = F)
@@ -35,7 +32,7 @@ p_load(readr, tidyr, magrittr, knitr, tidyverse, janitor, broom, dplyr, caret,
        lattice, # for caret
        kernlab, # caret
        randomForest) # caret
-```   
+```
 
 ```{r load data}
 data("iris") 
@@ -61,29 +58,27 @@ validation <- dataset[-validation_index, ]
 dataset <- dataset[validation_index, ]
 ```
 
+## Summarize the Dataset
 
-## Summarize the Dataset     
-
-### Dimensions    
+### Dimensions
 
 ```{r dim}
 dim(dataset)
 ```
 
-### Types of Columns    
+### Types of Columns
 
 ```{r}
 sapply(dataset, class)
 ```
 
-### Data Peek    
+### Data Peek
 
 ```{r}
 head(dataset)
 ```
 
-
-### Levels of the Species Column     
+### Levels of the Species Column
 
 ```{r}
 # using base
@@ -92,7 +87,7 @@ levels(dataset$Species)
 # 2 categories in a column: binomial/binary
 ```
 
-#### Breakdown of Species Column   
+#### Breakdown of Species Column
 
 ```{r prop of species}
 # using base
@@ -103,15 +98,15 @@ cbind(freq = table(
   percentage = percentage)
 ```
 
-### Summary of all Columns    
+### Summary of all Columns
 
 ```{r}
 summary(dataset)
 ```
 
-## Visualizations    
+## Visualizations
 
-### Univariate    
+### Univariate
 
 ```{r split x and y}
 x <- dataset[, 1:4]
@@ -127,7 +122,7 @@ for(i in 1:4){
   boxplot(x[ ,i], main = names(iris)[i])}
 ```
 
-### Multivariate   
+### Multivariate
 
 ```{r scatterplot matrix}
 # visually assessing interactions between the variables, 3 colors to represent species types
@@ -176,15 +171,15 @@ caret::featurePlot(x = x,
                    scales = scales)
 ```
 
-# 3. Evaluate Algorithms    
+# 3. Evaluate Algorithms
 
-## Test harness: 10-fold cross validation   
-_This method estimates accuracy_   
-* Splits data into 10 parts   
-* Trains 9 parts, tests 1 part   
-* Releases all combinations of train-test splits    
-* Repeat 3 times for each algorithm for more accurate estimate    
+## Test harness: 10-fold cross validation
 
+*This method estimates accuracy*\
+\* Splits data into 10 parts\
+\* Trains 9 parts, tests 1 part\
+\* Releases all combinations of train-test splits\
+\* Repeat 3 times for each algorithm for more accurate estimate
 
 ```{r test harness}
 # run algorithms using 10-fold cross validation   
@@ -195,23 +190,23 @@ control <- caret::trainControl(method = "cv",
 metric <- "Accuracy"
 ```
 
-_Formula for accuracy_   
+*Formula for accuracy*
 
 $$
 \text{accuracy} = \frac{\text{correctly predicted instances}}{\text{total number of instances}} ~\cdot~ 100
-$$  
+$$
 
-## Build 5 different models for prediction    
+## Build 5 different models for prediction
 
-__Evaluate 5 different algorithms__   
+**Evaluate 5 different algorithms**
 
-_simple linear method_   
-1. Linear Discriminant Analysis (LDA)   
-_nonlinear method_   
-2. Classification and Regression Trees (CART)    
-3. k-Nearest Neighbors (kNN)    
-_complex nonlinear method_   
-4. Support Vector Machines (SVM) with a linear kernel   
+*simple linear method*\
+1. Linear Discriminant Analysis (LDA)\
+*nonlinear method*\
+2. Classification and Regression Trees (CART)\
+3. k-Nearest Neighbors (kNN)\
+*complex nonlinear method*\
+4. Support Vector Machines (SVM) with a linear kernel\
 5. Random Forest (RF)
 
 ```{r build models}
@@ -270,7 +265,7 @@ fit.rf <- caret::train(Species~.,
   # caret can configure and tune the configuration of each model but that isn't covered in the tutorial I'm going off of
 ```
 
-## Select the best model     
+## Select the best model
 
 ```{r model accuracy}
 # summarize accuracy of models  
@@ -286,7 +281,8 @@ results <- caret::resamples(
 
 summary(results)
 ```
-### Plot model evaluation results   
+
+### Plot model evaluation results
 
 ```{r}
 lattice::dotplot(results)
@@ -300,19 +296,18 @@ print(fit.lda)
 ### haven't figured it out yet... TBC...
 ```
 
-# 4. Predictions + Conclusion    
+# 4. Predictions + Conclusion
 
-__Assessing the accuracy of the best fit model 'fit.lda' on the validation set__   
-* It's ideal to have a validation set in case the model is overfit   
+**Assessing the accuracy of the best fit model 'fit.lda' on the validation set**\
+\* It's ideal to have a validation set in case the model is overfit
 
 ```{r lda on validation}
 predictions <- stats::predict(fit.lda, validation)
 
 confusionMatrix(predictions, validation$Species)
 ```
-__Explanation__:    
-Accuracy is 100%. The validation dataset is small (20%) but is within our expected margin of $97\% ~\pm~4\%$. Concluding that we _might_ have an accurate and a reliably accurate model.    
 
+**Explanation**:\
+Accuracy is 100%. The validation dataset is small (20%) but is within our expected margin of $97\% ~\pm~4\%$. Concluding that we *might* have an accurate and a reliably accurate model.
 
-
-_End notes: That was fun as heck. Shout out to Jason_   
+*End notes: That was fun as heck. Shout out to Jason*

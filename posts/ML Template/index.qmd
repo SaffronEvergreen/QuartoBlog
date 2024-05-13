@@ -1,7 +1,7 @@
 ---
 title: "Machine Learning Template"
 author: "Saffron Evergreen"
-date: "2023-08-24"
+date: "2024-05-10"
 categories: [code, machine learning, templates]
 ---
 
@@ -13,11 +13,9 @@ The brains behind this template goes to [Jason Brownlee](https://machinelearning
 
 ```{r setup, include=TRUE}
 knitr::opts_chunk$set(eval = FALSE, fig.height=5, fig.width=7, message = F, warning = F)
-# eval = FALSE : show code, will not run code 
-
-### change eval = FALSE to 
-
-    ## echo = TRUE 
+###
+# code is unable to run given "eval = FALSE"
+# input items as needed and change the r setup to "echo = TRUE" when trying this out elsewhere
 ```
 
 ```{r packages}
@@ -63,7 +61,7 @@ validation <- dataset[-validation_index, ]
 dataset <- dataset[validation_index, ]
 ```
 
-## Summary of dataset
+## Summary of (the training) dataset
 
 ```{r dim}
 dim(dataset) # make sure columns were retained 
@@ -311,3 +309,16 @@ The validation dataset is \[20\]% but \[is within our expected margin $97\% ~\pm
 Concluding that we *might* have an \[accurate and a reliably accurate\] model.
 
 *Note to self*: I need to refresh my brain on determining the margin; I thought the standard was plus or minus 3% but I don't know if the technical reasons of why really matter right now. (They matter)
+
+*Update*\
+I reviewed my notes and have reached a conclusion on how to determine a given margin of error.\
+\@ having a margin of error that is used in other relevant studies is important as it makes the statistics more reliable and more comparable/reproducible.\
+\@ a smaller margin of error is more ideal when "risk" is high - when making reproducible reports, it might be beneficial to have 2-3 different margins of errors in the calculations to compare/contrast for future research projects.
+
+**Determining your margin of error**
+
+-   large samples (discretion is advised) can have smaller margins of errors given that the samples are more representative of the population. It will be important to make sure that the demographics and distribution of variables in the sample population are representative of the study population (i.e., check census data)\
+-   a higher confidence interval requires a larger margin of error - decipher accordingly\
+-   example: if you are testing the validity of the datasets accuracy and the estimate is 96% with a margin of error being 4% (with a 95% confidence interval), then the concluding generalizable statement would be something like;
+
+> Given that the accuracy of the data is 96%, there is 95% confidence that the population estimates would fall between 92% to 100%
