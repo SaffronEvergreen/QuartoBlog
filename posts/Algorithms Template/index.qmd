@@ -911,9 +911,23 @@ predictions <- predict(chaide_tree, newdata = new_data)
 
 ### Conditional Decision Trees
 
-## Bayesian Algorithms
+## Bayesian Algorithms   
 
--   explictly apply Bayes' Theorem for classification and regression probems \[1\]
+- conditional probability for two events (A|B)   
+
+$$
+P(A \mid B) = \frac{P(B \cap A)}{P(B)}
+$$   
+
+$$
+{P(B \cap A)} = {P(B|A)}{P(A)}
+$$   
+
+
+- the formula above expresses that the probability that B occurs and causes A is equivalent to the probability of B and A occurring, divided by the probability of B occurring. 
+
+-   explictly apply Bayes' Theorem for classification and regression probems \[1\]   
+- 
 
 ### Naive Bayes
 
