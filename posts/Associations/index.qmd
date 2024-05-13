@@ -31,4 +31,4 @@ names(firstvisit) %>% head(n = 5)
 names(tenthvisit) %>% head(n = 5)
 ```
 
-Based off of what I read (here)\[https://www.icpsr.umich.edu/web/ICPSR/studies/32961\] under "Scope of Project", the SWANID's are linked across studies, so I will assume at this point in time that the SWANID's from Visit 1 and Visit 10 are dependent.
+Based off of what I read [here](https://www.icpsr.umich.edu/web/ICPSR/studies/32961) under "Scope of Project", the SWANID's are linked across studies, so I will assume at this point in time that the SWANID's from Visit 1 and Visit 10 are dependent.

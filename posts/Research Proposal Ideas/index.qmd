@@ -1,0 +1,19 @@
+---
+title: "Postpartum Research Proposal"
+author: "Saffron"
+date: "2023-05-13"
+categories: [thesis, postpartum]
+---
+
+
+From the time of this post, I have an internship and 3 comp exams before I will be qualified to graduate. The internship is in two parts; the integrative project and practice experience. The purpose of this is to showcase a portfolio of work that I have done throughout the program and will give a presentation at the end of the given term.    
+To succeed in this integrative project I need to demonstrate the [sixth foundational competency](https://media.ceph.org/documents/D2_guidance.pdf) for MPH students,   
+
+>Discuss the means by which structural bias, social inequities and racism undermine health and create challenges to achieving health equity at organizational, communitym and systemic levels. 
+
+_Be able to discuss factors (esp racism) that impact health equity at multiple levels for a particular health problem. Students should be able to discuss health disparities and differences among groups, as well as the ways in which organizations, systems, and structures operate that may have inequitable influences on certain groups._   
+
+
+Given the above, I have wanted my thesis to be around the industrial prison complex, health disparities, efficient and quality care, and the surmounting cost of everything involved. I also really like exploring 'taboo' topics and pushing myself to grow to get comfortable with discussing these topics. One that is often on my mind is perinatal and postpartum mental health with an emphasis on psychosis, extreme personality and behavior changes, and the scale of people (mostly children) affected in some form from postpartum behavioral changes (e.g., homicide). I am also wanting to explore the current ways in which perinatal and postpartum mental health is evaluated and possible program initiatives to raise awareness for pregnant people.   
+
+Regarding biostatistics and its applications towards this research, I am wanting to build and test association and prediction models using population-based, longitudinal data to assess the cost of imprisoning mental illness, predict the amount of lives lost, and possibly how the current screenings predict postpartum depression or related outcome. 

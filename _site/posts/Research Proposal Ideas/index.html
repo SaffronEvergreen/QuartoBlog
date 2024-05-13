@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Saffron">
-<meta name="dcterms.date" content="2023-07-26">
+<meta name="dcterms.date" content="2023-05-13">
 
-<title>Saffron Evergreen - Associations</title>
+<title>Saffron Evergreen - Postpartum Research Proposal</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,40 +21,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -149,10 +115,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Associations</h1>
+      <h1 class="title">Postpartum Research Proposal</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">analysis</div>
-                <div class="quarto-category">code</div>
+                <div class="quarto-category">thesis</div>
+                <div class="quarto-category">postpartum</div>
               </div>
                   </div>
   </div>
@@ -170,7 +136,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">July 26, 2023</p>
+        <p class="date">May 13, 2023</p>
       </div>
     </div>
     
@@ -189,33 +155,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>I mess around with correlations and associations here (eventually).</p>
-<p>I like to seek out random associations, correlations, assumed causations just for fun (e.g., is daily juice drinking associated with athlete’s foot outbreaks?). So this is just one of those that I am messing around with.</p>
-<p>The data I’m using is from the SWAN study; I’m using the baseline dataset and visit 10 dataset.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pacman)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">p_load</span>(tidyr, magrittr, knitr, tidyverse, janitor, broom, infer, glue, ggplot2, ggfortify, forcats, epiR, epiDisplay, epitools, dplyr, DescTools, describedata, datawizard, corrplot, caret, car, nlme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visit 1  </span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Associations/ICPSR_29221-V3/ICPSR_29221/DS0001/29221-0001-Data.rda"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>firstvisit <span class="ot">&lt;-</span> da29221<span class="fl">.0001</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># visit 10</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"C:/Users/mckjo/OneDrive/Desktop/GitBlog/posts/Associations/ICPSR_32961-V2 (2)/ICPSR_32961/DS0001/32961-0001-Data.rda"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>tenthvisit <span class="ot">&lt;-</span> da32961<span class="fl">.0001</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(firstvisit) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "SWANID"   "VISIT"    "INTDAY1"  "AGE1"     "LANGINT1"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tenthvisit) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "SWANID"    "VISIT"     "AGE10"     "INTDAY10"  "LANGINT10"</code></pre>
-</div>
-</div>
-<p>Based off of what I read <a href="https://www.icpsr.umich.edu/web/ICPSR/studies/32961">here</a> under “Scope of Project”, the SWANID’s are linked across studies, so I will assume at this point in time that the SWANID’s from Visit 1 and Visit 10 are dependent.</p>
+<p>From the time of this post, I have an internship and 3 comp exams before I will be qualified to graduate. The internship is in two parts; the integrative project and practice experience. The purpose of this is to showcase a portfolio of work that I have done throughout the program and will give a presentation at the end of the given term.<br>
+To succeed in this integrative project I need to demonstrate the <a href="https://media.ceph.org/documents/D2_guidance.pdf">sixth foundational competency</a> for MPH students,</p>
+<blockquote class="blockquote">
+<p>Discuss the means by which structural bias, social inequities and racism undermine health and create challenges to achieving health equity at organizational, communitym and systemic levels.</p>
+</blockquote>
+<p><em>Be able to discuss factors (esp racism) that impact health equity at multiple levels for a particular health problem. Students should be able to discuss health disparities and differences among groups, as well as the ways in which organizations, systems, and structures operate that may have inequitable influences on certain groups.</em></p>
+<p>Given the above, I have wanted my thesis to be around the industrial prison complex, health disparities, efficient and quality care, and the surmounting cost of everything involved. I also really like exploring ‘taboo’ topics and pushing myself to grow to get comfortable with discussing these topics. One that is often on my mind is perinatal and postpartum mental health with an emphasis on psychosis, extreme personality and behavior changes, and the scale of people (mostly children) affected in some form from postpartum behavioral changes (e.g., homicide). I am also wanting to explore the current ways in which perinatal and postpartum mental health is evaluated and possible program initiatives to raise awareness for pregnant people.</p>
+<p>Regarding biostatistics and its applications towards this research, I am wanting to build and test association and prediction models using population-based, longitudinal data to assess the cost of imprisoning mental illness, predict the amount of lives lost, and possibly how the current screenings predict postpartum depression or related outcome.</p>
 
 
 
