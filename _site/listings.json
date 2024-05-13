@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/Research Proposal Ideas/index.html",
       "/posts/ML Template/index.html",
       "/posts/Algorithms Template/index.html",
       "/posts/Machine Learning Walk-Through/index.html",
@@ -10,8 +11,7 @@
       "/posts/Logistic Regression Project 23/index.html",
       "/posts/Logistic Regression Project 22/index.html",
       "/posts/Sampling Analysis 23/index.html",
-      "/posts/First Blog Post/index.html",
-      "/posts/Research Proposal Ideas/index.html"
+      "/posts/First Blog Post/index.html"
     ]
   }
 ]
