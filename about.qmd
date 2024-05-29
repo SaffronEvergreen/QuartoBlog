@@ -15,7 +15,7 @@ about:
       href: https://github.com/SaffronEvergreen 
     - icon: rss 
       text: Resume 
-      href: embed("resume.pdf")
+      href: https://typst.app/project/r38CEkuAGnzw2SwrgZ-caC
 ---
 
 Welcome to this internet space where I try my best to explore statistical analytics.
