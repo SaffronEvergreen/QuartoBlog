@@ -15,7 +15,7 @@ about:
       href: https://github.com/SaffronEvergreen 
     - icon: rss 
       text: Resume 
-      href: https://typst.app/project/roXl2ZLlMwxkKm3TU1bD2a
+      href: embed("resume.pdf")
 ---
 
-This blog is under construction but is intended as a way to express what I've learned throughout my MPH Biostatistics program, as a student and individual who geeks out in their free time.
+Welcome to this internet space where I try my best to explore statistical analytics.
